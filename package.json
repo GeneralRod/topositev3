@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://generalrod.github.io/topositev2",
+  "homepage": "https://topografiewereld.nl",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
