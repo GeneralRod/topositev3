@@ -1,0 +1,91 @@
+export interface City {
+  name: string;
+  country: string;
+  coordinates: [number, number];
+  package: 'pakket1' | 'pakket2' | 'pakket3';
+  lat: number;
+  lng: number;
+}
+
+export const cities: City[] = [
+  // Pakket 1 cities
+  { name: "Parijs", country: "Frankrijk", coordinates: [2.3522, 48.8566], package: 'pakket1', lat: 2.3522, lng: 48.8566 },
+  { name: "Washington", country: "Verenigde Staten", coordinates: [-77.0369, 38.9072], package: 'pakket1', lat: -77.0369, lng: 38.9072 },
+  { name: "Brasília", country: "Brazilië", coordinates: [-47.8645, -15.7975], package: 'pakket1', lat: -47.8645, lng: -15.7975 },
+  { name: "Londen", country: "Verenigd Koninkrijk", coordinates: [-0.1276, 51.5074], package: 'pakket1', lat: -0.1276, lng: 51.5074 },
+  { name: "New York", country: "Verenigde Staten", coordinates: [-74.0060, 40.7128], package: 'pakket1', lat: -74.0060, lng: 40.7128 },
+  { name: "São Paulo", country: "Brazilië", coordinates: [-46.6333, -23.5505], package: 'pakket1', lat: -46.6333, lng: -23.5505 },
+  { name: "Berlijn", country: "Duitsland", coordinates: [13.4050, 52.5200], package: 'pakket1', lat: 13.4050, lng: 52.5200 },
+  { name: "Los Angeles", country: "Verenigde Staten", coordinates: [-118.2437, 34.0522], package: 'pakket1', lat: -118.2437, lng: 34.0522 },
+  { name: "Rio de Janeiro", country: "Brazilië", coordinates: [-43.1729, -22.9068], package: 'pakket1', lat: -43.1729, lng: -22.9068 },
+  { name: "Moskou", country: "Rusland", coordinates: [37.6173, 55.7558], package: 'pakket1', lat: 37.6173, lng: 55.7558 },
+  { name: "Chicago", country: "Verenigde Staten", coordinates: [-87.6298, 41.8781], package: 'pakket1', lat: -87.6298, lng: 41.8781 },
+  { name: "Buenos Aires", country: "Argentinië", coordinates: [-58.3816, -34.6037], package: 'pakket1', lat: -58.3816, lng: -34.6037 },
+  { name: "Athene", country: "Griekenland", coordinates: [23.7275, 37.9838], package: 'pakket1', lat: 23.7275, lng: 37.9838 },
+  { name: "Miami", country: "Verenigde Staten", coordinates: [-80.1918, 25.7617], package: 'pakket1', lat: -80.1918, lng: 25.7617 },
+  { name: "Bogotá", country: "Colombia", coordinates: [-74.0721, 4.7110], package: 'pakket1', lat: -74.0721, lng: 4.7110 },
+  { name: "Madrid", country: "Spanje", coordinates: [-3.7038, 40.4168], package: 'pakket1', lat: -3.7038, lng: 40.4168 },
+  { name: "Montréal", country: "Canada", coordinates: [-73.5673, 45.5017], package: 'pakket1', lat: -73.5673, lng: 45.5017 },
+  { name: "Caracas", country: "Venezuela", coordinates: [-66.9036, 10.4806], package: 'pakket1', lat: -66.9036, lng: 10.4806 },
+  { name: "Rome", country: "Italië", coordinates: [12.4964, 41.9028], package: 'pakket1', lat: 12.4964, lng: 41.9028 },
+  { name: "Mexico-Stad", country: "Mexico", coordinates: [-99.1332, 19.4326], package: 'pakket1', lat: -99.1332, lng: 19.4326 },
+  { name: "Santiago", country: "Chili", coordinates: [-70.6483, -33.4489], package: 'pakket1', lat: -70.6483, lng: -33.4489 },
+  { name: "Istanbul", country: "Turkije", coordinates: [28.9784, 41.0082], package: 'pakket1', lat: 28.9784, lng: 41.0082 },
+  { name: "Havana", country: "Cuba", coordinates: [-82.3666, 23.1136], package: 'pakket1', lat: -82.3666, lng: 23.1136 },
+  { name: "Paramaribo", country: "Suriname", coordinates: [-55.1678, 5.8520], package: 'pakket1', lat: -55.1678, lng: 5.8520 },
+  { name: "Kaapstad", country: "Zuid-Afrika", coordinates: [18.4241, -33.9249], package: 'pakket1', lat: 18.4241, lng: -33.9249 },
+  { name: "Jeruzalem", country: "Israël", coordinates: [35.2137, 31.7683], package: 'pakket1', lat: 35.2137, lng: 31.7683 },
+  { name: "Sydney", country: "Australië", coordinates: [151.2093, -33.8688], package: 'pakket1', lat: 151.2093, lng: -33.8688 },
+  { name: "Johannesburg", country: "Zuid-Afrika", coordinates: [28.0473, -26.2041], package: 'pakket1', lat: 28.0473, lng: -26.2041 },
+  { name: "Riad", country: "Saoedi-Arabië", coordinates: [46.6753, 24.7136], package: 'pakket1', lat: 46.6753, lng: 24.7136 },
+  { name: "Melbourne", country: "Australië", coordinates: [144.9631, -37.8136], package: 'pakket1', lat: 144.9631, lng: -37.8136 },
+  { name: "Casablanca", country: "Marokko", coordinates: [-7.5898, 33.5731], package: 'pakket1', lat: -7.5898, lng: 33.5731 },
+  { name: "Bagdad", country: "Irak", coordinates: [44.3661, 33.3152], package: 'pakket1', lat: 44.3661, lng: 33.3152 },
+  { name: "Dakar", country: "Senegal", coordinates: [-17.4441, 14.7167], package: 'pakket1', lat: -17.4441, lng: 14.7167 },
+  { name: "Teheran", country: "Iran", coordinates: [51.3890, 35.6892], package: 'pakket1', lat: 51.3890, lng: 35.6892 },
+  { name: "Nairobi", country: "Kenia", coordinates: [36.8219, -1.2921], package: 'pakket1', lat: 36.8219, lng: -1.2921 },
+  { name: "Kabul", country: "Afghanistan", coordinates: [69.2075, 34.5553], package: 'pakket1', lat: 69.2075, lng: 34.5553 },
+  { name: "Accra", country: "Ghana", coordinates: [-0.1869, 5.6037], package: 'pakket1', lat: -0.1869, lng: 5.6037 },
+  { name: "Delhi", country: "India", coordinates: [77.1025, 28.7041], package: 'pakket1', lat: 77.1025, lng: 28.7041 },
+  { name: "Lagos", country: "Nigeria", coordinates: [3.3792, 6.5244], package: 'pakket1', lat: 3.3792, lng: 6.5244 },
+  { name: "Mumbai", country: "India", coordinates: [72.8777, 19.0760], package: 'pakket1', lat: 72.8777, lng: 19.0760 },
+  { name: "Cairo", country: "Egypte", coordinates: [31.2357, 30.0444], package: 'pakket1', lat: 31.2357, lng: 30.0444 },
+  { name: "Bangkok", country: "Thailand", coordinates: [100.5018, 13.7563], package: 'pakket1', lat: 100.5018, lng: 13.7563 },
+  { name: "Singapore", country: "Singapore", coordinates: [103.8198, 1.3521], package: 'pakket1', lat: 103.8198, lng: 1.3521 },
+  { name: "Jakarta", country: "Indonesië", coordinates: [106.8651, -6.2088], package: 'pakket1', lat: 106.8651, lng: -6.2088 },
+  { name: "Manila", country: "Filipijnen", coordinates: [120.9842, 14.5995], package: 'pakket1', lat: 120.9842, lng: 14.5995 },
+  { name: "Tokyo", country: "Japan", coordinates: [139.6917, 35.6895], package: 'pakket1', lat: 139.6917, lng: 35.6895 },
+  { name: "Seoul", country: "Zuid-Korea", coordinates: [126.9780, 37.5665], package: 'pakket1', lat: 126.9780, lng: 37.5665 },
+  { name: "Beijing", country: "China", coordinates: [116.4074, 39.9042], package: 'pakket1', lat: 116.4074, lng: 39.9042 },
+  { name: "Shanghai", country: "China", coordinates: [121.4737, 31.2304], package: 'pakket1', lat: 121.4737, lng: 31.2304 },
+  { name: "Hongkong", country: "China", coordinates: [114.1694, 22.3193], package: 'pakket1', lat: 114.1694, lng: 22.3193 },
+
+  // Pakket 2 cities
+  { name: "Kiev", country: "Oekraïne", coordinates: [30.5234, 50.4547], package: 'pakket2', lat: 30.5234, lng: 50.4547 },
+  { name: "Wenen", country: "Oostenrijk", coordinates: [16.3738, 48.2082], package: 'pakket2', lat: 16.3738, lng: 48.2082 },
+  { name: "San Francisco", country: "Verenigde Staten", coordinates: [-122.4194, 37.7749], package: 'pakket2', lat: -122.4194, lng: 37.7749 },
+  { name: "Detroit", country: "Verenigde Staten", coordinates: [-83.0458, 42.3314], package: 'pakket2', lat: -83.0458, lng: 42.3314 },
+  { name: "Vancouver", country: "Canada", coordinates: [-123.1207, 49.2827], package: 'pakket2', lat: -123.1207, lng: 49.2827 },
+  { name: "Lima", country: "Peru", coordinates: [-77.0428, -12.0464], package: 'pakket2', lat: -77.0428, lng: -12.0464 },
+  { name: "La Paz", country: "Bolivia", coordinates: [-68.1193, -16.4897], package: 'pakket2', lat: -68.1193, lng: -16.4897 },
+  { name: "Kinshasa", country: "Congo", coordinates: [15.2663, -4.4419], package: 'pakket2', lat: 15.2663, lng: -4.4419 },
+  { name: "Kolkata", country: "India", coordinates: [88.3639, 22.5726], package: 'pakket2', lat: 88.3639, lng: 22.5726 },
+  { name: "Perth", country: "Australië", coordinates: [115.8605, -31.9522], package: 'pakket2', lat: 115.8605, lng: -31.9522 },
+
+  // Pakket 3 cities
+  { name: "Stockholm", country: "Zweden", coordinates: [18.0686, 59.3293], package: 'pakket3', lat: 18.0686, lng: 59.3293 },
+  { name: "Sint Petersburg", country: "Rusland", coordinates: [30.3351, 59.9343], package: 'pakket3', lat: 30.3351, lng: 59.9343 },
+  { name: "Houston", country: "Verenigde Staten", coordinates: [-95.3698, 29.7604], package: 'pakket3', lat: -95.3698, lng: 29.7604 },
+  { name: "Quito", country: "Ecuador", coordinates: [-78.4678, -0.1807], package: 'pakket3', lat: -78.4678, lng: -0.1807 },
+  { name: "Montevideo", country: "Uruguay", coordinates: [-56.1645, -34.9011], package: 'pakket3', lat: -56.1645, lng: -34.9011 },
+  { name: "Manaus", country: "Brazilië", coordinates: [-60.0253, -3.1190], package: 'pakket3', lat: -60.0253, lng: -3.1190 },
+  { name: "Khartoum", country: "Soedan", coordinates: [32.5599, 15.5007], package: 'pakket3', lat: 32.5599, lng: 15.5007 },
+  { name: "Addis Abeba", country: "Ethiopië", coordinates: [38.7468, 9.0320], package: 'pakket3', lat: 38.7468, lng: 9.0320 },
+  { name: "Algiers", country: "Algerije", coordinates: [3.0588, 36.7538], package: 'pakket3', lat: 3.0588, lng: 36.7538 },
+  { name: "Karachi", country: "Pakistan", coordinates: [67.0099, 24.8615], package: 'pakket3', lat: 67.0099, lng: 24.8615 },
+  { name: "Kuala Lumpur", country: "Maleisië", coordinates: [101.6869, 3.1390], package: 'pakket3', lat: 101.6869, lng: 3.1390 },
+  { name: "Hanoi", country: "Vietnam", coordinates: [105.8342, 21.0285], package: 'pakket3', lat: 105.8342, lng: 21.0285 },
+  { name: "Adelaide", country: "Australië", coordinates: [138.6007, -34.9285], package: 'pakket3', lat: 138.6007, lng: -34.9285 },
+  { name: "Wellington", country: "Nieuw-Zeeland", coordinates: [174.7762, -41.2866], package: 'pakket3', lat: 174.7762, lng: -41.2866 },
+  { name: "Osaka", country: "Japan", coordinates: [135.5022, 34.6937], package: 'pakket3', lat: 135.5022, lng: 34.6937 }
+]; 
