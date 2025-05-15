@@ -77,11 +77,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage }) => {
         </PackageCard>
         <PackageCard color="#34a853" onClick={() => onSelectPackage('pakket2')}>
           <PackageTitle>Pakket 2</PackageTitle>
-          <PackageDescription>Extra steden in Europa en Amerika</PackageDescription>
+          <PackageDescription>Extra steden over de wereld</PackageDescription>
         </PackageCard>
         <PackageCard color="#fbbc05" onClick={() => onSelectPackage('pakket3')}>
           <PackageTitle>Pakket 3</PackageTitle>
-          <PackageDescription>Extra steden in Azië en Afrika</PackageDescription>
+          <PackageDescription>Extra steden over de wereld</PackageDescription>
         </PackageCard>
       </PackageGrid>
 

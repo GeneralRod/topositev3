@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { City } from '../data/cities';
+import { continentGeo } from '../data/continentsGeo';
 
 // Fix for default marker icons
 interface IconDefault extends L.Icon.Default {
@@ -183,19 +184,25 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [currentCity, setCurrentCity] = useState<City | null>(null);
   const [score, setScore] = useState(0);
   const [totalCities] = useState(cities.length);
-  const [foundCities, setFoundCities] = useState<string[]>([]);
+  const [cityStatus, setCityStatus] = useState<Record<string, 'unanswered' | 'blue' | 'green'>>(() => {
+    const status: Record<string, 'unanswered' | 'blue' | 'green'> = {};
+    cities.forEach(city => { status[city.name] = 'unanswered'; });
+    return status;
+  });
   const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
+  const [currentAttempts, setCurrentAttempts] = useState(0);
 
-  const selectNextCity = (excludeCity?: City) => {
-    const remainingCities = cities.filter(c => 
-      !foundCities.includes(c.name) && 
-      (!excludeCity || c.name !== excludeCity.name)
-    );
-    
-    if (remainingCities.length > 0) {
-      const randomIndex = Math.floor(Math.random() * remainingCities.length);
-      setCurrentCity(remainingCities[randomIndex]);
+  // Select next city: only from blue or unanswered
+  const selectNextCity = () => {
+    const eligible = Object.entries(cityStatus)
+      .filter(([_, status]) => status === 'blue' || status === 'unanswered')
+      .map(([name]) => name);
+    if (eligible.length > 0) {
+      const nextCityName = eligible[Math.floor(Math.random() * eligible.length)];
+      setCurrentCity(cities.find(c => c.name === nextCityName) || null);
+      setCurrentAttempts(0);
     } else {
       setCurrentCity(null);
     }
@@ -208,41 +215,50 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   }, [cities]);
 
   useEffect(() => {
-    if (score === totalCities && totalCities > 0) {
+    if (Object.values(cityStatus).every(status => status === 'green')) {
       setShowCompletion(true);
     }
-  }, [score, totalCities]);
+  }, [cityStatus]);
 
   const handleMarkerClick = (city: City) => {
-    if (currentCity && city.name === currentCity.name) {
-      setScore(prev => prev + 1);
-      setFoundCities(prev => [...prev, city.name]);
-      setFeedback({ message: 'Goed! 🎉', type: 'success' });
-      selectNextCity(city);
-    } else {
-      setFeedback({ message: 'Volgende keer beter', type: 'error' });
-      selectNextCity(city);
+    setHintUsed(false);
+    if (!currentCity) return;
+    if (city.name !== currentCity.name) {
+      setFeedback(null);
+      setTimeout(() => {
+        setFeedback({ message: 'Dit is niet de goede stad', type: 'error' });
+      }, 10);
+      setCurrentAttempts(a => a + 1);
+      return;
     }
+    // Correct city
+    setFeedback({ message: 'Goed! 🎉', type: 'success' });
+    setTimeout(() => {
+      setCityStatus(prev => {
+        const newStatus = { ...prev };
+        if (currentAttempts === 0) {
+          newStatus[city.name] = 'green';
+          setScore(s => s + 1);
+        } else {
+          newStatus[city.name] = 'blue';
+        }
+        return newStatus;
+      });
+      selectNextCity();
+    }, 500);
   };
 
-  // Clear feedback message after animation
-  useEffect(() => {
-    if (feedback) {
-      const timer = setTimeout(() => {
-        setFeedback(null);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [feedback]);
-
-  // Create custom red dot icon
-  const createDotIcon = (isFound: boolean) => {
+  // Update createDotIcon to use blue for 'blue', green for 'green', red for unanswered
+  const createDotIcon = (status: 'unanswered' | 'blue' | 'green') => {
+    let color = '#ea4335'; // red (unanswered)
+    if (status === 'green') color = '#34a853'; // green
+    if (status === 'blue') color = '#4285f4'; // blue
     return L.divIcon({
       className: 'custom-dot',
       html: `<div style="
         width: 12px;
         height: 12px;
-        background-color: ${isFound ? '#34a853' : '#ea4335'};
+        background-color: ${color};
         border-radius: 50%;
         border: 2px solid white;
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -255,6 +271,11 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const percentage = Math.round((score / totalCities) * 100);
   const remaining = totalCities - score;
 
+  // Add back the handleHint function
+  const handleHint = () => {
+    setHintUsed(true);
+  };
+
   return (
     <GameContainer>
       <Header>
@@ -265,17 +286,25 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
           )}
         </HeaderLeft>
         <ScoreContainer>
+          {hintUsed && currentCity && (
+            <span style={{ color: '#1a73e8', fontWeight: 600, marginRight: '1rem' }}>
+              Tip: {currentCity.continent}
+            </span>
+          )}
+          <BackButton onClick={handleHint} disabled={hintUsed} style={{marginRight: '1.2rem'}}>
+            Hint
+          </BackButton>
           <ScoreItem>
             <ScoreLabel>Score</ScoreLabel>
-            <ScoreValue>{score}/{totalCities}</ScoreValue>
+            <ScoreValue>{Object.values(cityStatus).filter(s => s === 'green').length}/{totalCities}</ScoreValue>
           </ScoreItem>
           <ScoreItem>
             <ScoreLabel>Percentage</ScoreLabel>
-            <ScoreValue>{percentage}%</ScoreValue>
+            <ScoreValue>{Math.round((Object.values(cityStatus).filter(s => s === 'green').length / totalCities) * 100)}%</ScoreValue>
           </ScoreItem>
           <ScoreItem>
             <ScoreLabel>Nog te vinden</ScoreLabel>
-            <ScoreValue>{remaining}</ScoreValue>
+            <ScoreValue>{totalCities - Object.values(cityStatus).filter(s => s === 'green').length}</ScoreValue>
           </ScoreItem>
           <BackButton onClick={onBack}>Terug</BackButton>
         </ScoreContainer>
@@ -287,14 +316,14 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
           </FeedbackMessage>
         )}
         <MapContainer
-          center={[20, 0]} // Center of the world map
-          zoom={2} // Zoomed out to show the whole world
+          center={[20, 0]}
+          zoom={2}
           style={{ height: '100%', width: '100%' }}
-          zoomControl={false} // Disable zoom controls
-          doubleClickZoom={false} // Disable double-click zoom
-          scrollWheelZoom={false} // Disable scroll wheel zoom
-          dragging={false} // Disable map dragging
-          touchZoom={false} // Disable touch zoom
+          zoomControl={false}
+          doubleClickZoom={false}
+          scrollWheelZoom={false}
+          dragging={false}
+          touchZoom={false}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -304,7 +333,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
             <Marker
               key={city.name}
               position={[city.lat, city.lng]}
-              icon={createDotIcon(foundCities.includes(city.name))}
+              icon={createDotIcon(cityStatus[city.name])}
               eventHandlers={{
                 click: () => handleMarkerClick(city),
               }}
