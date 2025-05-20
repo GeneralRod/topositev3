@@ -189,6 +189,11 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     cities.forEach(city => { status[city.name] = 'unanswered'; });
     return status;
   });
+  const [cityMistakes, setCityMistakes] = useState<Record<string, number>>(() => {
+    const mistakes: Record<string, number> = {};
+    cities.forEach(city => { mistakes[city.name] = 0; });
+    return mistakes;
+  });
   const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [showCompletion, setShowCompletion] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
@@ -229,6 +234,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
         setFeedback({ message: 'Dit is niet de goede stad', type: 'error' });
       }, 10);
       setCurrentAttempts(a => a + 1);
+      setCityMistakes(prev => ({ ...prev, [currentCity.name]: prev[currentCity.name] + 1 }));
       return;
     }
     // Correct city
@@ -346,6 +352,43 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
           <Overlay />
           <CompletionPopup>
             <CompletionMessage>Super! Je hebt alle steden gevonden!</CompletionMessage>
+            <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+              {(() => {
+                const mistakesArr = Object.entries(cityMistakes)
+                  .filter(([_, count]) => count > 0)
+                  .sort((a, b) => b[1] - a[1]);
+                if (mistakesArr.length === 0) {
+                  return <div style={{ color: '#34a853', fontWeight: 600 }}>Je hebt alle steden in één keer goed!</div>;
+                }
+                return <>
+                  <div style={{ fontWeight: 600, marginBottom: 8 }}>Moeilijkste steden deze ronde:</div>
+                  <ol style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
+                    {mistakesArr.map(([name, count], idx) => (
+                      <li key={name} style={{ 
+                        marginBottom: 4, 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center', 
+                        width: 280,
+                        padding: '2px 0'
+                      }}>
+                        <span style={{ color: '#111', fontWeight: 500 }}>{name}</span>
+                        <span style={{ 
+                          color: '#ea4335', 
+                          fontWeight: 500, 
+                          minWidth: 80, 
+                          textAlign: 'right', 
+                          display: 'inline-block',
+                          paddingLeft: 16
+                        }}>
+                          {count} fout{count > 1 ? 'en' : ''}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                </>;
+              })()}
+            </div>
             <BackToMenuButton onClick={onBack}>
               Terug naar hoofdmenu
             </BackToMenuButton>
