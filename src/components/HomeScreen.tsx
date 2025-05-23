@@ -6,12 +6,15 @@ interface HomeScreenProps {
 }
 
 const Container = styled.div`
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const Title = styled.h1`
@@ -27,6 +30,7 @@ const PackageGrid = styled.div`
   gap: 1.5rem;
   width: 100%;
   max-width: 1200px;
+  margin-bottom: 2rem;
 `;
 
 const PackageCard = styled.div<{ color: string }>`

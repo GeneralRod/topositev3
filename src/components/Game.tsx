@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { City } from '../data/cities';
 import { continentGeo } from '../data/continentsGeo';
+import { saveGameState, loadGameState, clearGameState } from '../utils/gameStorage';
+import { MapError, StorageError, handleMapError, handleStorageError } from '../utils/errorHandling';
 
 // Fix for default marker icons
 interface IconDefault extends L.Icon.Default {
@@ -25,10 +27,12 @@ interface GameProps {
 }
 
 const GameContainer = styled.div`
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  overflow: hidden;
 `;
 
 const Header = styled.header`
@@ -38,6 +42,7 @@ const Header = styled.header`
   padding: 1rem 2rem;
   background: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  flex-shrink: 0;
 `;
 
 const HeaderLeft = styled.div`
@@ -99,9 +104,18 @@ const BackButton = styled.button`
   }
 `;
 
+const ResetButton = styled(BackButton)`
+  background-color: #ea4335;
+  &:hover {
+    background-color: #d33426;
+  }
+`;
+
 const MapWrapper = styled.div`
   flex: 1;
   position: relative;
+  overflow: hidden;
+  min-height: 0;
 `;
 
 const FeedbackMessage = styled.div<{ type: 'success' | 'error' }>`
@@ -180,6 +194,25 @@ const Overlay = styled.div`
   animation: fadeIn 0.3s ease-in-out;
 `;
 
+const ErrorMessage = styled.div`
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff4444;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  animation: slideIn 0.3s ease-out;
+
+  @keyframes slideIn {
+    from { transform: translate(-50%, -100%); }
+    to { transform: translate(-50%, 0); }
+  }
+`;
+
 const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [currentCity, setCurrentCity] = useState<City | null>(null);
   const [score, setScore] = useState(0);
@@ -198,6 +231,74 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [showCompletion, setShowCompletion] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const [currentAttempts, setCurrentAttempts] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load saved game state on mount
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadState = async () => {
+      try {
+        const savedState = await loadGameState(selectedPackage);
+        if (isMounted && savedState) {
+          setCityStatus(savedState.cityStatus);
+          setCityMistakes(savedState.cityMistakes);
+          setScore(savedState.score);
+          setCurrentAttempts(savedState.currentAttempts);
+          setHintUsed(savedState.hintUsed);
+          setCurrentCity(savedState.currentCity);
+        } else if (isMounted) {
+          selectNextCity();
+        }
+      } catch (error) {
+        if (isMounted) {
+          handleStorageError(error);
+          setError('Failed to load game state. Starting new game...');
+          selectNextCity();
+        }
+      }
+    };
+
+    loadState();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedPackage]);
+
+  // Save game state whenever it changes
+  useEffect(() => {
+    let isMounted = true;
+    let saveTimeout: number;
+
+    const saveState = async () => {
+      try {
+        await saveGameState({
+          cityStatus,
+          cityMistakes,
+          score,
+          currentAttempts,
+          hintUsed,
+          currentCity,
+          selectedPackage,
+          lastUpdated: Date.now()
+        });
+      } catch (error) {
+        if (isMounted) {
+          handleStorageError(error);
+          setError('Failed to save game state. Your progress may not be saved.');
+        }
+      }
+    };
+
+    // Debounce save operations
+    saveTimeout = window.setTimeout(saveState, 1000);
+
+    return () => {
+      isMounted = false;
+      window.clearTimeout(saveTimeout);
+    };
+  }, [cityStatus, cityMistakes, score, currentAttempts, hintUsed, currentCity, selectedPackage]);
 
   // Select next city: only from blue or unanswered
   const selectNextCity = () => {
@@ -282,11 +383,42 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     setHintUsed(true);
   };
 
+  const handleMapError = useCallback((error: unknown) => {
+    if (error instanceof MapError) {
+      setError('Map loading failed. Please refresh the page.');
+    } else {
+      setError('An unexpected error occurred. Please try again.');
+    }
+  }, []);
+
+  const handleReset = async () => {
+    try {
+      await clearGameState(selectedPackage);
+      setCityStatus(Object.fromEntries(cities.map(city => [city.name, 'unanswered'])));
+      setCityMistakes(Object.fromEntries(cities.map(city => [city.name, 0])));
+      setScore(0);
+      setCurrentAttempts(0);
+      setHintUsed(false);
+      selectNextCity();
+    } catch (error) {
+      handleStorageError(error);
+      setError('Failed to reset game. Please try again.');
+    }
+  };
+
   return (
     <GameContainer>
+      {error && (
+        <ErrorMessage>
+          {error}
+          <button onClick={() => setError(null)} style={{ marginLeft: '1rem', background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
+            ×
+          </button>
+        </ErrorMessage>
+      )}
       <Header>
         <HeaderLeft>
-          <Title>Topografie Oefenen - {selectedPackage}</Title>
+          <Title>{selectedPackage.replace('pakket', 'Pakket ')}</Title>
           {currentCity && (
             <CityQuestion>Vind: {currentCity.name}</CityQuestion>
           )}
@@ -312,6 +444,9 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
             <ScoreLabel>Nog te vinden</ScoreLabel>
             <ScoreValue>{totalCities - Object.values(cityStatus).filter(s => s === 'green').length}</ScoreValue>
           </ScoreItem>
+          <ResetButton onClick={handleReset} style={{marginRight: '1.2rem'}}>
+            Herstart
+          </ResetButton>
           <BackButton onClick={onBack}>Terug</BackButton>
         </ScoreContainer>
       </Header>
@@ -361,7 +496,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
                   return <div style={{ color: '#34a853', fontWeight: 600 }}>Je hebt alle steden in één keer goed!</div>;
                 }
                 return <>
-                  <div style={{ fontWeight: 600, marginBottom: 8 }}>Moeilijkste steden deze ronde:</div>
+                  <div style={{ fontWeight: 600, marginBottom: 8, color: '#111' }}>Moeilijkste steden deze ronde:</div>
                   <ol style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
                     {mistakesArr.map(([name, count], idx) => (
                       <li key={name} style={{ 
