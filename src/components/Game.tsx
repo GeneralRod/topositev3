@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { City } from '../data/cities';
-import { continentGeo } from '../data/continentsGeo';
 import { saveGameState, loadGameState, clearGameState } from '../utils/gameStorage';
-import { MapError, StorageError, handleMapError, handleStorageError } from '../utils/errorHandling';
+import { handleStorageError } from '../utils/errorHandling';
+import { FaCoins } from 'react-icons/fa';
 
 // Fix for default marker icons
 interface IconDefault extends L.Icon.Default {
@@ -43,6 +43,14 @@ const Header = styled.header`
   background: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   flex-shrink: 0;
+  z-index: 1000;
+
+  @media (max-width: 768px) {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 120px;
+  }
 `;
 
 const HeaderLeft = styled.div`
@@ -55,6 +63,11 @@ const Title = styled.h1`
   font-size: 1.5rem;
   color: #1a73e8;
   margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    text-align: center;
+  }
 `;
 
 const CityQuestion = styled.h2`
@@ -62,6 +75,11 @@ const CityQuestion = styled.h2`
   color: #202124;
   margin: 0;
   font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    text-align: center;
+  }
 `;
 
 const ScoreContainer = styled.div`
@@ -69,6 +87,13 @@ const ScoreContainer = styled.div`
   align-items: center;
   gap: 1.5rem;
   margin-right: 1rem;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-right: 0;
+  }
 `;
 
 const ScoreItem = styled.div`
@@ -76,6 +101,10 @@ const ScoreItem = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
+
+  @media (max-width: 768px) {
+    min-width: 80px;
+  }
 `;
 
 const ScoreLabel = styled.span`
@@ -102,6 +131,11 @@ const BackButton = styled.button`
   &:hover {
     background: #1557b0;
   }
+
+  @media (max-width: 768px) {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
 `;
 
 const ResetButton = styled(BackButton)`
@@ -116,6 +150,16 @@ const MapWrapper = styled.div`
   position: relative;
   overflow: hidden;
   min-height: 0;
+  height: calc(100vh - 80px); // Account for header height
+
+  @media (max-width: 768px) {
+    height: calc(100vh - 120px); // Larger header on mobile
+    position: fixed;
+    top: 120px; // Match header height
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
 `;
 
 const FeedbackMessage = styled.div<{ type: 'success' | 'error' }>`
@@ -213,6 +257,91 @@ const ErrorMessage = styled.div`
   }
 `;
 
+const HintText = styled.span`
+  color: #1a73e8;
+  font-weight: 600;
+  margin-right: 1rem;
+`;
+
+const ButtonMargin = styled.div`
+  margin-right: 1.2rem;
+`;
+
+const CompletionStats = styled.div`
+  margin-bottom: 1.5rem;
+  text-align: left;
+`;
+
+const PerfectScore = styled.div`
+  color: #34a853;
+  font-weight: 600;
+`;
+
+const StatsTitle = styled.div`
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #111;
+`;
+
+const StatsList = styled.ol`
+  padding-left: 0;
+  margin: 0;
+  list-style: none;
+`;
+
+const StatsItem = styled.li`
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 280px;
+  padding: 2px 0;
+`;
+
+const CityName = styled.span`
+  color: #111;
+  font-weight: 500;
+`;
+
+const MistakeCount = styled.span`
+  color: #ea4335;
+  font-weight: 500;
+  min-width: 80px;
+  text-align: right;
+  display: inline-block;
+  padding-left: 16px;
+`;
+
+const ErrorCloseButton = styled.button`
+  margin-left: 1rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+`;
+
+const COINS_PER_CORRECT = 10;
+const SPEED_BONUS_MAX = 10; // max bonus for fastest answer
+const SPEED_BONUS_THRESHOLD = 3; // seconds for max bonus
+const COINS_PER_CITY_MAX = 10;
+const COINS_PER_PAKKET_BONUS = 0.2; // 20% bonus
+
+const SessionCoinCounter = styled.span`
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #FFD700;
+  margin-left: 1.2rem;
+  gap: 0.3rem;
+`;
+
+const CompletionCoins = styled.div`
+  font-weight: 600;
+  color: #FFD700;
+  margin-bottom: 12px;
+`;
+
 const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [currentCity, setCurrentCity] = useState<City | null>(null);
   const [score, setScore] = useState(0);
@@ -232,6 +361,9 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [hintUsed, setHintUsed] = useState(false);
   const [currentAttempts, setCurrentAttempts] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [sessionCoins, setSessionCoins] = useState(0);
+  const [pakketBonus, setPakketBonus] = useState(0);
+  const [lastAnswerTime, setLastAnswerTime] = useState<number>(Date.now());
 
   // Load saved game state on mount
   useEffect(() => {
@@ -323,12 +455,18 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   useEffect(() => {
     if (Object.values(cityStatus).every(status => status === 'green')) {
       setShowCompletion(true);
+      const bonus = Math.round(sessionCoins * COINS_PER_PAKKET_BONUS);
+      setPakketBonus(bonus);
+      setSessionCoins(c => c + bonus);
     }
   }, [cityStatus]);
 
   const handleMarkerClick = (city: City) => {
     setHintUsed(false);
     if (!currentCity) return;
+    const now = Date.now();
+    const timeTaken = (now - lastAnswerTime) / 1000;
+    setLastAnswerTime(now);
     if (city.name !== currentCity.name) {
       setFeedback(null);
       setTimeout(() => {
@@ -340,6 +478,16 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     }
     // Correct city
     setFeedback({ message: 'Goed! 🎉', type: 'success' });
+    // Calculate speed bonus
+    let speedBonus = 0;
+    if (timeTaken <= SPEED_BONUS_THRESHOLD) {
+      speedBonus = SPEED_BONUS_MAX;
+    } else if (timeTaken < 10) {
+      speedBonus = Math.max(0, Math.round(SPEED_BONUS_MAX * (1 - (timeTaken - SPEED_BONUS_THRESHOLD) / (10 - SPEED_BONUS_THRESHOLD))));
+    }
+    let totalCityCoins = COINS_PER_CORRECT + speedBonus;
+    if (totalCityCoins > COINS_PER_CITY_MAX) totalCityCoins = COINS_PER_CITY_MAX;
+    setSessionCoins(c => c + totalCityCoins);
     setTimeout(() => {
       setCityStatus(prev => {
         const newStatus = { ...prev };
@@ -375,21 +523,10 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     });
   };
 
-  const percentage = Math.round((score / totalCities) * 100);
-  const remaining = totalCities - score;
-
   // Add back the handleHint function
   const handleHint = () => {
     setHintUsed(true);
   };
-
-  const handleMapError = useCallback((error: unknown) => {
-    if (error instanceof MapError) {
-      setError('Map loading failed. Please refresh the page.');
-    } else {
-      setError('An unexpected error occurred. Please try again.');
-    }
-  }, []);
 
   const handleReset = async () => {
     try {
@@ -411,42 +548,46 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       {error && (
         <ErrorMessage>
           {error}
-          <button onClick={() => setError(null)} style={{ marginLeft: '1rem', background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
-            ×
-          </button>
+          <ErrorCloseButton onClick={() => setError(null)}>×</ErrorCloseButton>
         </ErrorMessage>
       )}
       <Header>
         <HeaderLeft>
           <Title>{selectedPackage.replace('pakket', 'Pakket ')}</Title>
           {currentCity && (
-            <CityQuestion>Vind: {currentCity.name}</CityQuestion>
+            <CityQuestion style={{ display: 'flex', alignItems: 'center' }}>
+              Vind: {currentCity.name}
+              <SessionCoinCounter>
+                <FaCoins style={{ color: '#FFD700', marginRight: 4 }} />
+                {sessionCoins}
+              </SessionCoinCounter>
+            </CityQuestion>
           )}
         </HeaderLeft>
         <ScoreContainer>
           {hintUsed && currentCity && (
-            <span style={{ color: '#1a73e8', fontWeight: 600, marginRight: '1rem' }}>
+            <HintText>
               Tip: {currentCity.continent}
-            </span>
+            </HintText>
           )}
-          <BackButton onClick={handleHint} disabled={hintUsed} style={{marginRight: '1.2rem'}}>
-            Hint
-          </BackButton>
+          <ButtonMargin>
+            <BackButton onClick={handleHint} disabled={hintUsed}>
+              Hint
+            </BackButton>
+          </ButtonMargin>
           <ScoreItem>
             <ScoreLabel>Score</ScoreLabel>
             <ScoreValue>{Object.values(cityStatus).filter(s => s === 'green').length}/{totalCities}</ScoreValue>
           </ScoreItem>
           <ScoreItem>
-            <ScoreLabel>Percentage</ScoreLabel>
-            <ScoreValue>{Math.round((Object.values(cityStatus).filter(s => s === 'green').length / totalCities) * 100)}%</ScoreValue>
-          </ScoreItem>
-          <ScoreItem>
             <ScoreLabel>Nog te vinden</ScoreLabel>
             <ScoreValue>{totalCities - Object.values(cityStatus).filter(s => s === 'green').length}</ScoreValue>
           </ScoreItem>
-          <ResetButton onClick={handleReset} style={{marginRight: '1.2rem'}}>
-            Herstart
-          </ResetButton>
+          <ButtonMargin>
+            <ResetButton onClick={handleReset}>
+              Herstart
+            </ResetButton>
+          </ButtonMargin>
           <BackButton onClick={onBack}>Terug</BackButton>
         </ScoreContainer>
       </Header>
@@ -487,44 +628,37 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
           <Overlay />
           <CompletionPopup>
             <CompletionMessage>Super! Je hebt alle steden gevonden!</CompletionMessage>
-            <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+            <CompletionCoins>
+              Bonus: +{pakketBonus} munten<br />
+              Totaal verdiend: {sessionCoins} munten
+            </CompletionCoins>
+            <CompletionStats>
               {(() => {
                 const mistakesArr = Object.entries(cityMistakes)
                   .filter(([_, count]) => count > 0)
                   .sort((a, b) => b[1] - a[1]);
                 if (mistakesArr.length === 0) {
-                  return <div style={{ color: '#34a853', fontWeight: 600 }}>Je hebt alle steden in één keer goed!</div>;
+                  return <PerfectScore>Je hebt alle steden in één keer goed!</PerfectScore>;
                 }
                 return <>
-                  <div style={{ fontWeight: 600, marginBottom: 8, color: '#111' }}>Moeilijkste steden deze ronde:</div>
-                  <ol style={{ paddingLeft: 0, margin: 0, listStyle: 'none' }}>
-                    {mistakesArr.map(([name, count], idx) => (
-                      <li key={name} style={{ 
-                        marginBottom: 4, 
-                        display: 'flex', 
-                        justifyContent: 'space-between', 
-                        alignItems: 'center', 
-                        width: 280,
-                        padding: '2px 0'
-                      }}>
-                        <span style={{ color: '#111', fontWeight: 500 }}>{name}</span>
-                        <span style={{ 
-                          color: '#ea4335', 
-                          fontWeight: 500, 
-                          minWidth: 80, 
-                          textAlign: 'right', 
-                          display: 'inline-block',
-                          paddingLeft: 16
-                        }}>
+                  <StatsTitle>Moeilijkste steden deze ronde:</StatsTitle>
+                  <StatsList>
+                    {mistakesArr.map(([name, count]) => (
+                      <StatsItem key={name}>
+                        <CityName>{name}</CityName>
+                        <MistakeCount>
                           {count} fout{count > 1 ? 'en' : ''}
-                        </span>
-                      </li>
+                        </MistakeCount>
+                      </StatsItem>
                     ))}
-                  </ol>
+                  </StatsList>
                 </>;
               })()}
-            </div>
-            <BackToMenuButton onClick={onBack}>
+            </CompletionStats>
+            <BackToMenuButton onClick={async () => {
+              await handleReset();
+              onBack();
+            }}>
               Terug naar hoofdmenu
             </BackToMenuButton>
           </CompletionPopup>

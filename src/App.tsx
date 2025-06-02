@@ -7,6 +7,8 @@ import InteractiveMap from './components/InteractiveMap';
 import TitlePage from './components/TitlePage';
 import { cities } from './data/cities';
 import './App.css';
+import { TrophyCabinet } from './features/trophy-system/components/TrophyCabinet';
+// import { TrophySystemTest } from './features/trophy-system/components/TrophySystemTest';
 
 const AppContainer = styled.div`
   width: 100vw;
@@ -97,6 +99,8 @@ const App: React.FC = () => {
           <Route path="/main" element={<HomeScreenWrapper />} />
           <Route path="/game/:package" element={<GameWrapper />} />
           <Route path="/interactive/:package" element={<InteractiveMapWrapper />} />
+          <Route path="/trophy-cabinet" element={<TrophyCabinet />} />
+          {/* <Route path="/trophy-test" element={<TrophySystemTest />} /> */}
         </Routes>
       </AppContainer>
     </Router>

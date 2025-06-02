@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
 
 interface HomeScreenProps {
   onSelectPackage: (packageName: string) => void;
@@ -68,7 +69,34 @@ const SectionTitle = styled.h2`
   font-size: 1.5rem;
 `;
 
+const TrophyButton = styled.button`
+  background: #f1c40f;
+  color: #2c3e50;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: transform 0.2s, background 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: #f39c12;
+  }
+`;
+
+const TrophyIcon = styled.span`
+  font-size: 1.5rem;
+`;
+
 const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage }) => {
+  const navigate = useNavigate();
+
   return (
     <Container>
       <Title>Topografie Wereld: hoofd- en wereldsteden</Title>
@@ -120,6 +148,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage }) => {
           <PackageDescription>Bekijk alle steden uit pakket 3</PackageDescription>
         </PackageCard>
       </PackageGrid>
+
+      <TrophyButton onClick={() => navigate('/trophy-cabinet')}>
+        <TrophyIcon>🏆</TrophyIcon>
+        Prijzenkast
+      </TrophyButton>
     </Container>
   );
 };

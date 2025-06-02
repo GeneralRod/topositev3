@@ -1,3 +1,39 @@
+# TopografieWereld
+
+[![Build Status](https://github.com/<your-username>/<your-repo>/actions/workflows/test.yml/badge.svg)](https://github.com/<your-username>/<your-repo>/actions/workflows/test.yml)
+[![Format Status](https://github.com/<your-username>/<your-repo>/actions/workflows/format.yml/badge.svg)](https://github.com/<your-username>/<your-repo>/actions/workflows/format.yml)
+[![Dependencies](https://img.shields.io/librariesio/github/<your-username>/<your-repo>)](https://libraries.io/github/<your-username>/<your-repo>)
+[![Uptime Robot](https://img.shields.io/badge/uptime-monitoring-lightgrey?logo=uptimerobot)](https://uptimerobot.com/)
+
+An interactive platform for practicing world capitals and geography.
+
+## 🚀 Getting Started
+
+1. Clone the repo
+2. `npm install`
+3. `npm run dev`
+
+## 🧪 Testing
+- Run `npm test` to execute the test suite.
+- Run `npm run lint` for linting.
+- Run `npx prettier --check .` for formatting checks.
+
+## 🤝 How to Contribute
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## 📜 Code of Conduct
+This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md).
+
+## 🌐 Live Site
+[https://topografiewereld.nl](https://topografiewereld.nl)
+
+## 🛡️ License
+MIT
+
+---
+
+> **Note:** To enable the UptimeRobot badge, create a free account at [UptimeRobot](https://uptimerobot.com/), add your site, and replace the badge URL with your monitor's link.
+
 # Topografie Wereld: hoofd- en wereldsteden
 
 Een interactieve website om te oefenen met hoofdsteden en grote wereldsteden. De website is gebouwd met React, TypeScript en Vite.
