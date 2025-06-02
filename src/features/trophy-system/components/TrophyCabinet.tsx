@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import CabinetSVG from './CabinetSVG';
 import { prizes } from '../data/prizes';
+import { getTotalCoins, setTotalCoins } from '../../../utils/coinStorage';
+import { saveRibbonsOwned, loadRibbonsOwned, saveRealPrizesOwned, loadRealPrizesOwned } from '../../../utils/prizeStorage';
 
 const Container = styled.div`
   width: 100vw;
@@ -359,14 +361,24 @@ export const TrophyCabinet: React.FC = () => {
   }, []);
 
   // Dynamic coins state
-  const [coins, setCoins] = useState(0);
+  const [coins, setCoins] = useState(getTotalCoins());
   const [devCode, setDevCode] = useState('');
   const [devUnlocked, setDevUnlocked] = useState(false);
   const [selectedPrize, setSelectedPrize] = useState<string | null>(null);
-  // ribbonsOwned: { [prizeId]: count }
-  const [ribbonsOwned, setRibbonsOwned] = useState<{ [id: string]: number }>({});
-  // realPrizesOwned: string[]
-  const [realPrizesOwned, setRealPrizesOwned] = useState<string[]>([]);
+  const [ribbonsOwned, setRibbonsOwned] = useState<{ [id: string]: number }>(loadRibbonsOwned());
+  const [realPrizesOwned, setRealPrizesOwned] = useState<string[]>(loadRealPrizesOwned());
+
+  useEffect(() => {
+    setTotalCoins(coins);
+  }, [coins]);
+
+  useEffect(() => {
+    saveRibbonsOwned(ribbonsOwned);
+  }, [ribbonsOwned]);
+
+  useEffect(() => {
+    saveRealPrizesOwned(realPrizesOwned);
+  }, [realPrizesOwned]);
 
   // Dutch translations for prize names and descriptions
   const getDutchPrize = (prize: typeof prizes[0]) => {

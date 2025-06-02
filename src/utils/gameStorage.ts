@@ -10,6 +10,8 @@ interface GameState {
   currentCity: City | null;
   selectedPackage: string;
   lastUpdated: number;
+  sessionCoins?: number;
+  coinsThisGame?: number;
 }
 
 const getStorageKey = (packageName: string) => `topografie_game_state_${packageName}`;
@@ -100,5 +102,6 @@ const isValidGameState = (state: unknown): state is GameState => {
     'selectedPackage' in s &&
     'currentCity' in s &&
     'lastUpdated' in s
+    // sessionCoins and coinsThisGame are optional
   );
 }; 

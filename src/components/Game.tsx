@@ -7,6 +7,7 @@ import type { City } from '../data/cities';
 import { saveGameState, loadGameState, clearGameState } from '../utils/gameStorage';
 import { handleStorageError } from '../utils/errorHandling';
 import { FaCoins } from 'react-icons/fa';
+import { addCoins } from '../utils/coinStorage';
 
 // Fix for default marker icons
 interface IconDefault extends L.Icon.Default {
@@ -402,6 +403,8 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
           setCurrentAttempts(savedState.currentAttempts);
           setHintUsed(savedState.hintUsed);
           setCurrentCity(savedState.currentCity);
+          if (typeof savedState.sessionCoins === 'number') setSessionCoins(savedState.sessionCoins);
+          if (typeof savedState.coinsThisGame === 'number') setCoinsThisGame(savedState.coinsThisGame);
         } else if (isMounted) {
           selectNextCity();
         }
@@ -436,7 +439,9 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
           hintUsed,
           currentCity,
           selectedPackage,
-          lastUpdated: Date.now()
+          lastUpdated: Date.now(),
+          sessionCoins,
+          coinsThisGame,
         });
       } catch (error) {
         if (isMounted) {
@@ -453,7 +458,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       isMounted = false;
       window.clearTimeout(saveTimeout);
     };
-  }, [cityStatus, cityMistakes, score, currentAttempts, hintUsed, currentCity, selectedPackage]);
+  }, [cityStatus, cityMistakes, score, currentAttempts, hintUsed, currentCity, selectedPackage, sessionCoins, coinsThisGame]);
 
   useEffect(() => {
     if (cities.length > 0) {
@@ -471,6 +476,8 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       } else {
         setSessionCoins(coinsThisGame); // sessionCoins = coinsThisGame, bonus shown separately
       }
+      // Only add the bonus at the end
+      addCoins(bonus);
     }
   }, [cityStatus, coinsThisGame]);
 
@@ -515,7 +522,12 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
 
   const handleMarkerClick = (city: City) => {
     if (!currentCity) return;
-    
+
+    // If the current city is green and clicked, do nothing
+    if (city.name === currentCity.name && cityStatus[city.name] === 'green') {
+      return;
+    }
+
     if (city.name !== currentCity.name) {
       setFeedback('Dit is niet de juiste stad.');
       setTimeout(() => setFeedback(null), 1500);
@@ -524,12 +536,10 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       return;
     }
 
-    // Correct city
+    // Correct city (first time or after blue)
     const now = Date.now();
     const timeTaken = (now - lastAnswerTime) / 1000;
     setLastAnswerTime(now);
-    setFeedback(`Goed! Je hebt ${city.name} gevonden!`);
-    setTimeout(() => setFeedback(null), 1200);
 
     // Calculate speed bonus (declines linearly from SPEED_BONUS_MAX to 0 over SPEED_BONUS_DECAY seconds)
     let speedBonus = 0;
@@ -543,6 +553,8 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     if (totalCityCoins > COINS_PER_CORRECT + SPEED_BONUS_MAX) totalCityCoins = COINS_PER_CORRECT + SPEED_BONUS_MAX;
     setSessionCoins(c => c + totalCityCoins);
     setCoinsThisGame(c => c + totalCityCoins);
+    // Immediately add per-city coins to total
+    addCoins(totalCityCoins);
 
     setCityStatus(prev => {
       const newStatus = { ...prev };
@@ -555,9 +567,14 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       return newStatus;
     });
 
+    // Immediately select the next city
+    selectNextCity();
+    setCurrentAttempts(0);
+
+    // Show feedback message (green) while new city is already visible
+    setFeedback(`Goed! Je hebt ${city.name} gevonden!`);
     setTimeout(() => {
-      selectNextCity();
-      setCurrentAttempts(0);
+      setFeedback(null);
     }, 1200);
   };
 
