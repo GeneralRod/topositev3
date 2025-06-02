@@ -372,6 +372,24 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [lastAnswerTime, setLastAnswerTime] = useState<number>(Date.now());
   const [coinsThisGame, setCoinsThisGame] = useState(0);
 
+  // Select next city: only from blue or unanswered
+  const selectNextCity = useCallback(() => {
+    const eligible = Object.entries(cityStatus)
+      .filter(([, status]) => status === 'blue' || status === 'unanswered')
+      .map(([name]) => name);
+    if (eligible.length > 0) {
+      const nextCityName = eligible[Math.floor(Math.random() * eligible.length)];
+      const nextCity = cities.find(c => c.name === nextCityName);
+      if (nextCity) {
+        setCurrentCity(nextCity);
+        setCurrentAttempts(0);
+        setLastAnswerTime(Date.now());
+      }
+    } else {
+      setCurrentCity(null);
+    }
+  }, [cityStatus, cities]);
+
   // Load saved game state on mount
   useEffect(() => {
     let isMounted = true;
@@ -437,25 +455,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       isMounted = false;
       window.clearTimeout(saveTimeout);
     };
-  }, [cityStatus, cityMistakes, score, currentAttempts, hintUsed, currentCity, selectedPackage, selectNextCity]);
-
-  // Select next city: only from blue or unanswered
-  const selectNextCity = useCallback(() => {
-    const eligible = Object.entries(cityStatus)
-      .filter(([, status]) => status === 'blue' || status === 'unanswered')
-      .map(([name]) => name);
-    if (eligible.length > 0) {
-      const nextCityName = eligible[Math.floor(Math.random() * eligible.length)];
-      const nextCity = cities.find(c => c.name === nextCityName);
-      if (nextCity) {
-        setCurrentCity(nextCity);
-        setCurrentAttempts(0);
-        setLastAnswerTime(Date.now());
-      }
-    } else {
-      setCurrentCity(null);
-    }
-  }, [cityStatus, cities]);
+  }, [selectedPackage, selectNextCity]);
 
   useEffect(() => {
     if (cities.length > 0) {
