@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const Container = styled.div`
   width: 100vw;
@@ -164,11 +163,6 @@ const TitlePage: React.FC = () => {
       // Materials
       const metalMaterial = new THREE.MeshPhongMaterial({ 
         color: 0xE0E0E0,
-        shininess: 100,
-        specular: 0x444444
-      });
-      const darkMetalMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0x333333,
         shininess: 100,
         specular: 0x444444
       });

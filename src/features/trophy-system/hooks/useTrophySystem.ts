@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { TrophyCabinet, UserPoints, Achievement, PurchasableTrophy } from '../types';
-import { achievements, purchasableTrophies } from '../data/trophies';
+import { useState } from 'react';
+import { TrophyCabinet, UserPoints, Achievement } from '../types';
+import { achievements } from '../data/trophies';
 
 const initialUserPoints: UserPoints = {
   total: 0,
@@ -10,7 +10,6 @@ const initialUserPoints: UserPoints = {
 export const useTrophySystem = () => {
   const [userPoints, setUserPoints] = useState<UserPoints>(initialUserPoints);
   const [unlockedAchievements, setUnlockedAchievements] = useState<Achievement[]>([]);
-  const [purchasedTrophies, setPurchasedTrophies] = useState<PurchasableTrophy[]>([]);
 
   // Add points to user's total
   const addPoints = (points: number, source: string) => {
@@ -25,19 +24,6 @@ export const useTrophySystem = () => {
         }
       ]
     }));
-  };
-
-  // Purchase a trophy
-  const purchaseTrophy = (trophy: PurchasableTrophy) => {
-    if (userPoints.total >= trophy.price) {
-      setUserPoints(prev => ({
-        ...prev,
-        total: prev.total - trophy.price
-      }));
-      setPurchasedTrophies(prev => [...prev, { ...trophy, purchased: true }]);
-      return true;
-    }
-    return false;
   };
 
   // Check and unlock achievements
@@ -72,16 +58,14 @@ export const useTrophySystem = () => {
   // Get trophy cabinet state
   const getTrophyCabinet = (): TrophyCabinet => ({
     achievements: unlockedAchievements,
-    purchasableTrophies: purchasedTrophies,
+    purchasableTrophies: [],
     userPoints
   });
 
   return {
     userPoints,
     unlockedAchievements,
-    purchasedTrophies,
     addPoints,
-    purchaseTrophy,
     checkAchievements,
     getTrophyCabinet
   };

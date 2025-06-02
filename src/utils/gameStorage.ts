@@ -88,17 +88,17 @@ export const clearGameState = async (packageName: string): Promise<void> => {
 };
 
 // Helper function to validate game state structure
-const isValidGameState = (state: any): state is GameState => {
+const isValidGameState = (state: unknown): state is GameState => {
+  if (typeof state !== 'object' || state === null) return false;
+  const s = state as Record<string, unknown>;
   return (
-    state &&
-    typeof state === 'object' &&
-    typeof state.cityStatus === 'object' &&
-    typeof state.cityMistakes === 'object' &&
-    typeof state.score === 'number' &&
-    typeof state.currentAttempts === 'number' &&
-    typeof state.hintUsed === 'boolean' &&
-    typeof state.selectedPackage === 'string' &&
-    (state.currentCity === null || typeof state.currentCity === 'object') &&
-    typeof state.lastUpdated === 'number'
+    'cityStatus' in s &&
+    'cityMistakes' in s &&
+    'score' in s &&
+    'currentAttempts' in s &&
+    'hintUsed' in s &&
+    'selectedPackage' in s &&
+    'currentCity' in s &&
+    'lastUpdated' in s
   );
 }; 

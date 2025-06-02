@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { City } from '../data/cities';
 import { saveGameState, loadGameState, clearGameState } from '../utils/gameStorage';
 import { handleStorageError } from '../utils/errorHandling';
 import { FaCoins } from 'react-icons/fa';
+import type { LatLngExpression } from 'leaflet';
 
 // Fix for default marker icons
 interface IconDefault extends L.Icon.Default {
@@ -320,10 +321,6 @@ const ErrorCloseButton = styled.button`
   cursor: pointer;
 `;
 
-const COINS_PER_CORRECT = 10;
-const SPEED_BONUS_MAX = 10; // max bonus for fastest answer
-const SPEED_BONUS_THRESHOLD = 3; // seconds for max bonus
-const COINS_PER_CITY_MAX = 10;
 const COINS_PER_PAKKET_BONUS = 0.2; // 20% bonus
 
 const SessionCoinCounter = styled.span`
@@ -341,6 +338,43 @@ const CompletionCoins = styled.div`
   color: #FFD700;
   margin-bottom: 12px;
 `;
+
+interface MapProps {
+  center: LatLngExpression;
+  zoom: number;
+  onMapClick?: (e: L.LeafletMouseEvent) => void;
+}
+
+const Map: React.FC<MapProps> = ({ center, zoom, onMapClick }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (onMapClick) {
+      map.on('click', onMapClick);
+      return () => {
+        map.off('click', onMapClick);
+      };
+    }
+  }, [map, onMapClick]);
+
+  return (
+    <MapContainer
+      center={center}
+      zoom={zoom}
+      style={{ height: '100%', width: '100%' }}
+      zoomControl={false}
+      doubleClickZoom={false}
+      scrollWheelZoom={false}
+      dragging={false}
+      touchZoom={false}
+    >
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+    </MapContainer>
+  );
+};
 
 const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [currentCity, setCurrentCity] = useState<City | null>(null);
@@ -363,7 +397,6 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [error, setError] = useState<string | null>(null);
   const [sessionCoins, setSessionCoins] = useState(0);
   const [pakketBonus, setPakketBonus] = useState(0);
-  const [lastAnswerTime, setLastAnswerTime] = useState<number>(Date.now());
 
   // Load saved game state on mount
   useEffect(() => {
@@ -461,69 +494,6 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     }
   }, [cityStatus]);
 
-  const handleMarkerClick = (city: City) => {
-    setHintUsed(false);
-    if (!currentCity) return;
-    const now = Date.now();
-    const timeTaken = (now - lastAnswerTime) / 1000;
-    setLastAnswerTime(now);
-    if (city.name !== currentCity.name) {
-      setFeedback(null);
-      setTimeout(() => {
-        setFeedback({ message: 'Dit is niet de goede stad', type: 'error' });
-      }, 10);
-      setCurrentAttempts(a => a + 1);
-      setCityMistakes(prev => ({ ...prev, [currentCity.name]: prev[currentCity.name] + 1 }));
-      return;
-    }
-    // Correct city
-    setFeedback({ message: 'Goed! 🎉', type: 'success' });
-    // Calculate speed bonus
-    let speedBonus = 0;
-    if (timeTaken <= SPEED_BONUS_THRESHOLD) {
-      speedBonus = SPEED_BONUS_MAX;
-    } else if (timeTaken < 10) {
-      speedBonus = Math.max(0, Math.round(SPEED_BONUS_MAX * (1 - (timeTaken - SPEED_BONUS_THRESHOLD) / (10 - SPEED_BONUS_THRESHOLD))));
-    }
-    let totalCityCoins = COINS_PER_CORRECT + speedBonus;
-    if (totalCityCoins > COINS_PER_CITY_MAX) totalCityCoins = COINS_PER_CITY_MAX;
-    setSessionCoins(c => c + totalCityCoins);
-    setTimeout(() => {
-      setCityStatus(prev => {
-        const newStatus = { ...prev };
-        if (currentAttempts === 0) {
-          newStatus[city.name] = 'green';
-          setScore(s => s + 1);
-        } else {
-          newStatus[city.name] = 'blue';
-        }
-        return newStatus;
-      });
-      selectNextCity();
-    }, 500);
-  };
-
-  // Update createDotIcon to use blue for 'blue', green for 'green', red for unanswered
-  const createDotIcon = (status: 'unanswered' | 'blue' | 'green') => {
-    let color = '#ea4335'; // red (unanswered)
-    if (status === 'green') color = '#34a853'; // green
-    if (status === 'blue') color = '#4285f4'; // blue
-    return L.divIcon({
-      className: 'custom-dot',
-      html: `<div style="
-        width: 12px;
-        height: 12px;
-        background-color: ${color};
-        border-radius: 50%;
-        border: 2px solid white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      "></div>`,
-      iconSize: [12, 12],
-      iconAnchor: [6, 6],
-    });
-  };
-
-  // Add back the handleHint function
   const handleHint = () => {
     setHintUsed(true);
   };
@@ -542,6 +512,15 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       setError('Failed to reset game. Please try again.');
     }
   };
+
+  const handleMapClick = (e: L.LeafletMouseEvent) => {
+    const { lat, lng } = e.latlng;
+    setCurrentCity({ lat, lng } as City);
+  };
+
+  useEffect(() => {
+    // Only update session coins if needed
+  }, [sessionCoins]);
 
   return (
     <GameContainer>
@@ -597,31 +576,11 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
             {feedback.message}
           </FeedbackMessage>
         )}
-        <MapContainer
-          center={[20, 0]}
-          zoom={2}
-          style={{ height: '100%', width: '100%' }}
-          zoomControl={false}
-          doubleClickZoom={false}
-          scrollWheelZoom={false}
-          dragging={false}
-          touchZoom={false}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          {cities.map((city) => (
-            <Marker
-              key={city.name}
-              position={[city.lat, city.lng]}
-              icon={createDotIcon(cityStatus[city.name])}
-              eventHandlers={{
-                click: () => handleMarkerClick(city),
-              }}
-            />
-          ))}
-        </MapContainer>
+        <Map
+          center={currentCity ? [currentCity.lat, currentCity.lng] : [20, 0]}
+          zoom={currentCity ? 15 : 2}
+          onMapClick={handleMapClick}
+        />
       </MapWrapper>
       {showCompletion && (
         <>
