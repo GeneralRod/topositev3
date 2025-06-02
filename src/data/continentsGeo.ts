@@ -1,5 +1,6 @@
+import type { Feature, Polygon } from 'geojson';
 // Simplified but accurate GeoJSON polygons for each continent (Dutch names as keys)
-export const continentGeo: Record<string, any> = {
+export const continentGeo: Record<string, Feature<Polygon>> = {
   'Europa': {
     "type": "Feature",
     "geometry": {
@@ -7,7 +8,8 @@ export const continentGeo: Record<string, any> = {
       "coordinates": [[
         [-10.0, 34.5], [2.0, 36.0], [10.0, 42.0], [20.0, 48.0], [30.0, 54.0], [40.0, 60.0], [30.0, 70.0], [20.0, 70.0], [10.0, 65.0], [0.0, 60.0], [-10.0, 55.0], [-20.0, 50.0], [-10.0, 45.0], [-10.0, 34.5]
       ]]
-    }
+    },
+    "properties": {}
   },
   'Azië': {
     "type": "Feature",
@@ -16,7 +18,8 @@ export const continentGeo: Record<string, any> = {
       "coordinates": [[
         [25.0, 10.0], [40.0, 20.0], [60.0, 30.0], [80.0, 40.0], [100.0, 50.0], [120.0, 60.0], [140.0, 70.0], [160.0, 60.0], [180.0, 50.0], [180.0, 10.0], [140.0, 0.0], [100.0, -10.0], [60.0, 0.0], [40.0, 10.0], [25.0, 10.0]
       ]]
-    }
+    },
+    "properties": {}
   },
   'Afrika': {
     "type": "Feature",
@@ -25,7 +28,8 @@ export const continentGeo: Record<string, any> = {
       "coordinates": [[
         [-20.0, 37.0], [0.0, 35.0], [20.0, 30.0], [35.0, 20.0], [40.0, 0.0], [50.0, -20.0], [40.0, -35.0], [20.0, -35.0], [0.0, -30.0], [-10.0, -20.0], [-20.0, 0.0], [-20.0, 20.0], [-20.0, 37.0]
       ]]
-    }
+    },
+    "properties": {}
   },
   'Noord-Amerika': {
     "type": "Feature",
@@ -34,7 +38,8 @@ export const continentGeo: Record<string, any> = {
       "coordinates": [[
         [-170.0, 7.0], [-150.0, 20.0], [-130.0, 30.0], [-110.0, 40.0], [-90.0, 50.0], [-70.0, 60.0], [-50.0, 70.0], [-50.0, 85.0], [-100.0, 85.0], [-130.0, 80.0], [-150.0, 70.0], [-170.0, 60.0], [-170.0, 7.0]
       ]]
-    }
+    },
+    "properties": {}
   },
   'Zuid-Amerika': {
     "type": "Feature",
@@ -43,7 +48,8 @@ export const continentGeo: Record<string, any> = {
       "coordinates": [[
         [-80.0, 15.0], [-70.0, 0.0], [-60.0, -15.0], [-50.0, -30.0], [-40.0, -45.0], [-60.0, -60.0], [-70.0, -45.0], [-80.0, -30.0], [-80.0, 0.0], [-80.0, 15.0]
       ]]
-    }
+    },
+    "properties": {}
   },
   'Australië': {
     "type": "Feature",
@@ -52,6 +58,7 @@ export const continentGeo: Record<string, any> = {
       "coordinates": [[
         [110.0, -10.0], [120.0, -20.0], [130.0, -30.0], [140.0, -40.0], [150.0, -35.0], [155.0, -25.0], [150.0, -10.0], [140.0, 0.0], [130.0, 0.0], [120.0, -5.0], [110.0, -10.0]
       ]]
-    }
+    },
+    "properties": {}
   },
 }; 

@@ -390,7 +390,6 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     cities.forEach(city => { mistakes[city.name] = 0; });
     return mistakes;
   });
-  const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [showCompletion, setShowCompletion] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const [currentAttempts, setCurrentAttempts] = useState(0);
@@ -571,9 +570,9 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
         </ScoreContainer>
       </Header>
       <MapWrapper>
-        {feedback && (
-          <FeedbackMessage type={feedback.type}>
-            {feedback.message}
+        {currentCity && (
+          <FeedbackMessage type="success">
+            Je hebt de stad {currentCity.name} gevonden!
           </FeedbackMessage>
         )}
         <Map
