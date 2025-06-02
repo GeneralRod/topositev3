@@ -467,7 +467,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   // Select next city: only from blue or unanswered
   const selectNextCity = () => {
     const eligible = Object.entries(cityStatus)
-      .filter(([_, status]) => status === 'blue' || status === 'unanswered')
+      .filter(([, status]) => status === 'blue' || status === 'unanswered')
       .map(([name]) => name);
     if (eligible.length > 0) {
       const nextCityName = eligible[Math.floor(Math.random() * eligible.length)];
@@ -482,7 +482,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     if (cities.length > 0) {
       selectNextCity();
     }
-  }, [cities]);
+  }, [cities, selectNextCity]);
 
   useEffect(() => {
     if (Object.values(cityStatus).every(status => status === 'green')) {
@@ -491,7 +491,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       setPakketBonus(bonus);
       setSessionCoins(c => c + bonus);
     }
-  }, [cityStatus]);
+  }, [cityStatus, sessionCoins]);
 
   const handleHint = () => {
     setHintUsed(true);
@@ -593,7 +593,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
             <CompletionStats>
               {(() => {
                 const mistakesArr = Object.entries(cityMistakes)
-                  .filter(([_, count]) => count > 0)
+                  .filter(([, count]) => count > 0)
                   .sort((a, b) => b[1] - a[1]);
                 if (mistakesArr.length === 0) {
                   return <PerfectScore>Je hebt alle steden in één keer goed!</PerfectScore>;
