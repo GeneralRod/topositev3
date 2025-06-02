@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { City } from '../data/cities';
@@ -8,6 +8,7 @@ import { saveGameState, loadGameState, clearGameState } from '../utils/gameStora
 import { handleStorageError } from '../utils/errorHandling';
 import { FaCoins } from 'react-icons/fa';
 import type { LatLngExpression } from 'leaflet';
+import type { LeafletEvent, Map as LeafletMap } from 'leaflet';
 
 // Fix for default marker icons
 interface IconDefault extends L.Icon.Default {
@@ -321,7 +322,15 @@ const ErrorCloseButton = styled.button`
   cursor: pointer;
 `;
 
-const COINS_PER_PAKKET_BONUS = 0.2; // 20% bonus
+const COINS_PER_CORRECT = 5;
+const COINS_PER_CITY_MAX = 10;
+const SPEED_BONUS_MAX = 5;
+const SPEED_BONUS_THRESHOLD = 3;
+const SPEED_BONUS_DECAY = 10;
+const COINS_PER_PAKKET_BONUS = 0.2;
+
+// Toggle for end-of-game coin display
+const SHOW_BONUS_SEPARATELY = true; // Set to false for option 2 (single total)
 
 const SessionCoinCounter = styled.span`
   display: flex;
@@ -338,43 +347,6 @@ const CompletionCoins = styled.div`
   color: #FFD700;
   margin-bottom: 12px;
 `;
-
-interface MapProps {
-  center: LatLngExpression;
-  zoom: number;
-  onMapClick?: (e: L.LeafletMouseEvent) => void;
-}
-
-const Map: React.FC<MapProps> = ({ center, zoom, onMapClick }) => {
-  const map = useMap();
-
-  useEffect(() => {
-    if (onMapClick) {
-      map.on('click', onMapClick);
-      return () => {
-        map.off('click', onMapClick);
-      };
-    }
-  }, [map, onMapClick]);
-
-  return (
-    <MapContainer
-      center={center}
-      zoom={zoom}
-      style={{ height: '100%', width: '100%' }}
-      zoomControl={false}
-      doubleClickZoom={false}
-      scrollWheelZoom={false}
-      dragging={false}
-      touchZoom={false}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-    </MapContainer>
-  );
-};
 
 const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [currentCity, setCurrentCity] = useState<City | null>(null);
@@ -396,6 +368,10 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [error, setError] = useState<string | null>(null);
   const [sessionCoins, setSessionCoins] = useState(0);
   const [pakketBonus, setPakketBonus] = useState(0);
+  const mapRef = useRef<L.Map>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [lastAnswerTime, setLastAnswerTime] = useState<number>(Date.now());
+  const [coinsThisGame, setCoinsThisGame] = useState(0);
 
   // Load saved game state on mount
   useEffect(() => {
@@ -471,8 +447,12 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       .map(([name]) => name);
     if (eligible.length > 0) {
       const nextCityName = eligible[Math.floor(Math.random() * eligible.length)];
-      setCurrentCity(cities.find(c => c.name === nextCityName) || null);
-      setCurrentAttempts(0);
+      const nextCity = cities.find(c => c.name === nextCityName);
+      if (nextCity) {
+        setCurrentCity(nextCity);
+        setCurrentAttempts(0);
+        setLastAnswerTime(Date.now());
+      }
     } else {
       setCurrentCity(null);
     }
@@ -482,16 +462,20 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     if (cities.length > 0) {
       selectNextCity();
     }
-  }, [cities, selectNextCity]);
+  }, [cities]);
 
   useEffect(() => {
     if (Object.values(cityStatus).every(status => status === 'green')) {
       setShowCompletion(true);
-      const bonus = Math.round(sessionCoins * COINS_PER_PAKKET_BONUS);
+      const bonus = Math.round(coinsThisGame * COINS_PER_PAKKET_BONUS);
       setPakketBonus(bonus);
-      setSessionCoins(c => c + bonus);
+      if (!SHOW_BONUS_SEPARATELY) {
+        setSessionCoins(coinsThisGame + bonus);
+      } else {
+        setSessionCoins(coinsThisGame); // sessionCoins = coinsThisGame, bonus shown separately
+      }
     }
-  }, [cityStatus, sessionCoins]);
+  }, [cityStatus, coinsThisGame]);
 
   const handleHint = () => {
     setHintUsed(true);
@@ -512,14 +496,84 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     }
   };
 
-  const handleMapClick = (e: L.LeafletMouseEvent) => {
-    const { lat, lng } = e.latlng;
-    setCurrentCity({ lat, lng } as City);
+  // Restore createDotIcon for marker color/status
+  const createDotIcon = (status: 'unanswered' | 'blue' | 'green') => {
+    let color = '#ea4335'; // red (unanswered)
+    if (status === 'green') color = '#34a853'; // green
+    if (status === 'blue') color = '#4285f4'; // blue
+    return L.divIcon({
+      className: 'custom-dot',
+      html: `<div style="
+        width: 12px;
+        height: 12px;
+        background-color: ${color};
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      "></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6],
+    });
   };
 
-  useEffect(() => {
-    // Only update session coins if needed
-  }, [sessionCoins]);
+  const handleMarkerClick = (city: City) => {
+    if (!currentCity) return;
+    
+    if (city.name !== currentCity.name) {
+      setFeedback('Dit is niet de juiste stad.');
+      setTimeout(() => setFeedback(null), 1500);
+      setCurrentAttempts(a => a + 1);
+      setCityMistakes(prev => ({ ...prev, [currentCity.name]: prev[currentCity.name] + 1 }));
+      return;
+    }
+
+    // Correct city
+    const now = Date.now();
+    const timeTaken = (now - lastAnswerTime) / 1000;
+    setLastAnswerTime(now);
+    setFeedback(`Goed! Je hebt ${city.name} gevonden!`);
+    setTimeout(() => setFeedback(null), 1200);
+
+    // Calculate speed bonus (declines linearly from SPEED_BONUS_MAX to 0 over SPEED_BONUS_DECAY seconds)
+    let speedBonus = 0;
+    if (timeTaken <= SPEED_BONUS_THRESHOLD) {
+      speedBonus = SPEED_BONUS_MAX;
+    } else if (timeTaken < SPEED_BONUS_DECAY) {
+      speedBonus = Math.max(0, Math.round(SPEED_BONUS_MAX * (1 - (timeTaken - SPEED_BONUS_THRESHOLD) / (SPEED_BONUS_DECAY - SPEED_BONUS_THRESHOLD))));
+    }
+
+    let totalCityCoins = COINS_PER_CORRECT + speedBonus;
+    if (totalCityCoins > COINS_PER_CORRECT + SPEED_BONUS_MAX) totalCityCoins = COINS_PER_CORRECT + SPEED_BONUS_MAX;
+    setSessionCoins(c => c + totalCityCoins);
+    setCoinsThisGame(c => c + totalCityCoins);
+
+    setCityStatus(prev => {
+      const newStatus = { ...prev };
+      if (currentAttempts === 0) {
+        newStatus[city.name] = 'green';
+        setScore(s => s + 1);
+      } else {
+        newStatus[city.name] = 'blue';
+      }
+      return newStatus;
+    });
+
+    setTimeout(() => {
+      selectNextCity();
+      setCurrentAttempts(0);
+    }, 1200);
+  };
+
+  if (cities.length === 0) {
+    return (
+      <GameContainer>
+        <ErrorMessage>
+          Geen steden gevonden voor dit pakket. <br />
+          <BackButton onClick={onBack}>Terug naar hoofdmenu</BackButton>
+        </ErrorMessage>
+      </GameContainer>
+    );
+  }
 
   return (
     <GameContainer>
@@ -570,26 +624,54 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
         </ScoreContainer>
       </Header>
       <MapWrapper>
-        {currentCity && (
-          <FeedbackMessage type="success">
-            Je hebt de stad {currentCity.name} gevonden!
+        {feedback && (
+          <FeedbackMessage type={feedback.startsWith('Goed!') ? 'success' : 'error'}>
+            {feedback}
           </FeedbackMessage>
         )}
-        <Map
+        <MapContainer
+          ref={mapRef}
           center={currentCity ? [currentCity.lat, currentCity.lng] : [20, 0]}
           zoom={currentCity ? 15 : 2}
-          onMapClick={handleMapClick}
-        />
+          style={{ height: '100%', width: '100%' }}
+          zoomControl={false}
+          doubleClickZoom={false}
+          scrollWheelZoom={false}
+          dragging={false}
+          touchZoom={false}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          {cities.map(city => (
+            <Marker
+              key={city.name}
+              position={[city.lat, city.lng]}
+              icon={createDotIcon(cityStatus[city.name])}
+              eventHandlers={{
+                click: () => handleMarkerClick(city)
+              }}
+            />
+          ))}
+        </MapContainer>
       </MapWrapper>
       {showCompletion && (
         <>
           <Overlay />
           <CompletionPopup>
             <CompletionMessage>Super! Je hebt alle steden gevonden!</CompletionMessage>
-            <CompletionCoins>
-              Bonus: +{pakketBonus} munten<br />
-              Totaal verdiend: {sessionCoins} munten
-            </CompletionCoins>
+            {SHOW_BONUS_SEPARATELY ? (
+              <CompletionCoins>
+                Munten dit spel: {coinsThisGame} <br />
+                Bonus: +{pakketBonus} <br />
+                <b>Totaal: {coinsThisGame + pakketBonus}</b>
+              </CompletionCoins>
+            ) : (
+              <CompletionCoins>
+                Totaal verdiend: {sessionCoins} munten
+              </CompletionCoins>
+            )}
             <CompletionStats>
               {(() => {
                 const mistakesArr = Object.entries(cityMistakes)
