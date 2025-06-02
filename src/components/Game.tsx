@@ -455,7 +455,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       isMounted = false;
       window.clearTimeout(saveTimeout);
     };
-  }, [selectedPackage, selectNextCity]);
+  }, [cityStatus, cityMistakes, score, currentAttempts, hintUsed, currentCity, selectedPackage]);
 
   useEffect(() => {
     if (cities.length > 0) {
