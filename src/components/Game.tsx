@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
@@ -323,7 +323,6 @@ const ErrorCloseButton = styled.button`
 `;
 
 const COINS_PER_CORRECT = 5;
-const COINS_PER_CITY_MAX = 10;
 const SPEED_BONUS_MAX = 5;
 const SPEED_BONUS_THRESHOLD = 3;
 const SPEED_BONUS_DECAY = 10;
@@ -441,7 +440,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   }, [cityStatus, cityMistakes, score, currentAttempts, hintUsed, currentCity, selectedPackage]);
 
   // Select next city: only from blue or unanswered
-  const selectNextCity = () => {
+  const selectNextCity = useCallback(() => {
     const eligible = Object.entries(cityStatus)
       .filter(([, status]) => status === 'blue' || status === 'unanswered')
       .map(([name]) => name);
@@ -456,13 +455,13 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     } else {
       setCurrentCity(null);
     }
-  };
+  }, [cityStatus, cities]);
 
   useEffect(() => {
     if (cities.length > 0) {
       selectNextCity();
     }
-  }, [cities]);
+  }, [cities, selectNextCity]);
 
   useEffect(() => {
     if (Object.values(cityStatus).every(status => status === 'green')) {

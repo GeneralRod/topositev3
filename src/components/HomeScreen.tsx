@@ -94,6 +94,19 @@ const TrophyIcon = styled.span`
   font-size: 1.5rem;
 `;
 
+const VersionTag = styled.div`
+  position: fixed;
+  left: 16px;
+  bottom: 12px;
+  font-size: 0.95rem;
+  color: #888;
+  background: rgba(255,255,255,0.85);
+  padding: 2px 10px;
+  border-radius: 6px;
+  z-index: 2000;
+  pointer-events: none;
+`;
+
 const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage }) => {
   const navigate = useNavigate();
 
@@ -153,6 +166,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage }) => {
         <TrophyIcon>🏆</TrophyIcon>
         Prijzenkast
       </TrophyButton>
+      <VersionTag>Versie: 7.3</VersionTag>
     </Container>
   );
 };
