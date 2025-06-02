@@ -437,7 +437,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       isMounted = false;
       window.clearTimeout(saveTimeout);
     };
-  }, [cityStatus, cityMistakes, score, currentAttempts, hintUsed, currentCity, selectedPackage]);
+  }, [cityStatus, cityMistakes, score, currentAttempts, hintUsed, currentCity, selectedPackage, selectNextCity]);
 
   // Select next city: only from blue or unanswered
   const selectNextCity = useCallback(() => {
