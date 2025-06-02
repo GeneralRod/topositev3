@@ -7,8 +7,6 @@ import type { City } from '../data/cities';
 import { saveGameState, loadGameState, clearGameState } from '../utils/gameStorage';
 import { handleStorageError } from '../utils/errorHandling';
 import { FaCoins } from 'react-icons/fa';
-import type { LatLngExpression } from 'leaflet';
-import type { LeafletEvent, Map as LeafletMap } from 'leaflet';
 
 // Fix for default marker icons
 interface IconDefault extends L.Icon.Default {
