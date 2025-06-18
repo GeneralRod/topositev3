@@ -8,7 +8,9 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
+# Allow tracking the built site for GitHub Pages
+# dist is included to simplify deployment
+#dist
 dist-ssr
 *.local
 
