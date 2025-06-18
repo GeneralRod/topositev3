@@ -42,7 +42,7 @@ const Header = styled.header`
   align-items: center;
   padding: 1rem 2rem;
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
   z-index: 1000;
 
@@ -170,21 +170,33 @@ const FeedbackMessage = styled.div<{ type: 'success' | 'error' }>`
   transform: translateX(-50%);
   padding: 0.5rem 1rem;
   border-radius: 4px;
-  color: ${props => props.type === 'success' ? '#34a853' : '#ea4335'};
+  color: ${(props) => (props.type === 'success' ? '#34a853' : '#ea4335')};
   font-weight: 600;
   font-size: 1.2rem;
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   opacity: 0;
   animation: fadeInOut 2s ease-in-out;
   margin-top: 1rem;
 
   @keyframes fadeInOut {
-    0% { opacity: 0; transform: translate(-50%, -20px); }
-    15% { opacity: 1; transform: translate(-50%, 0); }
-    85% { opacity: 1; transform: translate(-50%, 0); }
-    100% { opacity: 0; transform: translate(-50%, -20px); }
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -20px);
+    }
+    15% {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+    85% {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -20px);
+    }
   }
 `;
 
@@ -202,8 +214,14 @@ const CompletionPopup = styled.div`
   animation: fadeIn 0.3s ease-in-out;
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translate(-50%, -60%); }
-    to { opacity: 1; transform: translate(-50%, -50%); }
+    from {
+      opacity: 0;
+      transform: translate(-50%, -60%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
   }
 `;
 
@@ -249,12 +267,16 @@ const ErrorMessage = styled.div`
   padding: 1rem 2rem;
   border-radius: 4px;
   z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   animation: slideIn 0.3s ease-out;
 
   @keyframes slideIn {
-    from { transform: translate(-50%, -100%); }
-    to { transform: translate(-50%, 0); }
+    from {
+      transform: translate(-50%, -100%);
+    }
+    to {
+      transform: translate(-50%, 0);
+    }
   }
 `;
 
@@ -335,14 +357,14 @@ const SessionCoinCounter = styled.span`
   align-items: center;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #FFD700;
+  color: #ffd700;
   margin-left: 1.2rem;
   gap: 0.3rem;
 `;
 
 const CompletionCoins = styled.div`
   font-weight: 600;
-  color: #FFD700;
+  color: #ffd700;
   margin-bottom: 12px;
 `;
 
@@ -350,14 +372,20 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [currentCity, setCurrentCity] = useState<City | null>(null);
   const [score, setScore] = useState(0);
   const [totalCities] = useState(cities.length);
-  const [cityStatus, setCityStatus] = useState<Record<string, 'unanswered' | 'blue' | 'green'>>(() => {
-    const status: Record<string, 'unanswered' | 'blue' | 'green'> = {};
-    cities.forEach(city => { status[city.name] = 'unanswered'; });
-    return status;
-  });
+  const [cityStatus, setCityStatus] = useState<Record<string, 'unanswered' | 'blue' | 'green'>>(
+    () => {
+      const status: Record<string, 'unanswered' | 'blue' | 'green'> = {};
+      cities.forEach((city) => {
+        status[city.name] = 'unanswered';
+      });
+      return status;
+    },
+  );
   const [cityMistakes, setCityMistakes] = useState<Record<string, number>>(() => {
     const mistakes: Record<string, number> = {};
-    cities.forEach(city => { mistakes[city.name] = 0; });
+    cities.forEach((city) => {
+      mistakes[city.name] = 0;
+    });
     return mistakes;
   });
   const [showCompletion, setShowCompletion] = useState(false);
@@ -378,7 +406,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       .map(([name]) => name);
     if (eligible.length > 0) {
       const nextCityName = eligible[Math.floor(Math.random() * eligible.length)];
-      const nextCity = cities.find(c => c.name === nextCityName);
+      const nextCity = cities.find((c) => c.name === nextCityName);
       if (nextCity) {
         setCurrentCity(nextCity);
         setCurrentAttempts(0);
@@ -404,7 +432,8 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
           setHintUsed(savedState.hintUsed);
           setCurrentCity(savedState.currentCity);
           if (typeof savedState.sessionCoins === 'number') setSessionCoins(savedState.sessionCoins);
-          if (typeof savedState.coinsThisGame === 'number') setCoinsThisGame(savedState.coinsThisGame);
+          if (typeof savedState.coinsThisGame === 'number')
+            setCoinsThisGame(savedState.coinsThisGame);
         } else if (isMounted) {
           selectNextCity();
         }
@@ -458,7 +487,17 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       isMounted = false;
       window.clearTimeout(saveTimeout);
     };
-  }, [cityStatus, cityMistakes, score, currentAttempts, hintUsed, currentCity, selectedPackage, sessionCoins, coinsThisGame]);
+  }, [
+    cityStatus,
+    cityMistakes,
+    score,
+    currentAttempts,
+    hintUsed,
+    currentCity,
+    selectedPackage,
+    sessionCoins,
+    coinsThisGame,
+  ]);
 
   useEffect(() => {
     if (cities.length > 0) {
@@ -467,7 +506,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   }, [cities, selectNextCity]);
 
   useEffect(() => {
-    if (Object.values(cityStatus).every(status => status === 'green')) {
+    if (Object.values(cityStatus).every((status) => status === 'green')) {
       setShowCompletion(true);
       const bonus = Math.round(coinsThisGame * COINS_PER_PAKKET_BONUS);
       setPakketBonus(bonus);
@@ -488,8 +527,8 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const handleReset = async () => {
     try {
       await clearGameState(selectedPackage);
-      setCityStatus(Object.fromEntries(cities.map(city => [city.name, 'unanswered'])));
-      setCityMistakes(Object.fromEntries(cities.map(city => [city.name, 0])));
+      setCityStatus(Object.fromEntries(cities.map((city) => [city.name, 'unanswered'])));
+      setCityMistakes(Object.fromEntries(cities.map((city) => [city.name, 0])));
       setScore(0);
       setCurrentAttempts(0);
       setHintUsed(false);
@@ -534,8 +573,8 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     if (city.name !== currentCity.name) {
       setFeedback('Dit is niet de juiste stad.');
       setTimeout(() => setFeedback(null), 1500);
-      setCurrentAttempts(a => a + 1);
-      setCityMistakes(prev => ({ ...prev, [currentCity.name]: prev[currentCity.name] + 1 }));
+      setCurrentAttempts((a) => a + 1);
+      setCityMistakes((prev) => ({ ...prev, [currentCity.name]: prev[currentCity.name] + 1 }));
       return;
     }
 
@@ -549,21 +588,28 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     if (timeTaken <= SPEED_BONUS_THRESHOLD) {
       speedBonus = SPEED_BONUS_MAX;
     } else if (timeTaken < SPEED_BONUS_DECAY) {
-      speedBonus = Math.max(0, Math.round(SPEED_BONUS_MAX * (1 - (timeTaken - SPEED_BONUS_THRESHOLD) / (SPEED_BONUS_DECAY - SPEED_BONUS_THRESHOLD))));
+      speedBonus = Math.max(
+        0,
+        Math.round(
+          SPEED_BONUS_MAX *
+            (1 - (timeTaken - SPEED_BONUS_THRESHOLD) / (SPEED_BONUS_DECAY - SPEED_BONUS_THRESHOLD)),
+        ),
+      );
     }
 
     let totalCityCoins = COINS_PER_CORRECT + speedBonus;
-    if (totalCityCoins > COINS_PER_CORRECT + SPEED_BONUS_MAX) totalCityCoins = COINS_PER_CORRECT + SPEED_BONUS_MAX;
-    setSessionCoins(c => c + totalCityCoins);
-    setCoinsThisGame(c => c + totalCityCoins);
+    if (totalCityCoins > COINS_PER_CORRECT + SPEED_BONUS_MAX)
+      totalCityCoins = COINS_PER_CORRECT + SPEED_BONUS_MAX;
+    setSessionCoins((c) => c + totalCityCoins);
+    setCoinsThisGame((c) => c + totalCityCoins);
     // Immediately add per-city coins to total
     addCoins(totalCityCoins);
 
-    setCityStatus(prev => {
+    setCityStatus((prev) => {
       const newStatus = { ...prev };
       if (currentAttempts === 0) {
         newStatus[city.name] = 'green';
-        setScore(s => s + 1);
+        setScore((s) => s + 1);
       } else {
         newStatus[city.name] = 'blue';
       }
@@ -614,11 +660,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
           )}
         </HeaderLeft>
         <ScoreContainer>
-          {hintUsed && currentCity && (
-            <HintText>
-              Tip: {currentCity.continent}
-            </HintText>
-          )}
+          {hintUsed && currentCity && <HintText>Tip: {currentCity.continent}</HintText>}
           <ButtonMargin>
             <BackButton onClick={handleHint} disabled={hintUsed}>
               Hint
@@ -626,16 +668,18 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
           </ButtonMargin>
           <ScoreItem>
             <ScoreLabel>Score</ScoreLabel>
-            <ScoreValue>{Object.values(cityStatus).filter(s => s === 'green').length}/{totalCities}</ScoreValue>
+            <ScoreValue>
+              {Object.values(cityStatus).filter((s) => s === 'green').length}/{totalCities}
+            </ScoreValue>
           </ScoreItem>
           <ScoreItem>
             <ScoreLabel>Nog te vinden</ScoreLabel>
-            <ScoreValue>{totalCities - Object.values(cityStatus).filter(s => s === 'green').length}</ScoreValue>
+            <ScoreValue>
+              {totalCities - Object.values(cityStatus).filter((s) => s === 'green').length}
+            </ScoreValue>
           </ScoreItem>
           <ButtonMargin>
-            <ResetButton onClick={handleReset}>
-              Herstart
-            </ResetButton>
+            <ResetButton onClick={handleReset}>Herstart</ResetButton>
           </ButtonMargin>
           <BackButton onClick={onBack}>Terug</BackButton>
         </ScoreContainer>
@@ -661,13 +705,13 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-          {cities.map(city => (
+          {cities.map((city) => (
             <Marker
               key={city.name}
               position={[city.lat, city.lng]}
               icon={createDotIcon(cityStatus[city.name])}
               eventHandlers={{
-                click: () => handleMarkerClick(city)
+                click: () => handleMarkerClick(city),
               }}
             />
           ))}
@@ -685,9 +729,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
                 <b>Totaal: {coinsThisGame + pakketBonus}</b>
               </CompletionCoins>
             ) : (
-              <CompletionCoins>
-                Totaal verdiend: {sessionCoins} munten
-              </CompletionCoins>
+              <CompletionCoins>Totaal verdiend: {sessionCoins} munten</CompletionCoins>
             )}
             <CompletionStats>
               {(() => {
@@ -697,25 +739,29 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
                 if (mistakesArr.length === 0) {
                   return <PerfectScore>Je hebt alle steden in één keer goed!</PerfectScore>;
                 }
-                return <>
-                  <StatsTitle>Moeilijkste steden deze ronde:</StatsTitle>
-                  <StatsList>
-                    {mistakesArr.map(([name, count]) => (
-                      <StatsItem key={name}>
-                        <CityName>{name}</CityName>
-                        <MistakeCount>
-                          {count} fout{count > 1 ? 'en' : ''}
-                        </MistakeCount>
-                      </StatsItem>
-                    ))}
-                  </StatsList>
-                </>;
+                return (
+                  <>
+                    <StatsTitle>Moeilijkste steden deze ronde:</StatsTitle>
+                    <StatsList>
+                      {mistakesArr.map(([name, count]) => (
+                        <StatsItem key={name}>
+                          <CityName>{name}</CityName>
+                          <MistakeCount>
+                            {count} fout{count > 1 ? 'en' : ''}
+                          </MistakeCount>
+                        </StatsItem>
+                      ))}
+                    </StatsList>
+                  </>
+                );
               })()}
             </CompletionStats>
-            <BackToMenuButton onClick={async () => {
-              await handleReset();
-              onBack();
-            }}>
+            <BackToMenuButton
+              onClick={async () => {
+                await handleReset();
+                onBack();
+              }}
+            >
               Terug naar hoofdmenu
             </BackToMenuButton>
           </CompletionPopup>
@@ -725,4 +771,4 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   );
 };
 
-export default Game; 
+export default Game;

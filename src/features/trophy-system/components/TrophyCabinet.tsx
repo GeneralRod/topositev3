@@ -4,7 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import CabinetSVG from './CabinetSVG';
 import { prizes } from '../data/prizes';
 import { getTotalCoins, setTotalCoins } from '../../../utils/coinStorage';
-import { saveRibbonsOwned, loadRibbonsOwned, saveRealPrizesOwned, loadRealPrizesOwned } from '../../../utils/prizeStorage';
+import {
+  saveRibbonsOwned,
+  loadRibbonsOwned,
+  saveRealPrizesOwned,
+  loadRealPrizesOwned,
+} from '../../../utils/prizeStorage';
 
 const Container = styled.div`
   width: 100vw;
@@ -46,7 +51,7 @@ const CoinCounter = styled.div`
   font-size: 1.3rem;
   color: #f1c40f;
   font-weight: bold;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   padding: 0.5rem 1.2rem;
   margin-left: 1.5rem;
@@ -100,8 +105,8 @@ const CabinetWrapper = styled.div`
 
 const PrizeIcon = styled.div<{ x: number; y: number }>`
   position: absolute;
-  left: ${props => props.x}px;
-  top: ${props => props.y}px;
+  left: ${(props) => props.x}px;
+  top: ${(props) => props.y}px;
   font-size: 2.2rem;
   pointer-events: none;
   display: flex;
@@ -110,14 +115,14 @@ const PrizeIcon = styled.div<{ x: number; y: number }>`
 `;
 
 const ShopPanel = styled.div`
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 1.5rem 1rem;
   min-width: 320px;
   max-width: 600px;
   width: 100%;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -149,7 +154,9 @@ const ShopPrize = styled.div<{ selected?: boolean }>`
   padding: 0.7rem 0.2rem 0.5rem 0.2rem;
   cursor: pointer;
   border: ${({ selected }) => (selected ? '2px solid #f1c40f' : '2px solid transparent')};
-  transition: border 0.2s, background 0.2s;
+  transition:
+    border 0.2s,
+    background 0.2s;
   min-height: 90px;
 `;
 
@@ -169,13 +176,13 @@ const ShopName = styled.div`
 
 const ShopDetails = styled.div`
   margin-top: 0.5rem;
-  background: rgba(0,0,0,0.13);
+  background: rgba(0, 0, 0, 0.13);
   border-radius: 6px;
   padding: 0.6rem 0.7rem;
   text-align: center;
   font-size: 0.97rem;
   color: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
   word-break: break-word;
   min-width: 120px;
 `;
@@ -219,7 +226,7 @@ const BuyButton = styled.button`
 const DevPanel = styled.div`
   margin: 3rem auto 1.5rem auto;
   max-width: 400px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   padding: 1.5rem 2rem;
   color: #fff;
@@ -305,7 +312,7 @@ const RibbonIcon = styled.div<{ color: string }>`
     align-items: center;
     justify-content: center;
     font-size: 28px;
-    filter: ${props => props.color === 'red' ? 'hue-rotate(0deg)' : 'hue-rotate(200deg)'};
+    filter: ${(props) => (props.color === 'red' ? 'hue-rotate(0deg)' : 'hue-rotate(200deg)')};
   }
 `;
 
@@ -346,7 +353,9 @@ const shelfY = {
 const shelfX = [240, 290, 340, 390, 440, 490, 540];
 
 // Helper to render icon (emoji or React component)
-const renderPrizeIcon = (icon: string | React.ComponentType<{ width?: number; height?: number }>): React.ReactNode => {
+const renderPrizeIcon = (
+  icon: string | React.ComponentType<{ width?: number; height?: number }>,
+): React.ReactNode => {
   if (typeof icon === 'string') return <span>{icon}</span>;
   if (icon) return React.createElement(icon, { width: 36, height: 36 });
   return null;
@@ -381,7 +390,7 @@ export const TrophyCabinet: React.FC = () => {
   }, [realPrizesOwned]);
 
   // Dutch translations for prize names and descriptions
-  const getDutchPrize = (prize: typeof prizes[0]) => {
+  const getDutchPrize = (prize: (typeof prizes)[0]) => {
     switch (prize.id) {
       case 'ribbon-red':
         return { name: 'Rood lint', desc: 'Een simpel rood lint om je kast te versieren.' };
@@ -438,30 +447,32 @@ export const TrophyCabinet: React.FC = () => {
   const handleFillCabinet = () => {
     // Max all ribbons
     const ribbons: { [id: string]: number } = {};
-    prizes.filter(p => p.type === 'ribbon').forEach(p => {
-      ribbons[p.id] = p.max || 5;
-    });
+    prizes
+      .filter((p) => p.type === 'ribbon')
+      .forEach((p) => {
+        ribbons[p.id] = p.max || 5;
+      });
     setRibbonsOwned(ribbons);
     // Add all real prizes
-    setRealPrizesOwned(prizes.filter(p => p.type !== 'ribbon' && p.shelf).map(p => p.id));
+    setRealPrizesOwned(prizes.filter((p) => p.type !== 'ribbon' && p.shelf).map((p) => p.id));
   };
 
   // Buy logic
   const handleBuy = (prizeId: string, price: number) => {
-    const prize = prizes.find(p => p.id === prizeId);
+    const prize = prizes.find((p) => p.id === prizeId);
     if (!prize) return;
     if (prize.type === 'ribbon') {
       const max = prize.max || 5;
       const current = ribbonsOwned[prizeId] || 0;
       if (coins >= price && current < max) {
         setCoins(coins - price);
-        setRibbonsOwned(prev => ({ ...prev, [prizeId]: current + 1 }));
+        setRibbonsOwned((prev) => ({ ...prev, [prizeId]: current + 1 }));
         setSelectedPrize(null);
       }
     } else {
       if (coins >= price && !realPrizesOwned.includes(prizeId)) {
         setCoins(coins - price);
-        setRealPrizesOwned(prev => [...prev, prizeId]);
+        setRealPrizesOwned((prev) => [...prev, prizeId]);
         setSelectedPrize(null);
       }
     }
@@ -469,7 +480,9 @@ export const TrophyCabinet: React.FC = () => {
 
   // For ribbons, alternate between left and right door for stacking
   const getRibbonDoor = (prizeId: string) => {
-    const ribbonIndex = prizes.filter(p => p.type === 'ribbon').findIndex(p => p.id === prizeId);
+    const ribbonIndex = prizes
+      .filter((p) => p.type === 'ribbon')
+      .findIndex((p) => p.id === prizeId);
     return ribbonIndex % 2 === 0 ? 'left' : 'right';
   };
 
@@ -489,29 +502,31 @@ export const TrophyCabinet: React.FC = () => {
         <CabinetWrapper>
           <CabinetSVG />
           {/* Render ribbons stacked on doors, offset y for each ribbon type to avoid overlap */}
-          {prizes.filter(p => p.type === 'ribbon').map((prize, ribbonTypeIdx) => {
-            const count = ribbonsOwned[prize.id] || 0;
-            const door = getRibbonDoor(prize.id);
-            return Array.from({ length: count }).map((_, i) => {
-              const pos = ribbonDoorPositions[door][i] || ribbonDoorPositions[door][0];
-              // Increase y offset for each ribbon type to prevent overlap
-              const yOffset = ribbonTypeIdx * 45;
-              let icon: React.ReactNode = renderPrizeIcon(prize.icon);
-              // Use proper ribbon icons with correct colors
-              if (prize.id === 'ribbon-blue' || prize.id === 'ribbon-red') {
-                icon = <RibbonIcon color={prize.id === 'ribbon-blue' ? 'blue' : 'red'} />;
-              }
-              return (
-                <PrizeIcon key={prize.id + '-' + i} x={pos.x} y={pos.y + yOffset}>
-                  {icon}
-                </PrizeIcon>
-              );
-            });
-          })}
+          {prizes
+            .filter((p) => p.type === 'ribbon')
+            .map((prize, ribbonTypeIdx) => {
+              const count = ribbonsOwned[prize.id] || 0;
+              const door = getRibbonDoor(prize.id);
+              return Array.from({ length: count }).map((_, i) => {
+                const pos = ribbonDoorPositions[door][i] || ribbonDoorPositions[door][0];
+                // Increase y offset for each ribbon type to prevent overlap
+                const yOffset = ribbonTypeIdx * 45;
+                let icon: React.ReactNode = renderPrizeIcon(prize.icon);
+                // Use proper ribbon icons with correct colors
+                if (prize.id === 'ribbon-blue' || prize.id === 'ribbon-red') {
+                  icon = <RibbonIcon color={prize.id === 'ribbon-blue' ? 'blue' : 'red'} />;
+                }
+                return (
+                  <PrizeIcon key={prize.id + '-' + i} x={pos.x} y={pos.y + yOffset}>
+                    {icon}
+                  </PrizeIcon>
+                );
+              });
+            })}
           {/* Render real prizes on shelves, spaced */}
-          {[1, 2, 3].map(shelfNum => {
+          {[1, 2, 3].map((shelfNum) => {
             const shelfPrizes = prizes.filter(
-              p => p.shelf === shelfNum && realPrizesOwned.includes(p.id)
+              (p) => p.shelf === shelfNum && realPrizesOwned.includes(p.id),
             );
             return shelfPrizes.map((prize, idx) => {
               const x = shelfX[idx % shelfX.length];
@@ -527,7 +542,7 @@ export const TrophyCabinet: React.FC = () => {
         <ShopPanel>
           <ShopTitle>Winkel voor prijzen</ShopTitle>
           <ShopGrid>
-            {prizes.map(prize => {
+            {prizes.map((prize) => {
               const dutch = getDutchPrize(prize);
               const selected = selectedPrize === prize.id;
               let owned = 0;
@@ -553,18 +568,14 @@ export const TrophyCabinet: React.FC = () => {
                     )}
                   </ShopIcon>
                   <ShopName>{dutch.name}</ShopName>
-                  {prize.type === 'ribbon' && owned > 0 && (
-                    <RibbonCount>
-                      x{owned}
-                    </RibbonCount>
-                  )}
+                  {prize.type === 'ribbon' && owned > 0 && <RibbonCount>x{owned}</RibbonCount>}
                   {selected && (
                     <ShopDetails>
                       <ShopDesc>{dutch.desc}</ShopDesc>
                       <ShopPrice>Kost: {prize.price} munten</ShopPrice>
                       <BuyButton
                         disabled={maxed || coins < prize.price}
-                        onClick={e => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           handleBuy(prize.id, prize.price);
                         }}
@@ -587,16 +598,24 @@ export const TrophyCabinet: React.FC = () => {
             <DevButton onClick={() => setCoins(coins + 500)}>+500 munten</DevButton>
             <DevButton onClick={() => setCoins(0)}>Reset munten naar 0</DevButton>
             <DevButton onClick={handleFillCabinet}>Vul kast</DevButton>
-            <DevButton onClick={() => {
-              // Fill cabinet with max of all prizes
-              const ribbons: { [id: string]: number } = {};
-              prizes.filter(p => p.type === 'ribbon').forEach(p => {
-                ribbons[p.id] = p.max || 5;
-              });
-              setRibbonsOwned(ribbons);
-              setRealPrizesOwned(prizes.filter(p => p.type !== 'ribbon' && p.shelf).map(p => p.id));
-              setCoins(9999); // Give enough coins to buy everything
-            }}>Vul kast (max)</DevButton>
+            <DevButton
+              onClick={() => {
+                // Fill cabinet with max of all prizes
+                const ribbons: { [id: string]: number } = {};
+                prizes
+                  .filter((p) => p.type === 'ribbon')
+                  .forEach((p) => {
+                    ribbons[p.id] = p.max || 5;
+                  });
+                setRibbonsOwned(ribbons);
+                setRealPrizesOwned(
+                  prizes.filter((p) => p.type !== 'ribbon' && p.shelf).map((p) => p.id),
+                );
+                setCoins(9999); // Give enough coins to buy everything
+              }}
+            >
+              Vul kast (max)
+            </DevButton>
           </DevButtonGroup>
           <DevClose onClick={() => setDevUnlocked(false)}>Sluit ontwikkelaarsopties</DevClose>
         </DevPanel>
@@ -608,7 +627,7 @@ export const TrophyCabinet: React.FC = () => {
               id="devcode"
               type="text"
               value={devCode}
-              onChange={e => setDevCode(e.target.value)}
+              onChange={(e) => setDevCode(e.target.value)}
               placeholder="Voer code in..."
             />
             <DevButton type="submit">OK</DevButton>
@@ -617,4 +636,4 @@ export const TrophyCabinet: React.FC = () => {
       )}
     </Container>
   );
-}; 
+};

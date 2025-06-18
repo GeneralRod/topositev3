@@ -46,7 +46,7 @@ const Title = styled.h1`
 `;
 
 const StartButton = styled.button`
-  background: linear-gradient(45deg, #4CAF50, #45a049);
+  background: linear-gradient(45deg, #4caf50, #45a049);
   color: white;
   border: none;
   padding: 1rem 3rem;
@@ -77,11 +77,16 @@ const TitlePage: React.FC = () => {
 
     // Scene setup
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ 
-      canvas: containerRef.current.querySelector('canvas')!, 
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000,
+    );
+    const renderer = new THREE.WebGLRenderer({
+      canvas: containerRef.current.querySelector('canvas')!,
       antialias: true,
-      alpha: true
+      alpha: true,
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -90,9 +95,9 @@ const TitlePage: React.FC = () => {
     const createStars = () => {
       const starsGeometry = new THREE.BufferGeometry();
       const starsMaterial = new THREE.PointsMaterial({
-        color: 0xFFFFFF,
+        color: 0xffffff,
         size: 0.1,
-        transparent: true
+        transparent: true,
       });
 
       const starsVertices = [];
@@ -114,11 +119,13 @@ const TitlePage: React.FC = () => {
     // Earth
     const earthGeometry = new THREE.SphereGeometry(5, 64, 64);
     const textureLoader = new THREE.TextureLoader();
-    const earthTexture = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+    const earthTexture = textureLoader.load(
+      'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg',
+    );
     const earthMaterial = new THREE.MeshPhongMaterial({
       map: earthTexture,
       specular: new THREE.Color(0x333333),
-      shininess: 5
+      shininess: 5,
     });
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
     scene.add(earth);
@@ -128,7 +135,7 @@ const TitlePage: React.FC = () => {
     const atmosphereMaterial = new THREE.MeshPhongMaterial({
       color: 0x0077ff,
       transparent: true,
-      opacity: 0.1
+      opacity: 0.1,
     });
     const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
     scene.add(atmosphere);
@@ -159,36 +166,36 @@ const TitlePage: React.FC = () => {
     // Create and add the simple plane
     const createSimplePlane = () => {
       const planeGroup = new THREE.Group();
-      
+
       // Materials
-      const metalMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0xE0E0E0,
+      const metalMaterial = new THREE.MeshPhongMaterial({
+        color: 0xe0e0e0,
         shininess: 100,
-        specular: 0x444444
+        specular: 0x444444,
       });
       const glassMaterial = new THREE.MeshPhongMaterial({
-        color: 0x88CCFF,
+        color: 0x88ccff,
         transparent: true,
         opacity: 0.6,
         shininess: 100,
-        specular: 0xFFFFFF
+        specular: 0xffffff,
       });
       const accentMaterial = new THREE.MeshPhongMaterial({
-        color: 0x4A90E2,
+        color: 0x4a90e2,
         shininess: 100,
-        specular: 0x444444
+        specular: 0x444444,
       });
       const secondaryAccentMaterial = new THREE.MeshPhongMaterial({
-        color: 0x64B5F6,
+        color: 0x64b5f6,
         shininess: 100,
-        specular: 0x444444
+        specular: 0x444444,
       });
       const tertiaryAccentMaterial = new THREE.MeshPhongMaterial({
-        color: 0x90CAF9,
+        color: 0x90caf9,
         shininess: 100,
-        specular: 0x444444
+        specular: 0x444444,
       });
-      
+
       // Fuselage
       const fuselageGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.2, 16);
       const fuselage = new THREE.Mesh(fuselageGeometry, metalMaterial);
@@ -202,7 +209,15 @@ const TitlePage: React.FC = () => {
       planeGroup.add(fuselageLine);
 
       // Cockpit
-      const cockpitGeometry = new THREE.SphereGeometry(0.08, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+      const cockpitGeometry = new THREE.SphereGeometry(
+        0.08,
+        16,
+        16,
+        0,
+        Math.PI * 2,
+        0,
+        Math.PI / 2,
+      );
       const cockpit = new THREE.Mesh(cockpitGeometry, glassMaterial);
       cockpit.rotation.x = Math.PI / 2;
       cockpit.position.set(0, 0.05, 0.4);
@@ -224,7 +239,7 @@ const TitlePage: React.FC = () => {
         bevelEnabled: true,
         bevelThickness: 0.02,
         bevelSize: 0.02,
-        bevelSegments: 3
+        bevelSegments: 3,
       };
 
       const wingGeometry = new THREE.ExtrudeGeometry(wingShape, wingExtrudeSettings);
@@ -249,11 +264,14 @@ const TitlePage: React.FC = () => {
         bevelEnabled: true,
         bevelThickness: 0.005,
         bevelSize: 0.005,
-        bevelSegments: 2
+        bevelSegments: 2,
       };
 
       // Front wing line
-      const wingDetailGeometry = new THREE.ExtrudeGeometry(wingDetailShape, wingDetailExtrudeSettings);
+      const wingDetailGeometry = new THREE.ExtrudeGeometry(
+        wingDetailShape,
+        wingDetailExtrudeSettings,
+      );
       const wingDetail = new THREE.Mesh(wingDetailGeometry, accentMaterial);
       wingDetail.rotation.x = -Math.PI / 2;
       wingDetail.position.set(0, 0.08, 0.02); // Moved closer to main wing
@@ -273,14 +291,30 @@ const TitlePage: React.FC = () => {
       planeGroup.add(nose);
 
       // Nose accent (thin line)
-      const noseAccentGeometry = new THREE.SphereGeometry(0.095, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2);
+      const noseAccentGeometry = new THREE.SphereGeometry(
+        0.095,
+        32,
+        32,
+        0,
+        Math.PI * 2,
+        0,
+        Math.PI / 2,
+      );
       const noseAccent = new THREE.Mesh(noseAccentGeometry, secondaryAccentMaterial);
       noseAccent.rotation.x = Math.PI / 2;
       noseAccent.position.set(0, 0.03, 0.6);
       planeGroup.add(noseAccent);
 
       // Nose side lines
-      const noseSideLineGeometry = new THREE.SphereGeometry(0.101, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2);
+      const noseSideLineGeometry = new THREE.SphereGeometry(
+        0.101,
+        32,
+        32,
+        0,
+        Math.PI * 2,
+        0,
+        Math.PI / 2,
+      );
       const noseSideLine = new THREE.Mesh(noseSideLineGeometry, tertiaryAccentMaterial);
       noseSideLine.rotation.x = Math.PI / 2;
       noseSideLine.position.set(0, 0, 0.6);
@@ -339,7 +373,7 @@ const TitlePage: React.FC = () => {
     const planeHeight = 0.5;
     const maxPathVariation = 1.5;
     const maxHeightVariation = 0.8;
-    
+
     // Store previous positions for tail following
     const positionHistory: THREE.Vector3[] = [];
     const historyLength = 10;
@@ -348,35 +382,43 @@ const TitlePage: React.FC = () => {
     const createTrail = () => {
       const trailGeometry = new THREE.BufferGeometry();
       const trailMaterial = new THREE.PointsMaterial({
-        color: 0xFFFFFF, // White color
+        color: 0xffffff, // White color
         size: 0.08, // Larger points for cloudier effect
         transparent: true,
         opacity: 0.6,
         blending: THREE.AdditiveBlending,
-        sizeAttenuation: true
+        sizeAttenuation: true,
       });
-      
+
       // Create initial trail points
       const trailPoints: THREE.Vector3[] = [];
       const numPoints = 35; // Reduced from 50 to 35 for shorter trails
       for (let i = 0; i < numPoints; i++) {
         trailPoints.push(new THREE.Vector3(0, 0, 0));
       }
-      
+
       // Set up geometry
       const positions = new Float32Array(trailPoints.length * 3);
       const opacities = new Float32Array(trailPoints.length);
       trailGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       trailGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
-      
+
       const trail = new THREE.Points(trailGeometry, trailMaterial);
       scene.add(trail);
       return { trail, trailPoints, opacities };
     };
 
     // Create two trails for the wingtips
-    const { trail: leftTrail, trailPoints: leftTrailPoints, opacities: leftOpacities } = createTrail();
-    const { trail: rightTrail, trailPoints: rightTrailPoints, opacities: rightOpacities } = createTrail();
+    const {
+      trail: leftTrail,
+      trailPoints: leftTrailPoints,
+      opacities: leftOpacities,
+    } = createTrail();
+    const {
+      trail: rightTrail,
+      trailPoints: rightTrailPoints,
+      opacities: rightOpacities,
+    } = createTrail();
 
     const animate = () => {
       requestAnimationFrame(animate);
@@ -392,57 +434,60 @@ const TitlePage: React.FC = () => {
       // Animate plane
       if (planeRef.current) {
         planeAngle += planeSpeed;
-        
+
         // Update path variations with different frequencies
-        pathVariation = Math.sin(planeAngle * 0.2) * maxPathVariation + 
-                       Math.sin(planeAngle * 0.1) * maxPathVariation * 0.5;
+        pathVariation =
+          Math.sin(planeAngle * 0.2) * maxPathVariation +
+          Math.sin(planeAngle * 0.1) * maxPathVariation * 0.5;
         heightVariation = Math.sin(planeAngle * 0.3) * maxHeightVariation;
-        
+
         // Calculate base position on the sphere
         const baseX = Math.cos(planeAngle) * planeRadius;
         const baseZ = Math.sin(planeAngle) * planeRadius;
-        
+
         // Add path variation perpendicular to the current direction
-        const variationX = Math.cos(planeAngle + Math.PI/2) * pathVariation;
-        const variationZ = Math.sin(planeAngle + Math.PI/2) * pathVariation;
-        
+        const variationX = Math.cos(planeAngle + Math.PI / 2) * pathVariation;
+        const variationZ = Math.sin(planeAngle + Math.PI / 2) * pathVariation;
+
         // Calculate new position
         const x = baseX + variationX;
         const z = baseZ + variationZ;
         const y = Math.sin(planeAngle * 2) * planeHeight + heightVariation;
-        
+
         // Store current position in history
         positionHistory.unshift(new THREE.Vector3(x, y, z));
         if (positionHistory.length > historyLength) {
           positionHistory.pop();
         }
-        
+
         // Set plane position
         planeRef.current.position.set(x, y, z);
-        
+
         // Calculate wingtip positions with proper alignment
         const wingOffset = 0.6; // Distance from center to wingtip
         const wingHeight = 0.05; // Height offset to align with wings
         const trailOffset = 0.25; // Position at back edge of wings
-        
+
         // Get the plane's vectors for proper alignment
         const rightVector = new THREE.Vector3(1, 0, 0).applyQuaternion(planeRef.current.quaternion);
         const upVector = new THREE.Vector3(0, 1, 0).applyQuaternion(planeRef.current.quaternion);
-        const planeForwardVector = new THREE.Vector3(0, 0, 1).applyQuaternion(planeRef.current.quaternion);
-        
+        const planeForwardVector = new THREE.Vector3(0, 0, 1).applyQuaternion(
+          planeRef.current.quaternion,
+        );
+
         // Calculate wingtip positions using the plane's orientation
         const leftWingTip = new THREE.Vector3()
           .copy(planeRef.current.position)
           .add(rightVector.clone().multiplyScalar(-wingOffset))
           .add(upVector.clone().multiplyScalar(wingHeight))
           .add(planeForwardVector.clone().multiplyScalar(-trailOffset));
-          
+
         const rightWingTip = new THREE.Vector3()
           .copy(planeRef.current.position)
           .add(rightVector.clone().multiplyScalar(wingOffset))
           .add(upVector.clone().multiplyScalar(wingHeight))
           .add(planeForwardVector.clone().multiplyScalar(-trailOffset));
-        
+
         // Update left trail with subtle cloud effect
         const newLeftPoint = leftWingTip.clone();
         newLeftPoint.x += (Math.random() - 0.5) * 0.03; // Subtle random variation
@@ -450,7 +495,7 @@ const TitlePage: React.FC = () => {
         newLeftPoint.z += (Math.random() - 0.5) * 0.03;
         leftTrailPoints.unshift(newLeftPoint);
         leftTrailPoints.pop();
-        
+
         // Update right trail with subtle cloud effect
         const newRightPoint = rightWingTip.clone();
         newRightPoint.x += (Math.random() - 0.5) * 0.03; // Subtle random variation
@@ -458,15 +503,19 @@ const TitlePage: React.FC = () => {
         newRightPoint.z += (Math.random() - 0.5) * 0.03;
         rightTrailPoints.unshift(newRightPoint);
         rightTrailPoints.pop();
-        
+
         // Update trail geometries and opacities
-        const updateTrail = (trail: THREE.Points, points: THREE.Vector3[], opacities: Float32Array) => {
+        const updateTrail = (
+          trail: THREE.Points,
+          points: THREE.Vector3[],
+          opacities: Float32Array,
+        ) => {
           const positions = trail.geometry.attributes.position.array as Float32Array;
           for (let i = 0; i < points.length; i++) {
             positions[i * 3] = points[i].x;
             positions[i * 3 + 1] = points[i].y;
             positions[i * 3 + 2] = points[i].z;
-            
+
             // More gradual fade effect with adjusted rate for shorter trail
             const t = i / points.length;
             // Exponential fade with adjusted rate for shorter trail
@@ -475,13 +524,15 @@ const TitlePage: React.FC = () => {
           trail.geometry.attributes.position.needsUpdate = true;
           trail.geometry.attributes.opacity.needsUpdate = true;
         };
-        
+
         updateTrail(leftTrail, leftTrailPoints, leftOpacities);
         updateTrail(rightTrail, rightTrailPoints, rightOpacities);
-        
+
         // Calculate the direction vector from the plane to the center of the Earth
-        const directionToCenter = new THREE.Vector3(0, 0, 0).sub(planeRef.current.position).normalize();
-        
+        const directionToCenter = new THREE.Vector3(0, 0, 0)
+          .sub(planeRef.current.position)
+          .normalize();
+
         // Calculate the forward direction based on the path
         let forwardVector;
         if (positionHistory.length > 1) {
@@ -490,18 +541,18 @@ const TitlePage: React.FC = () => {
           forwardVector = new THREE.Vector3(
             -Math.sin(planeAngle),
             0,
-            Math.cos(planeAngle)
+            Math.cos(planeAngle),
           ).normalize();
         }
-        
+
         // Create a quaternion that rotates the plane to face the center
         const centerQuaternion = new THREE.Quaternion();
         centerQuaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), directionToCenter);
-        
+
         // Create a quaternion that rotates the plane to face forward
         const forwardQuaternion = new THREE.Quaternion();
         forwardQuaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), forwardVector);
-        
+
         // Combine the rotations
         planeRef.current.quaternion.copy(centerQuaternion).multiply(forwardQuaternion);
       }
@@ -546,4 +597,4 @@ const TitlePage: React.FC = () => {
   );
 };
 
-export default TitlePage; 
+export default TitlePage;

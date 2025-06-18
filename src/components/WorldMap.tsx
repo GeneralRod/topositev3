@@ -25,7 +25,7 @@ const defaultIcon = new Icon({
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+  shadowSize: [41, 41],
 });
 
 interface WorldMapProps {
@@ -41,10 +41,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountryClick, cities }) => {
   return (
     <MapWrapper>
       <MapContainerWrapper>
-        <LeafletMap
-          center={[20, 0]}
-          zoom={2}
-        >
+        <LeafletMap center={[20, 0]} zoom={2}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -55,7 +52,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountryClick, cities }) => {
               position={[city.latitude, city.longitude]}
               icon={defaultIcon}
               eventHandlers={{
-                click: () => onCountryClick?.(city.name)
+                click: () => onCountryClick?.(city.name),
               }}
             >
               <Popup>
@@ -69,4 +66,4 @@ const WorldMap: React.FC<WorldMapProps> = ({ onCountryClick, cities }) => {
   );
 };
 
-export default WorldMap; 
+export default WorldMap;

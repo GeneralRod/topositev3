@@ -1,5 +1,8 @@
 export class GameError extends Error {
-  constructor(message: string, public code: string) {
+  constructor(
+    message: string,
+    public code: string,
+  ) {
     super(message);
     this.name = 'GameError';
   }
@@ -49,10 +52,10 @@ export const RETRY_DELAY = 1000; // 1 second
 
 export const retryOperation = async <T>(
   operation: () => Promise<T>,
-  maxAttempts: number = MAX_RETRY_ATTEMPTS
+  maxAttempts: number = MAX_RETRY_ATTEMPTS,
 ): Promise<T> => {
   let lastError: unknown;
-  
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await operation();
@@ -61,9 +64,9 @@ export const retryOperation = async <T>(
       if (!isRetryableError(error) || attempt === maxAttempts) {
         throw error;
       }
-      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * attempt));
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY * attempt));
     }
   }
-  
+
   throw lastError;
-}; 
+};

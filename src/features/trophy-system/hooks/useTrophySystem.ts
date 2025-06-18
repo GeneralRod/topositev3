@@ -4,7 +4,7 @@ import { achievements } from '../data/trophies';
 
 const initialUserPoints: UserPoints = {
   total: 0,
-  history: []
+  history: [],
 };
 
 export const useTrophySystem = () => {
@@ -13,16 +13,16 @@ export const useTrophySystem = () => {
 
   // Add points to user's total
   const addPoints = (points: number, source: string) => {
-    setUserPoints(prev => ({
+    setUserPoints((prev) => ({
       total: prev.total + points,
       history: [
         ...prev.history,
         {
           date: new Date().toISOString(),
           points,
-          source
-        }
-      ]
+          source,
+        },
+      ],
     }));
   };
 
@@ -32,8 +32,8 @@ export const useTrophySystem = () => {
     speed?: number;
     streak?: number;
   }) => {
-    achievements.forEach(achievement => {
-      if (unlockedAchievements.find(a => a.id === achievement.id)) return;
+    achievements.forEach((achievement) => {
+      if (unlockedAchievements.find((a) => a.id === achievement.id)) return;
 
       let shouldUnlock = false;
       switch (achievement.condition.type) {
@@ -49,7 +49,7 @@ export const useTrophySystem = () => {
       }
 
       if (shouldUnlock) {
-        setUnlockedAchievements(prev => [...prev, { ...achievement, unlocked: true }]);
+        setUnlockedAchievements((prev) => [...prev, { ...achievement, unlocked: true }]);
         addPoints(achievement.points, `Achievement: ${achievement.name}`);
       }
     });
@@ -59,7 +59,7 @@ export const useTrophySystem = () => {
   const getTrophyCabinet = (): TrophyCabinet => ({
     achievements: unlockedAchievements,
     purchasableTrophies: [],
-    userPoints
+    userPoints,
   });
 
   return {
@@ -67,6 +67,6 @@ export const useTrophySystem = () => {
     unlockedAchievements,
     addPoints,
     checkAchievements,
-    getTrophyCabinet
+    getTrophyCabinet,
   };
-}; 
+};
