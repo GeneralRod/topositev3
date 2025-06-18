@@ -493,6 +493,9 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
       setScore(0);
       setCurrentAttempts(0);
       setHintUsed(false);
+      // Reset coin counters when starting a new game
+      setSessionCoins(0);
+      setCoinsThisGame(0);
       selectNextCity();
     } catch (error) {
       handleStorageError(error);
