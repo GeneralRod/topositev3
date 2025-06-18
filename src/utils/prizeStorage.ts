@@ -7,7 +7,16 @@ export function saveRibbonsOwned(ribbons: { [id: string]: number }) {
 
 export function loadRibbonsOwned(): { [id: string]: number } {
   const data = localStorage.getItem(RIBBONS_KEY);
-  return data ? JSON.parse(data) : {};
+  if (!data) return {};
+  try {
+    const parsed = JSON.parse(data);
+    if (typeof parsed === 'object' && parsed !== null) {
+      return parsed as { [id: string]: number };
+    }
+  } catch (err) {
+    console.error('Failed to parse ribbons data:', err);
+  }
+  return {};
 }
 
 export function saveRealPrizesOwned(prizes: string[]) {
@@ -16,5 +25,14 @@ export function saveRealPrizesOwned(prizes: string[]) {
 
 export function loadRealPrizesOwned(): string[] {
   const data = localStorage.getItem(REAL_PRIZES_KEY);
-  return data ? JSON.parse(data) : [];
-} 
+  if (!data) return [];
+  try {
+    const parsed = JSON.parse(data);
+    if (Array.isArray(parsed)) {
+      return parsed;
+    }
+  } catch (err) {
+    console.error('Failed to parse real prizes data:', err);
+  }
+  return [];
+}
