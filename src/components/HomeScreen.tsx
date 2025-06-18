@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface HomeScreenProps {
   onSelectPackage: (packageName: string) => void;
+  category: string;
 }
 
 const Container = styled.div`
@@ -111,60 +112,78 @@ const VersionTag = styled.div`
   pointer-events: none;
 `;
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage }) => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage, category }) => {
   const navigate = useNavigate();
 
   return (
     <Container>
-      <Title>Topografie Wereld: hoofd- en wereldsteden</Title>
+      {category === 'capitals' && (
+        <>
+          <Title>Topografie Wereld: hoofd- en wereldsteden</Title>
 
-      <SectionTitle>Oefenpakketten</SectionTitle>
-      <PackageGrid>
-        <PackageCard color="#1a73e8" onClick={() => onSelectPackage('pakket1')}>
-          <PackageTitle>Pakket 1</PackageTitle>
-          <PackageDescription>Basis steden over de hele wereld</PackageDescription>
-        </PackageCard>
-        <PackageCard color="#34a853" onClick={() => onSelectPackage('pakket2')}>
-          <PackageTitle>Pakket 2</PackageTitle>
-          <PackageDescription>Extra steden over de wereld</PackageDescription>
-        </PackageCard>
-        <PackageCard color="#fbbc05" onClick={() => onSelectPackage('pakket3')}>
-          <PackageTitle>Pakket 3</PackageTitle>
-          <PackageDescription>Extra steden over de wereld</PackageDescription>
-        </PackageCard>
-      </PackageGrid>
+          <SectionTitle>Oefenpakketten</SectionTitle>
+          <PackageGrid>
+            <PackageCard color="#1a73e8" onClick={() => onSelectPackage('pakket1')}>
+              <PackageTitle>Pakket 1</PackageTitle>
+              <PackageDescription>Basis steden over de hele wereld</PackageDescription>
+            </PackageCard>
+            <PackageCard color="#34a853" onClick={() => onSelectPackage('pakket2')}>
+              <PackageTitle>Pakket 2</PackageTitle>
+              <PackageDescription>Extra steden over de wereld</PackageDescription>
+            </PackageCard>
+            <PackageCard color="#fbbc05" onClick={() => onSelectPackage('pakket3')}>
+              <PackageTitle>Pakket 3</PackageTitle>
+              <PackageDescription>Extra steden over de wereld</PackageDescription>
+            </PackageCard>
+          </PackageGrid>
 
-      <SectionTitle>Gecombineerde Pakketten</SectionTitle>
-      <PackageGrid>
-        <PackageCard color="#ea4335" onClick={() => onSelectPackage('pakket1-2')}>
-          <PackageTitle>Pakket 1 + 2</PackageTitle>
-          <PackageDescription>Alle steden uit pakket 1 en 2</PackageDescription>
-        </PackageCard>
-        <PackageCard color="#9334e6" onClick={() => onSelectPackage('pakket2-3')}>
-          <PackageTitle>Pakket 2 + 3</PackageTitle>
-          <PackageDescription>Alle steden uit pakket 2 en 3</PackageDescription>
-        </PackageCard>
-        <PackageCard color="#4285f4" onClick={() => onSelectPackage('pakket1-2-3')}>
-          <PackageTitle>Pakket 1 + 2 + 3</PackageTitle>
-          <PackageDescription>Alle steden uit alle pakketten</PackageDescription>
-        </PackageCard>
-      </PackageGrid>
+          <SectionTitle>Gecombineerde Pakketten</SectionTitle>
+          <PackageGrid>
+            <PackageCard color="#ea4335" onClick={() => onSelectPackage('pakket1-2')}>
+              <PackageTitle>Pakket 1 + 2</PackageTitle>
+              <PackageDescription>Alle steden uit pakket 1 en 2</PackageDescription>
+            </PackageCard>
+            <PackageCard color="#9334e6" onClick={() => onSelectPackage('pakket2-3')}>
+              <PackageTitle>Pakket 2 + 3</PackageTitle>
+              <PackageDescription>Alle steden uit pakket 2 en 3</PackageDescription>
+            </PackageCard>
+            <PackageCard color="#4285f4" onClick={() => onSelectPackage('pakket1-2-3')}>
+              <PackageTitle>Pakket 1 + 2 + 3</PackageTitle>
+              <PackageDescription>Alle steden uit alle pakketten</PackageDescription>
+            </PackageCard>
+          </PackageGrid>
 
-      <SectionTitle>Interactieve Kaarten</SectionTitle>
-      <PackageGrid>
-        <PackageCard color="#1a73e8" onClick={() => onSelectPackage('interactive1')}>
-          <PackageTitle>Interactieve kaart pakket 1</PackageTitle>
-          <PackageDescription>Bekijk alle steden uit pakket 1</PackageDescription>
-        </PackageCard>
-        <PackageCard color="#34a853" onClick={() => onSelectPackage('interactive2')}>
-          <PackageTitle>Interactieve kaart pakket 2</PackageTitle>
-          <PackageDescription>Bekijk alle steden uit pakket 2</PackageDescription>
-        </PackageCard>
-        <PackageCard color="#fbbc05" onClick={() => onSelectPackage('interactive3')}>
-          <PackageTitle>Interactieve kaart pakket 3</PackageTitle>
-          <PackageDescription>Bekijk alle steden uit pakket 3</PackageDescription>
-        </PackageCard>
-      </PackageGrid>
+          <SectionTitle>Interactieve Kaarten</SectionTitle>
+          <PackageGrid>
+            <PackageCard color="#1a73e8" onClick={() => onSelectPackage('interactive1')}>
+              <PackageTitle>Interactieve kaart pakket 1</PackageTitle>
+              <PackageDescription>Bekijk alle steden uit pakket 1</PackageDescription>
+            </PackageCard>
+            <PackageCard color="#34a853" onClick={() => onSelectPackage('interactive2')}>
+              <PackageTitle>Interactieve kaart pakket 2</PackageTitle>
+              <PackageDescription>Bekijk alle steden uit pakket 2</PackageDescription>
+            </PackageCard>
+            <PackageCard color="#fbbc05" onClick={() => onSelectPackage('interactive3')}>
+              <PackageTitle>Interactieve kaart pakket 3</PackageTitle>
+              <PackageDescription>Bekijk alle steden uit pakket 3</PackageDescription>
+            </PackageCard>
+          </PackageGrid>
+        </>
+      )}
+
+      {category === 'landscapes' && (
+        <>
+          <Title>Topografie Wereld: wateren en landschappen</Title>
+
+          <SectionTitle>Landschappen</SectionTitle>
+          <PackageGrid>
+            <PackageCard color="#1a73e8" onClick={() => onSelectPackage('landschap1')}>
+              <PackageTitle>Wereldwijde landschappen</PackageTitle>
+              <PackageDescription>Belangrijke wateren en gebergtes</PackageDescription>
+            </PackageCard>
+          </PackageGrid>
+        </>
+      )}
 
       <TrophyButton onClick={() => navigate('/trophy-cabinet')}>
         <TrophyIcon>🏆</TrophyIcon>
