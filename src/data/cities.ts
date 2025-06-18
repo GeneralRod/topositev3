@@ -35,7 +35,7 @@ export const cities: City[] = [
   { name: 'Havana', country: 'Cuba', coordinates: [23.1135, -82.3666], package: 'pakket1', lat: 23.1135, lng: -82.3666, continent: 'Noord-Amerika' },
   { name: 'Paramaribo', country: 'Suriname', coordinates: [5.8520, -55.2038], package: 'pakket1', lat: 5.8520, lng: -55.2038, continent: 'Zuid-Amerika' },
   { name: 'Kaapstad', country: 'Zuid-Afrika', coordinates: [-33.9249, 18.4241], package: 'pakket1', lat: -33.9249, lng: 18.4241, continent: 'Afrika' },
-  { name: 'Jeruzalem', country: 'Israël', coordinates: [31.7683, 35.2137], package: 'pakket1', lat: 31.7683, lng: 35.2137, continent: 'Europa' },
+  { name: 'Jeruzalem', country: 'Israël', coordinates: [31.7683, 35.2137], package: 'pakket1', lat: 31.7683, lng: 35.2137, continent: 'Azië' },
   { name: 'Sydney', country: 'Australië', coordinates: [-33.8688, 151.2093], package: 'pakket1', lat: -33.8688, lng: 151.2093, continent: 'Australië' },
   { name: 'Johannesburg', country: 'Zuid-Afrika', coordinates: [-26.2041, 28.0473], package: 'pakket1', lat: -26.2041, lng: 28.0473, continent: 'Afrika' },
   { name: 'Riad', country: 'Saoedi-Arabië', coordinates: [24.7136, 46.6753], package: 'pakket1', lat: 24.7136, lng: 46.6753, continent: 'Azië' },
