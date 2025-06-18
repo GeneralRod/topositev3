@@ -38,14 +38,16 @@ const PackageCard = styled.div<{ color: string }>`
   background: white;
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border-top: 4px solid ${props => props.color};
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  border-top: 4px solid ${(props) => props.color};
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -77,7 +79,9 @@ const TrophyButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
   font-size: 1.2rem;
-  transition: transform 0.2s, background 0.2s;
+  transition:
+    transform 0.2s,
+    background 0.2s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
@@ -100,7 +104,7 @@ const VersionTag = styled.div`
   bottom: 12px;
   font-size: 0.95rem;
   color: #888;
-  background: rgba(255,255,255,0.85);
+  background: rgba(255, 255, 255, 0.85);
   padding: 2px 10px;
   border-radius: 6px;
   z-index: 2000;
@@ -113,7 +117,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage }) => {
   return (
     <Container>
       <Title>Topografie Wereld: hoofd- en wereldsteden</Title>
-      
+
       <SectionTitle>Oefenpakketten</SectionTitle>
       <PackageGrid>
         <PackageCard color="#1a73e8" onClick={() => onSelectPackage('pakket1')}>
@@ -171,4 +175,4 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage }) => {
   );
 };
 
-export default HomeScreen; 
+export default HomeScreen;

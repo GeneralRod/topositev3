@@ -3,7 +3,22 @@ export interface Prize {
   name: string;
   description: string;
   price: number;
-  type: 'ribbon' | 'trophy' | 'globe' | 'compass' | 'map' | 'decoration' | 'book' | 'binoculars' | 'atlas' | 'cup' | 'medal' | 'camera' | 'ship' | 'mountain' | 'special';
+  type:
+    | 'ribbon'
+    | 'trophy'
+    | 'globe'
+    | 'compass'
+    | 'map'
+    | 'decoration'
+    | 'book'
+    | 'binoculars'
+    | 'atlas'
+    | 'cup'
+    | 'medal'
+    | 'camera'
+    | 'ship'
+    | 'mountain'
+    | 'special';
   icon: string | React.ComponentType<{ width?: number; height?: number }>; // emoji, SVG path, or React component
   spot: number; // where in the cabinet it goes
   max?: number; // for ribbons
@@ -256,4 +271,4 @@ export const specialPrizes = [
     icon: CompassIcon,
     shelf: 3,
   },
-]; 
+];

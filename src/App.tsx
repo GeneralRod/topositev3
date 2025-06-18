@@ -46,15 +46,15 @@ const GameWrapper: React.FC = () => {
   const getCitiesForPackage = (packageName: string) => {
     switch (packageName) {
       case 'pakket1':
-        return cities.filter(city => city.package === 'pakket1');
+        return cities.filter((city) => city.package === 'pakket1');
       case 'pakket2':
-        return cities.filter(city => city.package === 'pakket2');
+        return cities.filter((city) => city.package === 'pakket2');
       case 'pakket3':
-        return cities.filter(city => city.package === 'pakket3');
+        return cities.filter((city) => city.package === 'pakket3');
       case 'pakket1-2':
-        return cities.filter(city => city.package === 'pakket1' || city.package === 'pakket2');
+        return cities.filter((city) => city.package === 'pakket1' || city.package === 'pakket2');
       case 'pakket2-3':
-        return cities.filter(city => city.package === 'pakket2' || city.package === 'pakket3');
+        return cities.filter((city) => city.package === 'pakket2' || city.package === 'pakket3');
       case 'pakket1-2-3':
         return cities;
       default:
@@ -78,7 +78,7 @@ const InteractiveMapWrapper: React.FC = () => {
 
   const getCitiesForPackage = (packageName: string) => {
     const basePackage = packageName.replace('interactive', 'pakket');
-    return cities.filter(city => city.package === basePackage);
+    return cities.filter((city) => city.package === basePackage);
   };
 
   return (

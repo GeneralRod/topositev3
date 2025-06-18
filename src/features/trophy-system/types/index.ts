@@ -36,4 +36,4 @@ export interface TrophyCabinet {
   achievements: Achievement[];
   purchasableTrophies: PurchasableTrophy[];
   userPoints: UserPoints;
-} 
+}

@@ -11,8 +11,8 @@ export const achievements: Achievement[] = [
     condition: {
       type: 'perfect_score',
       value: 1,
-      region: 'europe'
-    }
+      region: 'europe',
+    },
   },
   {
     id: 'speed-demon',
@@ -23,8 +23,8 @@ export const achievements: Achievement[] = [
     category: 'achievement',
     condition: {
       type: 'speed',
-      value: 30
-    }
+      value: 30,
+    },
   },
   {
     id: 'streak-master',
@@ -35,9 +35,9 @@ export const achievements: Achievement[] = [
     category: 'achievement',
     condition: {
       type: 'streak',
-      value: 7
-    }
-  }
+      value: 7,
+    },
+  },
 ];
 
 export const purchasableTrophies: PurchasableTrophy[] = [
@@ -48,7 +48,7 @@ export const purchasableTrophies: PurchasableTrophy[] = [
     imageUrl: '/trophies/gold-globe.png',
     points: 0,
     category: 'purchasable',
-    price: 2000
+    price: 2000,
   },
   {
     id: 'crystal-compass',
@@ -57,7 +57,7 @@ export const purchasableTrophies: PurchasableTrophy[] = [
     imageUrl: '/trophies/crystal-compass.png',
     points: 0,
     category: 'purchasable',
-    price: 1500
+    price: 1500,
   },
   {
     id: 'platinum-map',
@@ -66,6 +66,6 @@ export const purchasableTrophies: PurchasableTrophy[] = [
     imageUrl: '/trophies/platinum-map.png',
     points: 0,
     category: 'purchasable',
-    price: 3000
-  }
-]; 
+    price: 3000,
+  },
+];

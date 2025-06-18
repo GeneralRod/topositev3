@@ -2,7 +2,7 @@ name: Check Formatting
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   prettier:
@@ -17,4 +17,4 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Check formatting
-        run: npx prettier --check . 
+        run: npx prettier --check .

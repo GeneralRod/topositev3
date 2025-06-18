@@ -12,4 +12,4 @@ export function setTotalCoins(amount: number) {
 export function addCoins(amount: number) {
   const current = getTotalCoins();
   setTotalCoins(current + amount);
-} 
+}

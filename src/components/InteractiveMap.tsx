@@ -26,7 +26,7 @@ const Header = styled.header`
   align-items: center;
   padding: 1rem 2rem;
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
   z-index: 1000;
 
@@ -94,7 +94,8 @@ const MapContainerWrapper = styled.div`
 
 const createDotIcon = () => {
   return new Icon({
-    iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iNiIgZmlsbD0iI2VhNDMzNSIvPjwvc3ZnPg==',
+    iconUrl:
+      'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iNiIgZmlsbD0iI2VhNDMzNSIvPjwvc3ZnPg==',
     iconSize: [12, 12],
     iconAnchor: [6, 6],
   });
@@ -154,11 +155,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ cities, onBack, selecte
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
             {cities.map((city) => (
-              <Marker
-                key={city.name}
-                position={[city.lat, city.lng]}
-                icon={dotIcon}
-              >
+              <Marker key={city.name} position={[city.lat, city.lng]} icon={dotIcon}>
                 <Popup>
                   <CityPopup>
                     <CityName>{city.name}</CityName>
@@ -174,4 +171,4 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ cities, onBack, selecte
   );
 };
 
-export default InteractiveMap; 
+export default InteractiveMap;

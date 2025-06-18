@@ -22,11 +22,13 @@ export const saveGameState = async (state: GameState): Promise<void> => {
       const storageKey = getStorageKey(state.selectedPackage);
       const stateToSave = {
         ...state,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       };
       localStorage.setItem(storageKey, JSON.stringify(stateToSave));
     } catch (error) {
-      throw new StorageError(`Failed to save game state: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new StorageError(
+        `Failed to save game state: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   };
 
@@ -43,14 +45,14 @@ export const loadGameState = async (packageName: string): Promise<GameState | nu
     try {
       const storageKey = getStorageKey(packageName);
       const savedState = localStorage.getItem(storageKey);
-      
+
       if (savedState) {
         const parsedState = JSON.parse(savedState) as GameState;
-        
+
         if (!isValidGameState(parsedState)) {
           throw new StorageError('Invalid game state structure');
         }
-        
+
         return parsedState;
       }
       return null;
@@ -58,7 +60,9 @@ export const loadGameState = async (packageName: string): Promise<GameState | nu
       if (error instanceof StorageError) {
         throw error;
       }
-      throw new StorageError(`Failed to load game state: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new StorageError(
+        `Failed to load game state: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   };
 
@@ -77,7 +81,9 @@ export const clearGameState = async (packageName: string): Promise<void> => {
       const storageKey = getStorageKey(packageName);
       localStorage.removeItem(storageKey);
     } catch (error) {
-      throw new StorageError(`Failed to clear game state: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new StorageError(
+        `Failed to clear game state: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   };
 
@@ -104,4 +110,4 @@ const isValidGameState = (state: unknown): state is GameState => {
     'lastUpdated' in s
     // sessionCoins and coinsThisGame are optional
   );
-}; 
+};
