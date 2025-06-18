@@ -583,7 +583,7 @@ const TitlePage: React.FC = () => {
   }, []);
 
   const handleStart = () => {
-    navigate('/main');
+    navigate('/categories');
   };
 
   return (
