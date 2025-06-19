@@ -182,6 +182,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage, category }) =>
               <PackageDescription>Belangrijke wateren en gebergtes</PackageDescription>
             </PackageCard>
           </PackageGrid>
+
+          <SectionTitle>Interactieve Kaarten</SectionTitle>
+          <PackageGrid>
+            <PackageCard color="#34a853" onClick={() => onSelectPackage('interactive-landscapes')}>
+              <PackageTitle>Interactieve kaart landschappen</PackageTitle>
+              <PackageDescription>Bekijk de outlines van alle landschappen</PackageDescription>
+            </PackageCard>
+          </PackageGrid>
         </>
       )}
 
