@@ -11,7 +11,7 @@ export const features: City[] = [
     continent: 'Afrika',
   },
   {
-    name: 'Nijl',
+    name: 'Nile',
     country: 'Egypte',
     coordinates: [30.0444, 31.2357],
     package: 'landschap1',
@@ -20,7 +20,7 @@ export const features: City[] = [
     continent: 'Afrika',
   },
   {
-    name: 'Amazone',
+    name: 'Amazonas',
     country: 'Brazilië',
     coordinates: [-3.4653, -62.2159],
     package: 'landschap1',
@@ -38,7 +38,7 @@ export const features: City[] = [
     continent: 'Azië',
   },
   {
-    name: 'Alpen',
+    name: 'Alps',
     country: 'Europa',
     coordinates: [46.8, 9.8],
     package: 'landschap1',
@@ -56,7 +56,7 @@ export const features: City[] = [
     continent: 'Noord-Amerika',
   },
   {
-    name: 'Gobi',
+    name: 'Gobi Desert',
     country: 'China/Mongolië',
     coordinates: [42.59, 103.43],
     package: 'landschap1',
@@ -74,7 +74,7 @@ export const features: City[] = [
     continent: 'Noord-Amerika',
   },
   {
-    name: 'Grote Barrièrerif',
+    name: 'Great Barrier Reef',
     country: 'Australië',
     coordinates: [-18.2871, 147.6992],
     package: 'landschap1',
