@@ -4270,7 +4270,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Victoriameer',
       },
       geometry: {
-      type: Polygon,
+      type: 'Polygon',
       coordinates: [
             [
                   [
@@ -4359,7 +4359,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Bajkalmeer',
       },
       geometry: {
-      type: Polygon,
+      type: 'Polygon',
       coordinates: [
             [
                   [
@@ -4528,7 +4528,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Titicacameer',
       },
       geometry: {
-      type: Polygon,
+      type: 'Polygon',
       coordinates: [
             [
                   [
@@ -4609,7 +4609,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Nile',
       },
       geometry: {
-      type: LineString,
+      type: 'LineString',
       coordinates: [
             [
                   33.206893,
@@ -5084,7 +5084,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Mississippi',
       },
       geometry: {
-      type: MultiLineString,
+      type: 'MultiLineString',
       coordinates: [
             [
                   [
@@ -5123,7 +5123,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Amazone',
       },
       geometry: {
-      type: MultiLineString,
+      type: 'MultiLineString',
       coordinates: [
             [
                   [
@@ -6000,7 +6000,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Andesgebergte',
       },
       geometry: {
-      type: MultiPolygon,
+      type: 'MultiPolygon',
       coordinates: [
             [
                   [
@@ -9939,7 +9939,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Himalaya',
       },
       geometry: {
-      type: Polygon,
+      type: 'Polygon',
       coordinates: [
             [
                   [
@@ -10300,7 +10300,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Alps',
       },
       geometry: {
-      type: Polygon,
+      type: 'Polygon',
       coordinates: [
             [
                   [
@@ -10597,7 +10597,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Mount Everest',
       },
       geometry: {
-      type: Point,
+      type: 'Point',
       coordinates: [
             86.925,
             27.9881
@@ -10610,7 +10610,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Aconcagua',
       },
       geometry: {
-      type: Point,
+      type: 'Point',
       coordinates: [
             -70.01,
             -32.65
@@ -10623,7 +10623,7 @@ export const landscapeShapes: FeatureCollection = {
         name: 'Kilimanjaro',
       },
       geometry: {
-      type: Point,
+      type: 'Point',
       coordinates: [
             37.35,
             -3.07
