@@ -1,14 +1,22 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { MapContainer as LeafletMap, TileLayer, Marker, Popup } from 'react-leaflet';
+import {
+  MapContainer as LeafletMap,
+  TileLayer,
+  Marker,
+  Popup,
+  GeoJSON as GeoJSONLayer,
+} from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { City } from '../data/cities';
+import type { FeatureCollection } from 'geojson';
 import 'leaflet/dist/leaflet.css';
 
 interface InteractiveMapProps {
   cities: City[];
   onBack: () => void;
   selectedPackage: string;
+  shapes?: FeatureCollection;
 }
 
 const Container = styled.div`
@@ -130,7 +138,12 @@ const CountryName = styled.p`
   }
 `;
 
-const InteractiveMap: React.FC<InteractiveMapProps> = ({ cities, onBack, selectedPackage }) => {
+const InteractiveMap: React.FC<InteractiveMapProps> = ({
+  cities,
+  onBack,
+  selectedPackage,
+  shapes,
+}) => {
   const dotIcon = createDotIcon();
 
   return (
@@ -154,6 +167,36 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ cities, onBack, selecte
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
+            {shapes && (
+              <GeoJSONLayer
+                data={shapes}
+                style={(feature) => ({
+                  color:
+                    feature?.geometry.type === 'LineString' ||
+                    feature?.geometry.type === 'MultiLineString'
+                      ? 'blue'
+                      : '#333',
+                  weight: 2,
+                  fillOpacity: 0.1,
+                })}
+                eventHandlers={{
+                  mouseover: (e) => {
+                    const layer = e.target;
+                    layer.setStyle({ weight: 3, color: '#ff6600' });
+                  },
+                  mouseout: (e) => {
+                    const layer = e.target;
+                    const isLine =
+                      layer.feature.geometry.type === 'LineString' ||
+                      layer.feature.geometry.type === 'MultiLineString';
+                    layer.setStyle({
+                      weight: 2,
+                      color: isLine ? 'blue' : '#333',
+                    });
+                  },
+                }}
+              />
+            )}
             {cities.map((city) => (
               <Marker key={city.name} position={[city.lat, city.lng]} icon={dotIcon}>
                 <Popup>

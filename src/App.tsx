@@ -8,6 +8,7 @@ import TitlePage from './components/TitlePage';
 import CategoryScreen from './components/CategoryScreen';
 import { cities } from './data/cities';
 import { features } from './data/features';
+import { landscapeShapes } from './data/landscapeShapes';
 import './App.css';
 import { TrophyCabinet } from './features/trophy-system/components/TrophyCabinet';
 // import { TrophySystemTest } from './features/trophy-system/components/TrophySystemTest';
@@ -111,11 +112,19 @@ const InteractiveMapWrapper: React.FC = () => {
     return [];
   };
 
+  const getShapesForPackage = (cat: string) => {
+    if (cat === 'landscapes') {
+      return landscapeShapes;
+    }
+    return undefined;
+  };
+
   return (
     <InteractiveMap
       cities={getCitiesForPackage(category, selectedPackage || '')}
       onBack={() => navigate(`/main/${category}`)}
       selectedPackage={selectedPackage || ''}
+      shapes={getShapesForPackage(category)}
     />
   );
 };
