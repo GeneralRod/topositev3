@@ -57,11 +57,30 @@ const CategoryDescription = styled.p`
   font-size: 0.9rem;
 `;
 
+const BackButton = styled.button`
+  background: transparent;
+  border: 2px solid #1a73e8;
+  color: #1a73e8;
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  transition: all 0.2s;
+  align-self: flex-start;
+
+  &:hover {
+    background: #1a73e8;
+    color: white;
+  }
+`;
+
 const CategoryScreen: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <Container>
+      <BackButton onClick={() => navigate('/')}>← Terug</BackButton>
       <Title>Selecteer een categorie</Title>
       <CategoryGrid>
         <CategoryCard color="#1a73e8" onClick={() => navigate('/main/capitals')}>

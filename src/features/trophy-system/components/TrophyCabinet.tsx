@@ -496,7 +496,7 @@ export const TrophyCabinet: React.FC = () => {
             {coins} munten
           </CoinCounter>
         </TitleRow>
-        <BackButton onClick={() => navigate('/main')}>Terug naar hoofdmenu</BackButton>
+        <BackButton onClick={() => navigate(-1)}>← Terug</BackButton>
       </Header>
       <CabinetArea>
         <CabinetWrapper>
