@@ -9,22 +9,52 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
+  padding: 2rem;
   background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
 `;
 
-const CategoryCard = styled.div`
+const Title = styled.h1`
+  color: #1a73e8;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-size: 2.5rem;
+`;
+
+const CategoryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 800px;
+`;
+
+const CategoryCard = styled.div<{ color: string }>`
   background: white;
   border-radius: 8px;
-  padding: 2rem 3rem;
-  font-size: 1.5rem;
-  cursor: pointer;
+  padding: 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  border-top: 4px solid ${(props) => props.color};
 
   &:hover {
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+`;
+
+const CategoryTitle = styled.h2`
+  color: #202124;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+`;
+
+const CategoryDescription = styled.p`
+  color: #5f6368;
+  margin: 0;
+  font-size: 0.9rem;
 `;
 
 const CategoryScreen: React.FC = () => {
@@ -32,10 +62,17 @@ const CategoryScreen: React.FC = () => {
 
   return (
     <Container>
-      <CategoryCard onClick={() => navigate('/main/capitals')}>Hoofd- en wereldsteden</CategoryCard>
-      <CategoryCard onClick={() => navigate('/main/landscapes')}>
-        Wereldwijde wateren en landschappen
-      </CategoryCard>
+      <Title>Selecteer een categorie</Title>
+      <CategoryGrid>
+        <CategoryCard color="#1a73e8" onClick={() => navigate('/main/capitals')}>
+          <CategoryTitle>Hoofd- en wereldsteden</CategoryTitle>
+          <CategoryDescription>Oefen met hoofdsteden en belangrijke steden wereldwijd</CategoryDescription>
+        </CategoryCard>
+        <CategoryCard color="#34a853" onClick={() => navigate('/main/landscapes')}>
+          <CategoryTitle>Wereldwijde wateren en landschappen</CategoryTitle>
+          <CategoryDescription>Leer over belangrijke wateren en gebergtes</CategoryDescription>
+        </CategoryCard>
+      </CategoryGrid>
     </Container>
   );
 };
