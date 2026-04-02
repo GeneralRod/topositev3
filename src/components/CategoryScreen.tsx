@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
+import BackButton from './BackButton';
 
 const Container = styled.div`
   width: 100%;
@@ -55,24 +56,6 @@ const CategoryDescription = styled.p`
   color: #5f6368;
   margin: 0;
   font-size: 0.9rem;
-`;
-
-const BackButton = styled.button`
-  background: transparent;
-  border: 2px solid #1a73e8;
-  color: #1a73e8;
-  padding: 0.7rem 1.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-bottom: 2rem;
-  transition: all 0.2s;
-  align-self: flex-start;
-
-  &:hover {
-    background: #1a73e8;
-    color: white;
-  }
 `;
 
 const CategoryScreen: React.FC = () => {
