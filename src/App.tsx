@@ -131,7 +131,7 @@ const InteractiveMapWrapper: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <Router>
+    <Router basename="/topositev3">
       <AppContainer>
         <Routes>
           <Route path="/" element={<TitlePage />} />
