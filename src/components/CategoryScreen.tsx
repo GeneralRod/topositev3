@@ -85,7 +85,9 @@ const CategoryScreen: React.FC = () => {
       <CategoryGrid>
         <CategoryCard color="#1a73e8" onClick={() => navigate('/main/capitals')}>
           <CategoryTitle>Hoofd- en wereldsteden</CategoryTitle>
-          <CategoryDescription>Oefen met hoofdsteden en belangrijke steden wereldwijd</CategoryDescription>
+          <CategoryDescription>
+            Oefen met hoofdsteden en belangrijke steden wereldwijd
+          </CategoryDescription>
         </CategoryCard>
         <CategoryCard color="#34a853" onClick={() => navigate('/main/landscapes')}>
           <CategoryTitle>Wereldwijde wateren en landschappen</CategoryTitle>
