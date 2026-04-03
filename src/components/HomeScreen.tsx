@@ -173,28 +173,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage, category }) =>
         </>
       )}
 
-      {category === 'landscapes' && (
-        <>
-          <Title>Topografie Wereld: wateren en landschappen</Title>
-
-          <SectionTitle>Landschappen</SectionTitle>
-          <PackageGrid>
-            <PackageCard color="#1a73e8" onClick={() => onSelectPackage('landschap1')}>
-              <PackageTitle>Wereldwijde landschappen</PackageTitle>
-              <PackageDescription>Belangrijke wateren en gebergtes</PackageDescription>
-            </PackageCard>
-          </PackageGrid>
-
-          <SectionTitle>Interactieve Kaarten</SectionTitle>
-          <PackageGrid>
-            <PackageCard color="#34a853" onClick={() => onSelectPackage('interactive-landscapes')}>
-              <PackageTitle>Interactieve kaart landschappen</PackageTitle>
-              <PackageDescription>Bekijk de outlines van alle landschappen</PackageDescription>
-            </PackageCard>
-          </PackageGrid>
-        </>
-      )}
-
       <TrophyButton onClick={() => navigate('/trophy-cabinet')}>
         <TrophyIcon>🏆</TrophyIcon>
         Prijzenkast

@@ -7,8 +7,6 @@ import InteractiveMap from './components/InteractiveMap';
 import TitlePage from './components/TitlePage';
 import CategoryScreen from './components/CategoryScreen';
 import { cities } from './data/cities';
-import { features } from './data/features';
-import { landscapeShapes } from './data/landscapeShapes';
 import './App.css';
 import { TrophyCabinet } from './features/trophy-system/components/TrophyCabinet';
 // import { TrophySystemTest } from './features/trophy-system/components/TrophySystemTest';
@@ -70,15 +68,6 @@ const GameWrapper: React.FC = () => {
       }
     }
 
-    if (cat === 'landscapes') {
-      switch (packageName) {
-        case 'landschap1':
-          return features.filter((f) => f.package === 'landschap1');
-        default:
-          return [];
-      }
-    }
-
     return [];
   };
 
@@ -105,18 +94,7 @@ const InteractiveMapWrapper: React.FC = () => {
       return cities.filter((city) => city.package === basePackage);
     }
 
-    if (cat === 'landscapes') {
-      return features.filter((f) => f.package === 'landschap1');
-    }
-
     return [];
-  };
-
-  const getShapesForPackage = (cat: string) => {
-    if (cat === 'landscapes') {
-      return landscapeShapes;
-    }
-    return undefined;
   };
 
   return (
@@ -124,7 +102,6 @@ const InteractiveMapWrapper: React.FC = () => {
       cities={getCitiesForPackage(category, selectedPackage || '')}
       onBack={() => navigate(`/main/${category}`)}
       selectedPackage={selectedPackage || ''}
-      shapes={getShapesForPackage(category)}
     />
   );
 };

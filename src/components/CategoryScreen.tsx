@@ -72,10 +72,6 @@ const CategoryScreen: React.FC = () => {
             Oefen met hoofdsteden en belangrijke steden wereldwijd
           </CategoryDescription>
         </CategoryCard>
-        <CategoryCard color="#34a853" onClick={() => navigate('/main/landscapes')}>
-          <CategoryTitle>Wereldwijde wateren en landschappen</CategoryTitle>
-          <CategoryDescription>Leer over belangrijke wateren en gebergtes</CategoryDescription>
-        </CategoryCard>
       </CategoryGrid>
     </Container>
   );
