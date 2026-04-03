@@ -108,7 +108,7 @@ const InteractiveMapWrapper: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <Router basename="/topositev3">
+    <Router basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
       <AppContainer>
         <Routes>
           <Route path="/" element={<TitlePage />} />
