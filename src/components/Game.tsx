@@ -396,7 +396,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
   const [pakketBonus, setPakketBonus] = useState(0);
   const mapRef = useRef<L.Map>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [lastAnswerTime, setLastAnswerTime] = useState<number>(Date.now());
+  const [lastAnswerTime, setLastAnswerTime] = useState<number>(() => Date.now());
   const [coinsThisGame, setCoinsThisGame] = useState(0);
 
   // Select next city: only from blue or unanswered
@@ -579,6 +579,7 @@ const Game: React.FC<GameProps> = ({ cities, onBack, selectedPackage }) => {
     }
 
     // Correct city (first time or after blue)
+    // eslint-disable-next-line react-hooks/purity
     const now = Date.now();
     const timeTaken = (now - lastAnswerTime) / 1000;
     setLastAnswerTime(now);
