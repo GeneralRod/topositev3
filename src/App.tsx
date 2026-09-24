@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import {
   BrowserRouter as Router,
   Navigate,
@@ -9,13 +9,20 @@ import {
 } from 'react-router-dom';
 import styled from '@emotion/styled';
 import HomeScreen from './components/HomeScreen';
-import Game from './components/Game';
-import InteractiveMap from './components/InteractiveMap';
 import TitlePage from './components/TitlePage';
 import CategoryScreen from './components/CategoryScreen';
 import { findCategory, findPackage, locationsFor } from './content/catalog';
 import './App.css';
-import { TrophyCabinet } from './features/trophy-system/components/TrophyCabinet';
+
+// Deze schermen (met de kaartbibliotheek Leaflet) worden pas geladen als ze
+// geopend worden; dat maakt de eerste keer laden van de site sneller.
+const Game = lazy(() => import('./components/Game'));
+const InteractiveMap = lazy(() => import('./components/InteractiveMap'));
+const TrophyCabinet = lazy(() =>
+  import('./features/trophy-system/components/TrophyCabinet').then((m) => ({
+    default: m.TrophyCabinet,
+  })),
+);
 
 const AppContainer = styled.div`
   width: 100vw;
@@ -79,15 +86,17 @@ const App: React.FC = () => {
   return (
     <Router>
       <AppContainer>
-        <Routes>
-          <Route path="/" element={<TitlePage />} />
-          <Route path="/categories" element={<CategoryScreen />} />
-          <Route path="/main/:category" element={<HomeScreenWrapper />} />
-          <Route path="/game/:category/:package" element={<GameWrapper />} />
-          <Route path="/interactive/:category/:package" element={<InteractiveMapWrapper />} />
-          <Route path="/trophy-cabinet" element={<TrophyCabinet />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<TitlePage />} />
+            <Route path="/categories" element={<CategoryScreen />} />
+            <Route path="/main/:category" element={<HomeScreenWrapper />} />
+            <Route path="/game/:category/:package" element={<GameWrapper />} />
+            <Route path="/interactive/:category/:package" element={<InteractiveMapWrapper />} />
+            <Route path="/trophy-cabinet" element={<TrophyCabinet />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </AppContainer>
     </Router>
   );

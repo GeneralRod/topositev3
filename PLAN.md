@@ -71,8 +71,8 @@ zonder dat de live site ooit stuk gaat tijdens het werk.
 
 ### Fase 3: sneller
 
-- [ ] Routes lazy laden (code splitting); three.js alleen op de startpagina
-- [ ] Animatielek fixen; lichtere wereldbol, texture zelf hosten
+- [x] Routes lazy laden (code splitting); three.js alleen op de startpagina
+- [x] Animatielek fixen; lichtere wereldbol, texture zelf hosten
 - [x] Marker-iconen lokaal (niet meer nodig: het spel gebruikt eigen stippen, CDN-verwijzing is weg)
 
 ### Fase 4: nieuwe features
