@@ -108,8 +108,10 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
 
 **Deel 2: slimmer oefenen**
 
-- [ ] Oefenrondje "Mijn lastige steden" (steden waar je vaak fouten maakt)
-- [ ] Sterren per pakket (1 tot 3, op basis van fouten), zichtbaar op de pakketkaarten
+- [x] Oefenrondje "Mijn lastige steden": een stad is lastig na een fout, tot je hem twee keer
+      achter elkaar in één keer goed hebt (`src/game/progress.ts`)
+- [x] Sterren per pakket (3 = foutloos, 2 = hooguit 1 fout per 10 steden, anders 1), beste
+      score zichtbaar op de pakketkaarten en in het eindscherm
 
 **Deel 3: tweede speelmanier**
 

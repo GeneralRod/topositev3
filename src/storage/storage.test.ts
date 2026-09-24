@@ -106,6 +106,8 @@ describe('overzetten van oude gegevens', () => {
       upgrades: [],
       style: { finish: 'oak', extras: [] },
       games: {},
+      cityStats: {},
+      stars: {},
     });
   });
 });
@@ -186,6 +188,22 @@ describe('opslag in de app', () => {
     storage.setStoreForTesting(store);
     expect(storage.getUpgrades()).toEqual(['cherry']);
     expect(storage.getStyle()).toEqual({ finish: 'cherry', extras: [] });
+  });
+
+  it('houdt lastige steden per onderwerp bij', () => {
+    storage.recordCityAnswer('capitals', 'Lima', 'wrong');
+    storage.setStoreForTesting(store);
+    expect(storage.getCityStats('capitals')).toEqual({ Lima: { wrong: 1, streak: 0 } });
+    expect(storage.getCityStats('europa')).toEqual({});
+  });
+
+  it('bewaart alleen betere sterren', () => {
+    storage.recordStars('pakket1', 2);
+    storage.recordStars('pakket1', 1);
+    expect(storage.getStars()).toEqual({ pakket1: 2 });
+    storage.recordStars('pakket1', 3);
+    storage.setStoreForTesting(store);
+    expect(storage.getStars()).toEqual({ pakket1: 3 });
   });
 
   it('bewaart en wist spellen per pakket', () => {

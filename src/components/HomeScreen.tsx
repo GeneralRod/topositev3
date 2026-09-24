@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import type { Category } from '../content/catalog';
-import { BackLink, Card, CardGrid, Page, PageTitle, SectionTitle } from '../ui';
+import { PRACTICE_PACKAGE_ID, type Category } from '../content/catalog';
+import { getCityStats, getStars } from '../storage';
+import { hardCities } from '../game/progress';
+import { BackLink, Card, CardGrid, Page, PageTitle, SectionTitle, Stars } from '../ui';
 
 interface HomeScreenProps {
   category: Category;
@@ -50,11 +52,31 @@ const VersionTag = styled.div`
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
   const navigate = useNavigate();
+  const stars = getStars();
+  const hardCount = hardCities(
+    getCityStats(category.id),
+    category.locations.map((l) => l.name),
+  ).length;
 
   return (
     <Page>
       <BackLink onClick={() => navigate('/categories')}>← Terug naar categorieën</BackLink>
       <PageTitle>{category.heading}</PageTitle>
+
+      <SectionTitle>Oefenen</SectionTitle>
+      <CardGrid>
+        <Card
+          title="Mijn lastige steden"
+          description={
+            hardCount > 0
+              ? `Oefen de ${hardCount === 1 ? 'stad' : `${hardCount} steden`} die je vaak fout hebt.`
+              : 'Nog geen lastige steden. Speel eerst een pakket!'
+          }
+          color="#e67e22"
+          disabled={hardCount === 0}
+          onClick={() => navigate(`/game/${category.id}/${PRACTICE_PACKAGE_ID}`)}
+        />
+      </CardGrid>
 
       {category.sections.map((section) => (
         <React.Fragment key={section.title}>
@@ -66,6 +88,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
                 title={pkg.title}
                 description={pkg.description}
                 color={pkg.color}
+                extra={section.kind === 'game' ? <Stars count={stars[pkg.id] ?? 0} /> : undefined}
                 onClick={() =>
                   navigate(
                     `/${section.kind === 'map' ? 'interactive' : 'game'}/${category.id}/${pkg.id}`,

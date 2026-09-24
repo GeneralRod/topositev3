@@ -2,6 +2,7 @@
 // geheugen bij en schrijft elke wijziging meteen weg naar localStorage.
 
 import type { GameState } from '../game/rules';
+import { recordAnswer, type AnswerKind, type CityStats } from '../game/progress';
 import { loadSaveData, writeSaveData, type KeyValueStore, type SaveData } from './storage';
 
 function memoryStore(): KeyValueStore {
@@ -125,4 +126,28 @@ export function clearGame(packageId: string): void {
     delete games[packageId];
     return { ...d, games };
   });
+}
+
+export function getCityStats(categoryId: string): CityStats {
+  return state().cityStats[categoryId] ?? {};
+}
+
+export function recordCityAnswer(categoryId: string, city: string, kind: AnswerKind): void {
+  update((d) => ({
+    ...d,
+    cityStats: {
+      ...d.cityStats,
+      [categoryId]: recordAnswer(d.cityStats[categoryId] ?? {}, city, kind),
+    },
+  }));
+}
+
+export function getStars(): Record<string, number> {
+  return state().stars;
+}
+
+/** Bewaar sterren voor een pakket; alleen als het beter is dan eerder. */
+export function recordStars(packageId: string, stars: number): void {
+  if ((state().stars[packageId] ?? 0) >= stars) return;
+  update((d) => ({ ...d, stars: { ...d.stars, [packageId]: stars } }));
 }

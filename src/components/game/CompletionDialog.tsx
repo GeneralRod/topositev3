@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Button, colors } from '../../ui';
+import { Button, Stars, colors } from '../../ui';
 
 const Overlay = styled.div`
   position: fixed;
@@ -84,17 +84,50 @@ const Mistakes = styled.span`
   font-weight: 500;
 `;
 
+const StarLine = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin: -0.75rem 0 1rem;
+`;
+
+const StarText = styled.div`
+  color: #5f6368;
+  font-size: 0.9rem;
+`;
+
+const STAR_TEXT: Record<number, string> = {
+  1: 'Goed gedaan! Met minder fouten verdien je meer sterren.',
+  2: 'Heel goed! Nog foutlozer voor 3 sterren.',
+  3: 'Foutloos! Je bent een echte kampioen.',
+};
+
 interface CompletionDialogProps {
   coins: number;
   bonus: number;
   hardest: Array<{ city: string; mistakes: number }>;
+  /** Behaalde sterren; null bij het oefenrondje. */
+  stars: number | null;
   onClose: () => void;
 }
 
-const CompletionDialog: React.FC<CompletionDialogProps> = ({ coins, bonus, hardest, onClose }) => (
+const CompletionDialog: React.FC<CompletionDialogProps> = ({
+  coins,
+  bonus,
+  hardest,
+  stars,
+  onClose,
+}) => (
   <Overlay>
     <Dialog role="dialog" aria-modal="true">
       <Message>Super! Je hebt alle steden gevonden!</Message>
+      {stars !== null && (
+        <StarLine>
+          <Stars count={stars} size={40} />
+          <StarText>{STAR_TEXT[stars]}</StarText>
+        </StarLine>
+      )}
       <CoinSummary>
         Munten dit spel: {coins} <br />
         Bonus: +{bonus} <br />
