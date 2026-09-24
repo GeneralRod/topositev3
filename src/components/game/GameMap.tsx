@@ -1,14 +1,14 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import { MapContainer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { City } from '../../data/cities';
 import ResetViewButton from '../map/ResetViewButton';
+import WorldLayer from '../map/WorldLayer';
 import {
   MAX_ZOOM,
   MIN_ZOOM,
-  TILE_ATTRIBUTION,
-  TILE_URL,
+  WATER_COLOR,
   WHEEL_PX_PER_ZOOM_LEVEL,
   WORLD_BOUNDS,
   WORLD_CENTER,
@@ -58,11 +58,13 @@ const GameMap: React.FC<GameMapProps> = ({ cities, status, onCityClick }) => (
     maxBounds={WORLD_BOUNDS}
     maxBoundsViscosity={1}
     wheelPxPerZoomLevel={WHEEL_PX_PER_ZOOM_LEVEL}
-    style={{ height: '100%', width: '100%' }}
+    style={{ height: '100%', width: '100%', background: WATER_COLOR }}
+    // Landen tekenen op canvas: veel sneller dan losse SVG-vormen.
+    preferCanvas
     // Dubbelklikken zoomt niet: een snelle tweede klik zou als fout antwoord tellen.
     doubleClickZoom={false}
   >
-    <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
+    <WorldLayer />
     <ResetViewButton />
     {cities.map((city) => (
       <Marker

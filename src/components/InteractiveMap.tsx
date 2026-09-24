@@ -1,20 +1,14 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import {
-  MapContainer as LeafletMap,
-  TileLayer,
-  Marker,
-  Popup,
-  GeoJSON as GeoJSONLayer,
-} from 'react-leaflet';
+import { MapContainer as LeafletMap, Marker, Popup, GeoJSON as GeoJSONLayer } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { City } from '../data/cities';
 import ResetViewButton from './map/ResetViewButton';
+import WorldLayer from './map/WorldLayer';
 import {
   MAX_ZOOM,
   MIN_ZOOM,
-  TILE_ATTRIBUTION,
-  TILE_URL,
+  WATER_COLOR,
   WHEEL_PX_PER_ZOOM_LEVEL,
   WORLD_BOUNDS,
   WORLD_CENTER,
@@ -167,6 +161,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       <MapWrapper>
         <MapContainerWrapper>
           <LeafletMap
+            style={{ background: WATER_COLOR }}
+            preferCanvas
             center={WORLD_CENTER}
             zoom={WORLD_ZOOM}
             minZoom={MIN_ZOOM}
@@ -175,7 +171,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
             maxBoundsViscosity={1}
             wheelPxPerZoomLevel={WHEEL_PX_PER_ZOOM_LEVEL}
           >
-            <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
+            <WorldLayer />
             <ResetViewButton />
             {shapes && (
               <GeoJSONLayer

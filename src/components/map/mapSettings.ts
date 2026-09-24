@@ -2,17 +2,11 @@
 
 import type { LatLngBoundsExpression, LatLngTuple } from 'leaflet';
 
-// Kaart zonder namen (CARTO Voyager 'nolabels'), zodat inzoomen het antwoord
-// niet verraadt. Gratis voor niet-commercieel gebruik, met bronvermelding.
-// CARTO vraagt een sleutel: VITE_CARTO_KEY, ingesteld bij Netlify of lokaal in
-// een eigen .env-bestand (staat niet in git). Zonder sleutel werkt de kaart
-// ook, maar met een watermerk.
-const CARTO_KEY = import.meta.env.VITE_CARTO_KEY ?? '';
-export const TILE_URL =
-  'https://basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png' +
-  (CARTO_KEY ? `?key=${encodeURIComponent(CARTO_KEY)}` : '');
-export const TILE_ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
+// Kleuren van de eigen wereldkaart (zie WorldLayer).
+export const WATER_COLOR = '#a8d5f2';
+export const LAND_COLOR = '#f4efdc';
+export const BORDER_COLOR = '#b9a57e';
+export const COAST_COLOR = '#6f9fc0';
 
 /** Beginbeeld: de hele wereld. */
 export const WORLD_CENTER: LatLngTuple = [20, 0];

@@ -101,7 +101,8 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
 **Deel 1: de kaart**
 
 - [x] Zoomen en slepen met de muis, plus een knop "Hele wereld" die de kaart terugzet
-- [x] Kaart zonder namen, zodat inzoomen het antwoord niet verraadt (CARTO Voyager zonder labels)
+- [x] Kaart zonder namen, zodat inzoomen het antwoord niet verraadt: eigen kaart met landen en
+      grenzen uit Natural Earth (`world-atlas`), geen externe kaartdienst of sleutel nodig
 - [x] Versienummer bijwerken (9.0)
 - [ ] GitHub Pages uitzetten (instelling op GitHub, door de eigenaar)
 
