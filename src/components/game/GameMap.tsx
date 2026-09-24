@@ -3,6 +3,17 @@ import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { City } from '../../data/cities';
+import ResetViewButton from '../map/ResetViewButton';
+import {
+  MAX_ZOOM,
+  MIN_ZOOM,
+  TILE_ATTRIBUTION,
+  TILE_URL,
+  WHEEL_PX_PER_ZOOM_LEVEL,
+  WORLD_BOUNDS,
+  WORLD_CENTER,
+  WORLD_ZOOM,
+} from '../map/mapSettings';
 import type { CityStatus } from '../../game/rules';
 
 const STATUS_COLORS: Record<CityStatus, string> = {
@@ -40,19 +51,19 @@ interface GameMapProps {
 
 const GameMap: React.FC<GameMapProps> = ({ cities, status, onCityClick }) => (
   <MapContainer
-    center={[20, 0]}
-    zoom={2}
+    center={WORLD_CENTER}
+    zoom={WORLD_ZOOM}
+    minZoom={MIN_ZOOM}
+    maxZoom={MAX_ZOOM}
+    maxBounds={WORLD_BOUNDS}
+    maxBoundsViscosity={1}
+    wheelPxPerZoomLevel={WHEEL_PX_PER_ZOOM_LEVEL}
     style={{ height: '100%', width: '100%' }}
-    zoomControl={false}
+    // Dubbelklikken zoomt niet: een snelle tweede klik zou als fout antwoord tellen.
     doubleClickZoom={false}
-    scrollWheelZoom={false}
-    dragging={false}
-    touchZoom={false}
   >
-    <TileLayer
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    />
+    <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
+    <ResetViewButton />
     {cities.map((city) => (
       <Marker
         key={city.name}

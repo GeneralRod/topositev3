@@ -9,6 +9,18 @@ import {
 } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { City } from '../data/cities';
+import ResetViewButton from './map/ResetViewButton';
+import {
+  MAX_ZOOM,
+  MIN_ZOOM,
+  TILE_ATTRIBUTION,
+  TILE_URL,
+  WHEEL_PX_PER_ZOOM_LEVEL,
+  WORLD_BOUNDS,
+  WORLD_CENTER,
+  WORLD_ZOOM,
+} from './map/mapSettings';
+
 import type { FeatureCollection } from 'geojson';
 import 'leaflet/dist/leaflet.css';
 
@@ -155,18 +167,16 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       <MapWrapper>
         <MapContainerWrapper>
           <LeafletMap
-            center={[20, 0]}
-            zoom={2}
-            zoomControl={false}
-            doubleClickZoom={false}
-            scrollWheelZoom={false}
-            dragging={false}
-            touchZoom={false}
+            center={WORLD_CENTER}
+            zoom={WORLD_ZOOM}
+            minZoom={MIN_ZOOM}
+            maxZoom={MAX_ZOOM}
+            maxBounds={WORLD_BOUNDS}
+            maxBoundsViscosity={1}
+            wheelPxPerZoomLevel={WHEEL_PX_PER_ZOOM_LEVEL}
           >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
+            <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
+            <ResetViewButton />
             {shapes && (
               <GeoJSONLayer
                 data={shapes}

@@ -82,9 +82,6 @@ Mobiel is daarom geen prioriteit; muis en toetsenbord wel.
 
 ### Fase 4: nieuwe features
 
-- [ ] Kaart met zoomen/slepen (met de muis; stippen in Europa liggen nu op elkaar)
-- [ ] Nieuwe categorieën (landen, wateren, gebergtes)
-- [ ] Oefenmodus "moeilijkste steden" en voortgangsoverzicht
 - [x] Prijzenkast opnieuw ontworpen (`src/cabinet/`): houten ontdekkerskast met 4 thema-planken
       × 4 plekken, eigen tekeningen, lege plekken als doel (schaduw + prijs), stickers op de
       zijpanelen, kopen vanuit de kast. Oude prijzen blijven; linten en deurspullen worden
@@ -95,3 +92,44 @@ Mobiel is daarom geen prioriteit; muis en toetsenbord wel.
 ### Fase 5: nieuw design
 
 - [ ] Consistente stijl (kleuren, typografie), mobile-first
+
+### Fase 6: verbeterplan (september 2026)
+
+Afspraak: elk deel is een eigen pull request met voorbeeldlink. De eigenaar test en geeft een
+oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft zoals het is.
+
+**Deel 1: de kaart**
+
+- [x] Zoomen en slepen met de muis, plus een knop "Hele wereld" die de kaart terugzet
+- [x] Kaart zonder namen, zodat inzoomen het antwoord niet verraadt (CARTO Voyager zonder labels)
+- [x] Versienummer bijwerken (9.0)
+- [ ] GitHub Pages uitzetten (instelling op GitHub, door de eigenaar)
+
+**Deel 2: slimmer oefenen**
+
+- [ ] Oefenrondje "Mijn lastige steden" (steden waar je vaak fouten maakt)
+- [ ] Sterren per pakket (1 tot 3, op basis van fouten), zichtbaar op de pakketkaarten
+
+**Deel 3: tweede speelmanier**
+
+- [ ] Meerkeuze: een stip knippert, kies de goede naam uit vier
+
+**Deel 4: dagelijkse uitdaging**
+
+- [ ] Elke dag 10 willekeurige steden; extra munten als je meerdere dagen achter elkaar speelt
+
+**Deel 5: meer om te verdienen**
+
+- [ ] Extra prijzen en stickers
+- [ ] Prestatieprijzen (bijv. een pakket zonder fouten), niet te koop maar te verdienen
+
+**Deel 6 en verder: nieuwe onderwerpen** (elk onderwerp een eigen deel)
+
+- [ ] Nederland: provinciehoofdsteden en grote steden
+- [ ] Nederland: provincies, rivieren en wateren
+- [ ] Europa: landen en hoofdsteden
+- [ ] De wereld: landen, zeeën en gebergtes
+
+**Later**
+
+- [ ] Geluidjes bij goed en fout (met aan/uit-knop)
