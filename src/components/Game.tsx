@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import type { City } from '../data/cities';
-import { useGame } from '../game/useGame';
+import { totalMistakes, useGame } from '../game/useGame';
+import { starsFor } from '../game/progress';
 import { completionBonus, foundCount, hardestCities, isComplete } from '../game/rules';
 import { Button, colors } from '../ui';
 import GameHeader from './game/GameHeader';
@@ -70,6 +71,9 @@ const EmptyMessage = styled.div`
 
 interface GameProps {
   packageId: string;
+  categoryId: string;
+  /** Sterren tellen (niet bij het oefenrondje met lastige steden). */
+  countStars: boolean;
   title: string;
   cities: City[];
   onBack: () => void;
@@ -81,9 +85,19 @@ interface FeedbackState {
   success: boolean;
 }
 
-const Game: React.FC<GameProps> = ({ packageId, title, cities, onBack }) => {
+const Game: React.FC<GameProps> = ({
+  packageId,
+  categoryId,
+  countStars,
+  title,
+  cities,
+  onBack,
+}) => {
   const cityNames = useMemo(() => cities.map((c) => c.name), [cities]);
-  const { state, clickCity, showHint, restart } = useGame(packageId, cityNames);
+  const { state, clickCity, showHint, restart } = useGame(packageId, cityNames, {
+    categoryId,
+    countStars,
+  });
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
 
   // Laat een melding na een tijdje weer verdwijnen.
@@ -145,6 +159,7 @@ const Game: React.FC<GameProps> = ({ packageId, title, cities, onBack }) => {
           coins={state.coinsThisGame}
           bonus={completionBonus(state.coinsThisGame)}
           hardest={hardestCities(state)}
+          stars={countStars ? starsFor(totalMistakes(state), cities.length) : null}
           onClose={() => {
             restart();
             onBack();

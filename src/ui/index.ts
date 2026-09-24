@@ -4,3 +4,4 @@ export { colors } from './theme';
 export { Button, Page, PageTitle, SectionTitle, CardGrid } from './styles';
 export { default as BackLink } from './BackLink';
 export { default as Card } from './Card';
+export { default as Stars } from './Stars';

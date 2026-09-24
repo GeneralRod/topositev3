@@ -2,7 +2,8 @@
 // Alle beslissingen staan in rules.ts; hier alleen: bijhouden, bewaren, munten uitkeren.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { addCoins, clearGame, loadGame, saveGame } from '../storage';
+import { addCoins, clearGame, loadGame, recordCityAnswer, recordStars, saveGame } from '../storage';
+import { starsFor } from './progress';
 import {
   answer,
   claimCompletionBonus,
@@ -18,7 +19,20 @@ function startGame(packageId: string, cityNames: string[]): GameState {
   return saved ? restoreGame(saved, cityNames) : newGame(cityNames);
 }
 
-export function useGame(packageId: string, cityNames: string[]) {
+export interface GameOptions {
+  /** Onderwerp, voor het bijhouden van lastige steden. */
+  categoryId: string;
+  /** Sterren bewaren bij een afgerond spel (niet bij het oefenrondje). */
+  countStars: boolean;
+}
+
+/** Totaal aantal fouten in een spel. */
+export function totalMistakes(state: GameState): number {
+  return Object.values(state.mistakes).reduce((sum, n) => sum + n, 0);
+}
+
+export function useGame(packageId: string, cityNames: string[], options: GameOptions) {
+  const { categoryId, countStars } = options;
   const [state, setState] = useState(() => startGame(packageId, cityNames));
   const questionStartedAt = useRef(0);
 
@@ -37,18 +51,25 @@ export function useGame(packageId: string, cityNames: string[]) {
       const seconds = (Date.now() - questionStartedAt.current) / 1000;
       const { state: answered, result } = answer(state, cityName, seconds);
       let next = answered;
+      if (result.kind === 'wrong' && state.currentCity) {
+        recordCityAnswer(categoryId, state.currentCity, 'wrong');
+      }
       if (result.kind === 'correct') {
+        recordCityAnswer(categoryId, result.city, result.firstTry ? 'first-try' : 'after-mistake');
         addCoins(result.coins);
         if (isComplete(next)) {
           const claimed = claimCompletionBonus(next);
           addCoins(claimed.bonus);
           next = claimed.state;
+          if (countStars) {
+            recordStars(packageId, starsFor(totalMistakes(next), Object.keys(next.status).length));
+          }
         }
       }
       setState(next);
       return result;
     },
-    [state],
+    [state, categoryId, countStars, packageId],
   );
 
   const showHint = useCallback(() => setState((s) => ({ ...s, hintUsed: true })), []);

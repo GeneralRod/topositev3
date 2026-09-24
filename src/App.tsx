@@ -11,7 +11,9 @@ import styled from '@emotion/styled';
 import HomeScreen from './components/HomeScreen';
 import TitlePage from './components/TitlePage';
 import CategoryScreen from './components/CategoryScreen';
-import { findCategory, findPackage, locationsFor } from './content/catalog';
+import { findCategory, findPackage, locationsFor, PRACTICE_PACKAGE_ID } from './content/catalog';
+import { getCityStats } from './storage';
+import { hardCities } from './game/progress';
 
 // Deze schermen (met de kaartbibliotheek Leaflet) worden pas geladen als ze
 // geopend worden; dat maakt de eerste keer laden van de site sneller.
@@ -50,21 +52,62 @@ function usePackageRoute(kind: 'game' | 'map') {
   if (!category || !found || found.kind !== kind) return null;
   return {
     pkg: found.pkg,
+    categoryId: category.id,
     cities: locationsFor(category, found.pkg),
     onBack: () => navigate(`/main/${category.id}`),
   };
 }
 
 const GameWrapper: React.FC = () => {
+  const { category: categoryId, package: packageId } = useParams<{
+    category: string;
+    package: string;
+  }>();
+  if (packageId === PRACTICE_PACKAGE_ID) return <PracticeWrapper categoryId={categoryId} />;
+  return <PackageGameWrapper />;
+};
+
+const PackageGameWrapper: React.FC = () => {
   const route = usePackageRoute('game');
   if (!route) return <Navigate to="/categories" replace />;
   return (
     <Game
       key={route.pkg.id}
       packageId={route.pkg.id}
+      categoryId={route.categoryId}
+      countStars
       title={route.pkg.title}
       cities={route.cities}
       onBack={route.onBack}
+    />
+  );
+};
+
+// Oefenrondje: alleen de steden die je vaak fout hebt (zie game/progress.ts).
+const PracticeWrapper: React.FC<{ categoryId: string | undefined }> = ({ categoryId }) => {
+  const navigate = useNavigate();
+  const category = findCategory(categoryId);
+  // Lijst één keer bepalen bij het openen; tijdens het spel verandert hij niet.
+  const [cities] = React.useState(() => {
+    if (!category) return [];
+    const hard = new Set(
+      hardCities(
+        getCityStats(category.id),
+        category.locations.map((l) => l.name),
+      ),
+    );
+    return category.locations.filter((l) => hard.has(l.name));
+  });
+  if (!category || cities.length === 0)
+    return <Navigate to={`/main/${categoryId ?? ''}`} replace />;
+  return (
+    <Game
+      packageId={`${PRACTICE_PACKAGE_ID}-${category.id}`}
+      categoryId={category.id}
+      countStars={false}
+      title="Mijn lastige steden"
+      cities={cities}
+      onBack={() => navigate(`/main/${category.id}`)}
     />
   );
 };

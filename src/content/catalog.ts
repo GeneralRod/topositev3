@@ -141,3 +141,6 @@ export function findPackage(
 export function locationsFor(category: Category, pkg: GamePackage): City[] {
   return category.locations.filter((location) => pkg.groups.includes(location.package));
 }
+
+/** Pakket-id van het oefenrondje met je lastige steden (in de url). */
+export const PRACTICE_PACKAGE_ID = 'lastig';

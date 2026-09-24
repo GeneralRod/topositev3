@@ -10,9 +10,11 @@
 //   2: munten, prijzen, stickers en spellen (nieuwe prijzenkast). Linten en
 //      prijzen die niet meer bestaan worden omgezet in munten (zie migrations.ts).
 //      Later toegevoegd (zonder nieuw versienummer, ontbreekt = standaard):
-//      kast-upgrades en de gekozen kaststijl.
+//      kast-upgrades en de gekozen kaststijl, statistieken per stad (lastige
+//      steden) en de beste sterren per pakket.
 
 import type { CityStatus, GameState } from '../game/rules';
+import type { CityStats } from '../game/progress';
 import { upgradeCollection } from './migrations';
 
 export const STORAGE_KEY = 'topografiewereld';
@@ -38,6 +40,10 @@ export interface SaveData {
   style: { finish: string; extras: string[] };
   /** Lopende spellen per pakket-id (bijv. 'pakket1-2'). */
   games: Record<string, GameState>;
+  /** Fouten en reeksen per stad, per onderwerp (categorie-id). */
+  cityStats: Record<string, CityStats>;
+  /** Beste aantal sterren (1-3) per pakket-id. */
+  stars: Record<string, number>;
 }
 
 /** Het oude formaat (versie 1 en de losse sleutels daarvoor). */
@@ -62,11 +68,37 @@ export function emptySaveData(): SaveData {
     upgrades: [],
     style: defaultStyle(),
     games: {},
+    cityStats: {},
+    stars: {},
   };
 }
 
 export function defaultStyle(): SaveData['style'] {
   return { finish: 'oak', extras: [] };
+}
+
+function parseCityStats(value: unknown): Record<string, CityStats> {
+  const out: Record<string, CityStats> = {};
+  if (!isRecord(value)) return out;
+  for (const [categoryId, cities] of Object.entries(value)) {
+    if (!isRecord(cities)) continue;
+    out[categoryId] = {};
+    for (const [city, stat] of Object.entries(cities)) {
+      if (!isRecord(stat)) continue;
+      out[categoryId][city] = { wrong: toCount(stat.wrong), streak: toCount(stat.streak) };
+    }
+  }
+  return out;
+}
+
+function parseStars(value: unknown): Record<string, number> {
+  const out: Record<string, number> = {};
+  if (!isRecord(value)) return out;
+  for (const [packageId, stars] of Object.entries(value)) {
+    const n = toCount(stars);
+    if (n >= 1) out[packageId] = Math.min(3, n);
+  }
+  return out;
 }
 
 function parseStyle(value: unknown): SaveData['style'] {
@@ -97,6 +129,8 @@ export function upgradeV1(old: SaveDataV1): SaveData {
     upgrades: [],
     style: defaultStyle(),
     games: old.games,
+    cityStats: {},
+    stars: {},
   };
 }
 
@@ -219,6 +253,8 @@ export function parseSaveData(value: unknown): SaveData | null {
     upgrades: toIdList(value.upgrades),
     style: parseStyle(value.style),
     games: parseGames(value.games),
+    cityStats: parseCityStats(value.cityStats),
+    stars: parseStars(value.stars),
   };
 }
 
