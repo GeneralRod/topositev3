@@ -181,7 +181,7 @@ const CompletionDialog: React.FC<CompletionDialogProps> = ({
           <div>
             <b>Nieuwe prestatie: {achievement.name}!</b>
             <br />
-            Hij hangt nu op het prestatiebord in je prijzenkast.
+            Hij hangt nu naast je prijzenkast.
           </div>
         </NewAchievement>
       ))}

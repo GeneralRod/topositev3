@@ -25,7 +25,7 @@ import {
 } from './catalog';
 import { effectiveStyle, nextGoal, slotState, type CabinetStyle } from './rules';
 import { AchievementArt, PrizeArt, StickerArt } from './art';
-import { achievements, findAchievement } from '../game/achievements';
+import { achievements, findAchievement, type Achievement } from '../game/achievements';
 import BuyDialog, { type Selection } from './BuyDialog';
 import DevTools from './DevTools';
 import Workshop from './Workshop';
@@ -92,6 +92,7 @@ const Goal = styled.p`
 `;
 
 const Cabinet = styled.div`
+  grid-area: cabinet;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -409,21 +410,31 @@ const CompassRose: React.FC = () => (
 
 const STICKER_TILTS = [-8, 6, -4, 7, -6, 5];
 
-/** Kast en prestatiebord naast elkaar; op een smal scherm het bord eronder. */
+/**
+ * De kast precies in het midden, met links en rechts een prestatiebord als
+ * vleugels. Te smal voor alle drie naast elkaar: kast boven, borden eronder.
+ */
 const Showroom = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-areas: 'left cabinet right';
   justify-content: center;
-  align-items: flex-start;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 20px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: auto auto;
+    grid-template-areas: 'cabinet cabinet' 'left right';
+    align-items: start;
+  }
 `;
 
 // Prestatiebord: groen vilt in een lijst van hetzelfde hout als de kast.
-const Board = styled.section`
-  /* Even hoog beginnen als de kast zelf (onder de kroon). */
-  margin-top: 46px;
-  width: 232px;
-  padding: 10px 12px 14px;
+const Board = styled.section<{ side: 'left' | 'right' }>`
+  grid-area: ${(p) => p.side};
+  justify-self: center;
+  width: 144px;
+  padding: 10px 8px 12px;
   background-color: #2f5d50;
   background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
   background-size: 6px 6px;
@@ -439,16 +450,17 @@ const Board = styled.section`
   gap: 8px;
 `;
 
-const BoardCount = styled.span`
-  color: #e8f3ee;
-  font-size: 0.85rem;
-  font-weight: 600;
+const BoardPlate = styled(NamePlate)`
+  padding: 1px 8px;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 `;
 
-const MedalGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px 8px;
+const MedalColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   width: 100%;
 `;
 
@@ -550,8 +562,8 @@ export const PrizeCabinet: React.FC = () => {
     newNames.length === 0
       ? null
       : newNames.length === 1
-        ? `Hoera, een nieuwe prestatie: ${newNames[0]}! Kijk maar op je prestatiebord.`
-        : `Hoera, ${newNames.length} nieuwe prestaties: ${newNames.slice(0, -1).join(', ')} en ${newNames[newNames.length - 1]}! Kijk maar op je prestatiebord.`;
+        ? `Hoera, een nieuwe prestatie: ${newNames[0]}! Kijk maar naast je kast.`
+        : `Hoera, ${newNames.length} nieuwe prestaties: ${newNames.slice(0, -1).join(', ')} en ${newNames[newNames.length - 1]}! Kijk maar naast je kast.`;
 
   const buy = (selected: Selection) => {
     // Prestatieprijzen zijn niet te koop.
@@ -565,6 +577,26 @@ export const PrizeCabinet: React.FC = () => {
 
   const goal = nextGoal(allPrizes, prizes);
   const half = Math.ceil(stickers.length / 2);
+  const medalHalf = Math.ceil(achievements.length / 2);
+  const earnedCount = `${earned.length} VAN ${achievements.length}`;
+
+  const renderMedal = (achievement: Achievement) => {
+    const isEarned = earned.includes(achievement.id);
+    return (
+      <MedalSpot
+        key={achievement.id}
+        earned={isEarned}
+        fresh={newlyEarned.includes(achievement.id)}
+        onClick={() => setSelection({ kind: 'achievement', item: achievement })}
+        aria-label={isEarned ? achievement.name : `${achievement.name}, nog niet verdiend`}
+      >
+        <ArtWrap>
+          <AchievementArt id={achievement.id} size={72} />
+        </ArtWrap>
+        {achievement.name}
+      </MedalSpot>
+    );
+  };
 
   const renderSticker = (item: CabinetItem, index: number) => {
     const owned = ownedStickers.includes(item.id);
@@ -681,32 +713,14 @@ export const PrizeCabinet: React.FC = () => {
           <Feet />
         </Cabinet>
 
-        <Board aria-label="Prestatiebord">
-          <NamePlate>PRESTATIES</NamePlate>
-          <BoardCount>
-            {earned.length} van {achievements.length} verdiend
-          </BoardCount>
-          <MedalGrid>
-            {achievements.map((achievement) => {
-              const isEarned = earned.includes(achievement.id);
-              return (
-                <MedalSpot
-                  key={achievement.id}
-                  earned={isEarned}
-                  fresh={newlyEarned.includes(achievement.id)}
-                  onClick={() => setSelection({ kind: 'achievement', item: achievement })}
-                  aria-label={
-                    isEarned ? achievement.name : `${achievement.name}, nog niet verdiend`
-                  }
-                >
-                  <ArtWrap>
-                    <AchievementArt id={achievement.id} size={72} />
-                  </ArtWrap>
-                  {achievement.name}
-                </MedalSpot>
-              );
-            })}
-          </MedalGrid>
+        {/* Links de makkelijkere prestaties, rechts de moeilijkere. */}
+        <Board side="left" aria-label="Prestaties">
+          <BoardPlate>PRESTATIES</BoardPlate>
+          <MedalColumn>{achievements.slice(0, medalHalf).map(renderMedal)}</MedalColumn>
+        </Board>
+        <Board side="right" aria-label={`Meer prestaties, ${earnedCount} verdiend`}>
+          <BoardPlate>{earnedCount}</BoardPlate>
+          <MedalColumn>{achievements.slice(medalHalf).map(renderMedal)}</MedalColumn>
         </Board>
       </Showroom>
 

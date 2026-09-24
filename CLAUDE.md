@@ -38,8 +38,8 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 - Live: fase 1 t/m 3, nieuwe prijzenkast met werkplaats, fase 6 deel 1 (eigen kaart zonder namen,
   zoomen), deel 2 (lastige steden, sterren), deel 3 (meerkeuze, max. hints), deel 4 (dagelijkse
   uitdaging).
-- Open: pull request voor deel 5 (plank Wereldwonderen, 4 stickers, prestatiebord met 8
-  medailles), wacht op test/oké van de eigenaar.
+- Open: pull request voor deel 5 (plank Wereldwonderen, 4 stickers, twee prestatieborden
+  met 8 medailles naast de kast), wacht op test/oké van de eigenaar.
 - Volgende: nieuwe onderwerpen (Nederland eerst). Zie `PLAN.md` fase 6 voor de details en de aanpak voor precieze kaarten.
 - Testen in de browser: `npm run build && npx vite preview`, prijzenkast met `?ontwikkelaar`.
 - GitHub Pages uitzetten (Settings → Pages) moet de eigenaar zelf nog doen.
