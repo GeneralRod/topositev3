@@ -3,7 +3,15 @@
 
 import type { GameState } from '../game/rules';
 import { recordAnswer, type AnswerKind, type CityStats } from '../game/progress';
-import { loadSaveData, writeSaveData, type KeyValueStore, type SaveData } from './storage';
+import {
+  loadSaveData,
+  writeSaveData,
+  type KeyValueStore,
+  type PlayMode,
+  type SaveData,
+} from './storage';
+
+export type { PlayMode } from './storage';
 
 function memoryStore(): KeyValueStore {
   const map = new Map<string, string>();
@@ -150,4 +158,12 @@ export function getStars(): Record<string, number> {
 export function recordStars(packageId: string, stars: number): void {
   if ((state().stars[packageId] ?? 0) >= stars) return;
   update((d) => ({ ...d, stars: { ...d.stars, [packageId]: stars } }));
+}
+
+export function getPlayMode(): PlayMode {
+  return state().prefs.playMode;
+}
+
+export function setPlayMode(playMode: PlayMode): void {
+  update((d) => ({ ...d, prefs: { ...d.prefs, playMode } }));
 }

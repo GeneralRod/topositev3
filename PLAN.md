@@ -115,7 +115,9 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
 
 **Deel 3: tweede speelmanier**
 
-- [ ] Meerkeuze: een stip knippert, kies de goede naam uit vier
+- [x] Meerkeuze: een stip knippert, kies de goede naam uit vier (ook met toetsen 1-4); hint haalt
+      twee foute antwoorden weg; halve munten, geen sterren; keuze onthouden op het pakketscherm
+- [x] Maximaal aantal hints per spel: 5 bij aanwijzen, 3 bij meerkeuze (teller op de knop)
 
 **Deel 4: dagelijkse uitdaging**
 

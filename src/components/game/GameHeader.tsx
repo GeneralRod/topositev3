@@ -106,6 +106,8 @@ interface GameHeaderProps {
   found: number;
   total: number;
   onHint: () => void;
+  /** Hoeveel hints je dit spel nog hebt. */
+  hintsLeft: number;
   onRestart: () => void;
   onBack: () => void;
 }
@@ -118,6 +120,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
   found,
   total,
   onHint,
+  hintsLeft,
   onRestart,
   onBack,
 }) => (
@@ -126,7 +129,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
       <Title>{title}</Title>
       {question && (
         <Question>
-          Vind: {question}
+          {question}
           <Coins>
             <FaCoins />
             {coins}
@@ -135,9 +138,13 @@ const GameHeader: React.FC<GameHeaderProps> = ({
       )}
     </HeaderLeft>
     <Controls>
-      {hint && <Hint>Tip: {hint}</Hint>}
-      <Button onClick={onHint} disabled={hint !== null || !question}>
-        Hint
+      {hint && <Hint>{hint}</Hint>}
+      <Button
+        onClick={onHint}
+        disabled={hint !== null || !question || hintsLeft === 0}
+        title={hintsLeft === 0 ? 'Je hints zijn op voor dit spel' : undefined}
+      >
+        Hint ({hintsLeft})
       </Button>
       <Stat>
         <StatLabel>Score</StatLabel>

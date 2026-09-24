@@ -38,6 +38,14 @@ function dotIcon(color: string): L.DivIcon {
   });
 }
 
+// Knipperende stip voor meerkeuze (animatie in index.css).
+const PULSE_ICON = L.divIcon({
+  className: 'pulse-dot',
+  html: '<div class="pulse-dot__ring"></div><div class="pulse-dot__core"></div>',
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
+});
+
 // Eén icoon per status, één keer gemaakt (niet bij elke klik opnieuw voor elke stip).
 const ICONS = Object.fromEntries(
   Object.entries(STATUS_COLORS).map(([status, color]) => [status, dotIcon(color)]),
@@ -47,9 +55,11 @@ interface GameMapProps {
   cities: City[];
   status: Record<string, CityStatus>;
   onCityClick: (cityName: string) => void;
+  /** Meerkeuze: toon alleen deze stad, knipperend en niet klikbaar. */
+  highlight?: string | null;
 }
 
-const GameMap: React.FC<GameMapProps> = ({ cities, status, onCityClick }) => (
+const GameMap: React.FC<GameMapProps> = ({ cities, status, onCityClick, highlight }) => (
   <MapContainer
     center={WORLD_CENTER}
     zoom={WORLD_ZOOM}
@@ -66,14 +76,20 @@ const GameMap: React.FC<GameMapProps> = ({ cities, status, onCityClick }) => (
   >
     <WorldLayer />
     <ResetViewButton />
-    {cities.map((city) => (
-      <Marker
-        key={city.name}
-        position={[city.lat, city.lng]}
-        icon={ICONS[status[city.name] ?? 'unanswered']}
-        eventHandlers={{ click: () => onCityClick(city.name) }}
-      />
-    ))}
+    {highlight !== undefined
+      ? cities
+          .filter((city) => city.name === highlight)
+          .map((city) => (
+            <Marker key={city.name} position={[city.lat, city.lng]} icon={PULSE_ICON} />
+          ))
+      : cities.map((city) => (
+          <Marker
+            key={city.name}
+            position={[city.lat, city.lng]}
+            icon={ICONS[status[city.name] ?? 'unanswered']}
+            eventHandlers={{ click: () => onCityClick(city.name) }}
+          />
+        ))}
   </MapContainer>
 );
 

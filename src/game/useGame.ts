@@ -10,6 +10,7 @@ import {
   isComplete,
   newGame,
   restoreGame,
+  takeHint,
   type AnswerResult,
   type GameState,
 } from './rules';
@@ -24,6 +25,10 @@ export interface GameOptions {
   categoryId: string;
   /** Sterren bewaren bij een afgerond spel (niet bij het oefenrondje). */
   countStars: boolean;
+  /** Deel van de munten (meerkeuze: 0,5). */
+  coinFactor?: number;
+  /** Maximaal aantal hints in dit spel. */
+  maxHints: number;
 }
 
 /** Totaal aantal fouten in een spel. */
@@ -32,7 +37,7 @@ export function totalMistakes(state: GameState): number {
 }
 
 export function useGame(packageId: string, cityNames: string[], options: GameOptions) {
-  const { categoryId, countStars } = options;
+  const { categoryId, countStars, coinFactor = 1, maxHints } = options;
   const [state, setState] = useState(() => startGame(packageId, cityNames));
   const questionStartedAt = useRef(0);
 
@@ -49,7 +54,7 @@ export function useGame(packageId: string, cityNames: string[], options: GameOpt
   const clickCity = useCallback(
     (cityName: string): AnswerResult => {
       const seconds = (Date.now() - questionStartedAt.current) / 1000;
-      const { state: answered, result } = answer(state, cityName, seconds);
+      const { state: answered, result } = answer(state, cityName, seconds, Math.random, coinFactor);
       let next = answered;
       if (result.kind === 'wrong' && state.currentCity) {
         recordCityAnswer(categoryId, state.currentCity, 'wrong');
@@ -69,10 +74,10 @@ export function useGame(packageId: string, cityNames: string[], options: GameOpt
       setState(next);
       return result;
     },
-    [state, categoryId, countStars, packageId],
+    [state, categoryId, countStars, packageId, coinFactor],
   );
 
-  const showHint = useCallback(() => setState((s) => ({ ...s, hintUsed: true })), []);
+  const showHint = useCallback(() => setState((s) => takeHint(s, maxHints)), [maxHints]);
 
   const restart = useCallback(() => {
     clearGame(packageId);

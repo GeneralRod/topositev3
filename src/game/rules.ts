@@ -12,6 +12,8 @@ export interface GameState {
   /** Aantal foute klikken voor de huidige vraag. */
   attempts: number;
   hintUsed: boolean;
+  /** Hoeveel hints je dit spel al hebt gebruikt (er is een maximum). */
+  hintsUsed: number;
   coinsThisGame: number;
   /** Is de eindbonus al uitgekeerd? Voorkomt dubbele uitbetaling. */
   bonusPaid: boolean;
@@ -66,6 +68,7 @@ export function newGame(cityNames: string[], random: Random = Math.random): Game
     currentCity: null,
     attempts: 0,
     hintUsed: false,
+    hintsUsed: 0,
     coinsThisGame: 0,
     bonusPaid: false,
   };
@@ -123,6 +126,8 @@ export function answer(
   clickedCity: string,
   secondsTaken: number,
   random: Random = Math.random,
+  /** Deel van de munten dat je krijgt (meerkeuze is makkelijker: 0,5). */
+  coinFactor = 1,
 ): { state: GameState; result: AnswerResult } {
   const target = state.currentCity;
   if (target === null) return { state, result: { kind: 'ignored' } };
@@ -139,7 +144,7 @@ export function answer(
   }
 
   const firstTry = state.attempts === 0;
-  const coins = coinsForCorrect(secondsTaken);
+  const coins = Math.round(coinsForCorrect(secondsTaken) * coinFactor);
   const answered: GameState = {
     ...state,
     status: { ...state.status, [target]: firstTry ? 'green' : 'blue' },
@@ -163,6 +168,22 @@ export function claimCompletionBonus(state: GameState): { state: GameState; bonu
     state: { ...state, bonusPaid: true },
     bonus: completionBonus(state.coinsThisGame),
   };
+}
+
+/** Maximaal aantal hints per spel. */
+export const MAX_HINTS = { map: 5, choice: 3 } as const;
+
+export function hintsLeft(state: GameState, max: number): number {
+  return Math.max(0, max - state.hintsUsed);
+}
+
+/**
+ * Gebruik een hint voor de huidige vraag. Lukt niet als de hint al aan staat,
+ * er geen vraag is of de hints op zijn.
+ */
+export function takeHint(state: GameState, max: number): GameState {
+  if (state.hintUsed || state.currentCity === null || hintsLeft(state, max) === 0) return state;
+  return { ...state, hintUsed: true, hintsUsed: state.hintsUsed + 1 };
 }
 
 /** Steden met fouten, meeste fouten eerst. */

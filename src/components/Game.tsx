@@ -1,9 +1,19 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import type { City } from '../data/cities';
 import { totalMistakes, useGame } from '../game/useGame';
 import { starsFor } from '../game/progress';
-import { completionBonus, foundCount, hardestCities, isComplete } from '../game/rules';
+import { hintRemovals, pickChoices, seededRandom } from '../game/choices';
+import type { PlayMode } from '../storage';
+import ChoicePanel from './game/ChoicePanel';
+import {
+  completionBonus,
+  foundCount,
+  hardestCities,
+  hintsLeft,
+  isComplete,
+  MAX_HINTS,
+} from '../game/rules';
 import { Button, colors } from '../ui';
 import GameHeader from './game/GameHeader';
 import GameMap from './game/GameMap';
@@ -16,6 +26,13 @@ const GameContainer = styled.div`
   flex-direction: column;
   background: ${colors.background};
   overflow: hidden;
+`;
+
+/** Kaart met (bij meerkeuze) de antwoorden ernaast, zodat niets de kaart bedekt. */
+const PlayArea = styled.div`
+  flex: 1;
+  display: flex;
+  min-height: 0;
 `;
 
 const MapWrapper = styled.div`
@@ -74,6 +91,8 @@ interface GameProps {
   categoryId: string;
   /** Sterren tellen (niet bij het oefenrondje met lastige steden). */
   countStars: boolean;
+  /** Aanwijzen op de kaart of meerkeuze. */
+  mode: PlayMode;
   title: string;
   cities: City[];
   onBack: () => void;
@@ -89,14 +108,23 @@ const Game: React.FC<GameProps> = ({
   packageId,
   categoryId,
   countStars,
+  mode,
   title,
   cities,
   onBack,
 }) => {
   const cityNames = useMemo(() => cities.map((c) => c.name), [cities]);
+  const isChoice = mode === 'choice';
   const { state, clickCity, showHint, restart } = useGame(packageId, cityNames, {
     categoryId,
-    countStars,
+    // Meerkeuze is makkelijker: halve munten en geen sterren.
+    countStars: countStars && !isChoice,
+    coinFactor: isChoice ? 0.5 : 1,
+    maxHints: MAX_HINTS[mode],
+  });
+  const [wrongPicks, setWrongPicks] = useState<{ city: string | null; names: string[] }>({
+    city: null,
+    names: [],
   });
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
 
@@ -109,18 +137,49 @@ const Game: React.FC<GameProps> = ({
 
   const currentCity = cities.find((c) => c.name === state.currentCity) ?? null;
 
-  const handleCityClick = (cityName: string) => {
-    const result = clickCity(cityName);
-    if (result.kind === 'ignored') return;
-    setFeedback((prev) => ({
-      id: (prev?.id ?? 0) + 1,
-      success: result.kind === 'correct',
-      text:
-        result.kind === 'correct'
-          ? `Goed! Je hebt ${result.city} gevonden!`
-          : 'Dit is niet de juiste stad.',
-    }));
-  };
+  const handleCityClick = useCallback(
+    (cityName: string) => {
+      const asked = state.currentCity;
+      const result = clickCity(cityName);
+      if (result.kind === 'ignored') return;
+      if (result.kind === 'wrong') {
+        setWrongPicks((prev) => ({
+          city: asked,
+          names: prev.city === asked ? [...prev.names, cityName] : [cityName],
+        }));
+      }
+      setFeedback((prev) => ({
+        id: (prev?.id ?? 0) + 1,
+        success: result.kind === 'correct',
+        text:
+          result.kind === 'correct'
+            ? isChoice
+              ? `Goed! Dat is ${result.city}!`
+              : `Goed! Je hebt ${result.city} gevonden!`
+            : isChoice
+              ? 'Helaas, probeer het nog eens.'
+              : 'Dit is niet de juiste stad.',
+      }));
+    },
+    [clickCity, isChoice, state.currentCity],
+  );
+
+  // Meerkeuze: vier antwoorden per vraag, vast zolang dezelfde vraag openstaat.
+  const answeredCount = Object.values(state.status).filter((s) => s !== 'unanswered').length;
+  const choices = useMemo(
+    () =>
+      isChoice && state.currentCity
+        ? pickChoices(
+            state.currentCity,
+            cityNames,
+            seededRandom(`${state.currentCity}#${answeredCount}`),
+          )
+        : [],
+    [isChoice, state.currentCity, cityNames, answeredCount],
+  );
+  const wrong = wrongPicks.city === state.currentCity ? wrongPicks.names : [];
+  const removed =
+    isChoice && state.hintUsed && state.currentCity ? hintRemovals(choices, state.currentCity) : [];
 
   if (cities.length === 0) {
     return (
@@ -137,29 +196,53 @@ const Game: React.FC<GameProps> = ({
     <GameContainer>
       <GameHeader
         title={title}
-        question={currentCity?.name ?? null}
-        hint={state.hintUsed && currentCity ? currentCity.continent : null}
+        question={
+          currentCity ? (isChoice ? 'Welke stad knippert?' : `Vind: ${currentCity.name}`) : null
+        }
+        hint={
+          state.hintUsed && currentCity
+            ? isChoice
+              ? 'Twee foute antwoorden zijn weg'
+              : `Tip: ${currentCity.continent}`
+            : null
+        }
         coins={state.coinsThisGame}
         found={foundCount(state)}
         total={cities.length}
         onHint={showHint}
+        hintsLeft={hintsLeft(state, MAX_HINTS[mode])}
         onRestart={restart}
         onBack={onBack}
       />
-      <MapWrapper>
-        {feedback && (
-          <Feedback key={feedback.id} success={feedback.success}>
-            {feedback.text}
-          </Feedback>
+      <PlayArea>
+        <MapWrapper>
+          {feedback && (
+            <Feedback key={feedback.id} success={feedback.success}>
+              {feedback.text}
+            </Feedback>
+          )}
+          <GameMap
+            cities={cities}
+            status={state.status}
+            onCityClick={handleCityClick}
+            highlight={isChoice ? state.currentCity : undefined}
+          />
+        </MapWrapper>
+        {isChoice && state.currentCity && (
+          <ChoicePanel
+            choices={choices}
+            wrong={wrong}
+            removed={removed}
+            onChoose={handleCityClick}
+          />
         )}
-        <GameMap cities={cities} status={state.status} onCityClick={handleCityClick} />
-      </MapWrapper>
+      </PlayArea>
       {isComplete(state) && (
         <CompletionDialog
           coins={state.coinsThisGame}
           bonus={completionBonus(state.coinsThisGame)}
           hardest={hardestCities(state)}
-          stars={countStars ? starsFor(totalMistakes(state), cities.length) : null}
+          stars={countStars && !isChoice ? starsFor(totalMistakes(state), cities.length) : null}
           onClose={() => {
             restart();
             onBack();

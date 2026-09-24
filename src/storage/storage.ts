@@ -44,6 +44,20 @@ export interface SaveData {
   cityStats: Record<string, CityStats>;
   /** Beste aantal sterren (1-3) per pakket-id. */
   stars: Record<string, number>;
+  /** Voorkeuren van de speler. */
+  prefs: Prefs;
+}
+
+export type PlayMode = 'map' | 'choice';
+
+export interface Prefs {
+  /** Aanwijzen op de kaart of meerkeuze. */
+  playMode: PlayMode;
+}
+
+function parsePrefs(value: unknown): Prefs {
+  const playMode = isRecord(value) && value.playMode === 'choice' ? 'choice' : 'map';
+  return { playMode };
 }
 
 /** Het oude formaat (versie 1 en de losse sleutels daarvoor). */
@@ -70,6 +84,7 @@ export function emptySaveData(): SaveData {
     games: {},
     cityStats: {},
     stars: {},
+    prefs: { playMode: 'map' },
   };
 }
 
@@ -131,6 +146,7 @@ export function upgradeV1(old: SaveDataV1): SaveData {
     games: old.games,
     cityStats: {},
     stars: {},
+    prefs: { playMode: 'map' },
   };
 }
 
@@ -177,6 +193,7 @@ function toGameState(value: unknown): GameState | null {
     currentCity: typeof value.currentCity === 'string' ? value.currentCity : null,
     attempts: toCount(value.attempts),
     hintUsed: value.hintUsed === true,
+    hintsUsed: toCount(value.hintsUsed),
     coinsThisGame: toCount(value.coinsThisGame),
     bonusPaid: value.bonusPaid === true,
   };
@@ -198,6 +215,7 @@ export function migrateLegacyGame(value: unknown): GameState | null {
     currentCity: typeof current === 'string' ? current : null,
     attempts: toCount(value.currentAttempts),
     hintUsed: value.hintUsed === true,
+    hintsUsed: toCount(value.hintsUsed),
     coinsThisGame: toCount(value.coinsThisGame),
     bonusPaid: Object.keys(status).length > 0 && allGreen,
   };
@@ -255,6 +273,7 @@ export function parseSaveData(value: unknown): SaveData | null {
     games: parseGames(value.games),
     cityStats: parseCityStats(value.cityStats),
     stars: parseStars(value.stars),
+    prefs: parsePrefs(value.prefs),
   };
 }
 
