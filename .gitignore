@@ -2,16 +2,18 @@
 logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
+# Dependencies en build-uitvoer (Netlify bouwt zelf)
 node_modules
-# Allow tracking the built site for GitHub Pages
-# dist is included to simplify deployment
-#dist
+dist
 dist-ssr
+*.tsbuildinfo
+coverage
+.jest-cache
+
+# Lokale instellingen en geheimen
+.env
+.env.*
 *.local
 
 # Editor directories and files

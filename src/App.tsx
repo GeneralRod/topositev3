@@ -9,7 +9,6 @@ import CategoryScreen from './components/CategoryScreen';
 import { cities } from './data/cities';
 import './App.css';
 import { TrophyCabinet } from './features/trophy-system/components/TrophyCabinet';
-// import { TrophySystemTest } from './features/trophy-system/components/TrophySystemTest';
 
 const AppContainer = styled.div`
   width: 100vw;
@@ -108,7 +107,7 @@ const InteractiveMapWrapper: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <Router basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+    <Router>
       <AppContainer>
         <Routes>
           <Route path="/" element={<TitlePage />} />
@@ -117,7 +116,6 @@ const App: React.FC = () => {
           <Route path="/game/:category/:package" element={<GameWrapper />} />
           <Route path="/interactive/:category/:package" element={<InteractiveMapWrapper />} />
           <Route path="/trophy-cabinet" element={<TrophyCabinet />} />
-          {/* <Route path="/trophy-test" element={<TrophySystemTest />} /> */}
         </Routes>
       </AppContainer>
     </Router>

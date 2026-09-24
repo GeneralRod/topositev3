@@ -7,11 +7,11 @@ Thank you for considering contributing to this project! Here are some guidelines
 - Fork the repository and clone it locally.
 - Run `npm install` to install dependencies.
 - Use `npm run dev` to start the development server.
-- Use `npm test` to run the test suite.
+- Use `npm run build` to typecheck and build the project.
 
 ## Code Style
 
-- Use Prettier for code formatting (`npx prettier --write .`).
+- Use Prettier for code formatting (`npm run format`).
 - Use ESLint to check for linting errors (`npm run lint`).
 - Write clear, descriptive commit messages.
 
