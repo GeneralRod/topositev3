@@ -16,9 +16,10 @@ zonder dat de live site ooit stuk gaat tijdens het werk.
 ## Huidige stand (september 2026)
 
 - React 19 + TypeScript + Vite 7 + react-leaflet + three.js. Ongeveer 3.000 regels code.
-- Hosting: Netlify is de werkende live site. GitHub Pages staat ook aan, maar serveert de
-  ruwe broncode van `main` en toont daardoor een wit scherm. Het domein `topografiewereld.nl`
-  verwijst nergens meer naar (DNS lost niet op).
+- Hosting: **Netlify is de enige hosting** (besluit eigenaar). GitHub Pages staat nog aan, maar
+  serveert de ruwe broncode van `main` en toont een wit scherm; dat wordt opgeruimd. Het domein
+  `topografiewereld.nl` is opgezegd: verwijzingen ernaar (o.a. `homepage` in `package.json`,
+  README) moeten weg.
 
 ### Gevonden problemen
 
@@ -47,7 +48,9 @@ zonder dat de live site ooit stuk gaat tijdens het werk.
 - [ ] `dist/`, `.jest-cache/`, `.env`, `*.tsbuildinfo` uit git en in `.gitignore`
 - [ ] Ongebruikte bestanden verwijderen
 - [ ] CI naar Node 22; één workflow die lint + typecheck + test + build draait op PR's
-- [ ] GitHub Pages-deploy-workflow weghalen (Netlify is de hosting); `vite.config.ts` base op `/`
+- [ ] GitHub Pages-deploy-workflow, `gh-pages`-script/dependency en `public/404.html`-hack weghalen;
+      `vite.config.ts` base op `/`. (GitHub Pages zelf uitzetten in de repo-instellingen doet de
+      eigenaar, of na expliciete toestemming.)
 - [ ] `package.json` naam/versie, README bijwerken
 - [ ] Openstaande dependabot-PR's beoordelen (o.a. Vite 8)
 
