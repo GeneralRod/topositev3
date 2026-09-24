@@ -1,12 +1,19 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useParams } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Routes,
+  Route,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import styled from '@emotion/styled';
 import HomeScreen from './components/HomeScreen';
 import Game from './components/Game';
 import InteractiveMap from './components/InteractiveMap';
 import TitlePage from './components/TitlePage';
 import CategoryScreen from './components/CategoryScreen';
-import { cities } from './data/cities';
+import { findCategory, findPackage, locationsFor } from './content/catalog';
 import './App.css';
 import { TrophyCabinet } from './features/trophy-system/components/TrophyCabinet';
 
@@ -22,86 +29,49 @@ const AppContainer = styled.div`
   background: #f5f7fa;
 `;
 
-// Wrapper component to handle navigation
 const HomeScreenWrapper: React.FC = () => {
-  const navigate = useNavigate();
-  const { category = 'capitals' } = useParams<{ category: string }>();
-
-  const handleSelectPackage = (packageName: string) => {
-    const isInteractiveMap = packageName.startsWith('interactive');
-    if (isInteractiveMap) {
-      navigate(`/interactive/${category}/${packageName}`);
-    } else {
-      navigate(`/game/${category}/${packageName}`);
-    }
-  };
-
-  return <HomeScreen onSelectPackage={handleSelectPackage} category={category} />;
+  const { category: categoryId } = useParams<{ category: string }>();
+  const category = findCategory(categoryId);
+  if (!category) return <Navigate to="/categories" replace />;
+  return <HomeScreen category={category} />;
 };
 
-// Wrapper component to handle game navigation
-const GameWrapper: React.FC = () => {
+// Zoekt het pakket uit de url op in de catalogus; onbekend → terug naar het menu.
+function usePackageRoute(kind: 'game' | 'map') {
   const navigate = useNavigate();
-  const { category = 'capitals', package: selectedPackage } = useParams<{
+  const { category: categoryId, package: packageId } = useParams<{
     category: string;
     package: string;
   }>();
-
-  const getCitiesForPackage = (cat: string, packageName: string) => {
-    if (cat === 'capitals') {
-      switch (packageName) {
-        case 'pakket1':
-          return cities.filter((city) => city.package === 'pakket1');
-        case 'pakket2':
-          return cities.filter((city) => city.package === 'pakket2');
-        case 'pakket3':
-          return cities.filter((city) => city.package === 'pakket3');
-        case 'pakket1-2':
-          return cities.filter((city) => city.package === 'pakket1' || city.package === 'pakket2');
-        case 'pakket2-3':
-          return cities.filter((city) => city.package === 'pakket2' || city.package === 'pakket3');
-        case 'pakket1-2-3':
-          return cities;
-        default:
-          return [];
-      }
-    }
-
-    return [];
+  const category = findCategory(categoryId);
+  const found = findPackage(category, packageId);
+  if (!category || !found || found.kind !== kind) return null;
+  return {
+    pkg: found.pkg,
+    cities: locationsFor(category, found.pkg),
+    onBack: () => navigate(`/main/${category.id}`),
   };
+}
 
+const GameWrapper: React.FC = () => {
+  const route = usePackageRoute('game');
+  if (!route) return <Navigate to="/categories" replace />;
   return (
     <Game
-      cities={getCitiesForPackage(category, selectedPackage || '')}
-      onBack={() => navigate(`/main/${category}`)}
-      selectedPackage={selectedPackage || ''}
+      key={route.pkg.id}
+      packageId={route.pkg.id}
+      title={route.pkg.title}
+      cities={route.cities}
+      onBack={route.onBack}
     />
   );
 };
 
-// Wrapper component to handle interactive map navigation
 const InteractiveMapWrapper: React.FC = () => {
-  const navigate = useNavigate();
-  const { category = 'capitals', package: selectedPackage } = useParams<{
-    category: string;
-    package: string;
-  }>();
-
-  const getCitiesForPackage = (cat: string, packageName: string) => {
-    if (cat === 'capitals') {
-      const basePackage = packageName.replace('interactive', 'pakket');
-      return cities.filter((city) => city.package === basePackage);
-    }
-
-    return [];
-  };
-
+  const route = usePackageRoute('map');
+  if (!route) return <Navigate to="/categories" replace />;
   return (
-    <InteractiveMap
-      cities={getCitiesForPackage(category, selectedPackage || '')}
-      onBack={() => navigate(`/main/${category}`)}
-      selectedPackage={selectedPackage || ''}
-    />
+    <InteractiveMap cities={route.cities} onBack={route.onBack} selectedPackage={route.pkg.id} />
   );
 };
 
@@ -116,6 +86,7 @@ const App: React.FC = () => {
           <Route path="/game/:category/:package" element={<GameWrapper />} />
           <Route path="/interactive/:category/:package" element={<InteractiveMapWrapper />} />
           <Route path="/trophy-cabinet" element={<TrophyCabinet />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AppContainer>
     </Router>
