@@ -13,6 +13,11 @@ zonder dat de live site ooit stuk gaat tijdens het werk.
 - De site is Nederlandstalig; teksten voor spelers blijven Nederlands.
 - Voortgang en munten van bestaande spelers (localStorage) mogen niet verloren gaan.
 
+## Doelgroep
+
+Kinderen die topografie oefenen, op een **laptop of computer** (niet bedoeld voor telefoons).
+Mobiel is daarom geen prioriteit; muis en toetsenbord wel.
+
 ## Huidige stand (september 2026)
 
 - React 19 + TypeScript + Vite 7 + react-leaflet + three.js. Ongeveer 3.000 regels code.
@@ -71,13 +76,13 @@ zonder dat de live site ooit stuk gaat tijdens het werk.
 
 ### Fase 3: sneller
 
-- [ ] Routes lazy laden (code splitting); three.js alleen op de startpagina
-- [ ] Animatielek fixen; lichtere wereldbol, texture zelf hosten
+- [x] Routes lazy laden (code splitting); three.js alleen op de startpagina
+- [x] Animatielek fixen; lichtere wereldbol, texture zelf hosten
 - [x] Marker-iconen lokaal (niet meer nodig: het spel gebruikt eigen stippen, CDN-verwijzing is weg)
 
 ### Fase 4: nieuwe features
 
-- [ ] Kaart met zoomen/slepen (ook mobiel)
+- [ ] Kaart met zoomen/slepen (met de muis; stippen in Europa liggen nu op elkaar)
 - [ ] Nieuwe categorieën (landen, wateren, gebergtes)
 - [ ] Oefenmodus "moeilijkste steden" en voortgangsoverzicht
 - [ ] Prijzensysteem afmaken
