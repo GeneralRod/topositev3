@@ -111,6 +111,11 @@ describe('antwoorden', () => {
     expect(state.attempts).toBe(0);
   });
 
+  it('geeft minder munten met een lagere muntfactor', () => {
+    const { result } = answer(game(), 'Parijs', 1, first, 0.5);
+    expect(result).toMatchObject({ kind: 'correct', coins: 5 });
+  });
+
   it('zet de hint terug na een goed antwoord', () => {
     const { state } = answer(game({ hintUsed: true }), 'Parijs', 1, first);
     expect(state.hintUsed).toBe(false);

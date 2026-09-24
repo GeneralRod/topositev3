@@ -126,7 +126,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
       <Title>{title}</Title>
       {question && (
         <Question>
-          Vind: {question}
+          {question}
           <Coins>
             <FaCoins />
             {coins}
@@ -135,7 +135,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
       )}
     </HeaderLeft>
     <Controls>
-      {hint && <Hint>Tip: {hint}</Hint>}
+      {hint && <Hint>{hint}</Hint>}
       <Button onClick={onHint} disabled={hint !== null || !question}>
         Hint
       </Button>

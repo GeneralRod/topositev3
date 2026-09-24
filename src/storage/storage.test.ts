@@ -108,6 +108,7 @@ describe('overzetten van oude gegevens', () => {
       games: {},
       cityStats: {},
       stars: {},
+      prefs: { playMode: 'map' },
     });
   });
 });
@@ -204,6 +205,13 @@ describe('opslag in de app', () => {
     storage.recordStars('pakket1', 3);
     storage.setStoreForTesting(store);
     expect(storage.getStars()).toEqual({ pakket1: 3 });
+  });
+
+  it('onthoudt de speelmanier', () => {
+    expect(storage.getPlayMode()).toBe('map');
+    storage.setPlayMode('choice');
+    storage.setStoreForTesting(store);
+    expect(storage.getPlayMode()).toBe('choice');
   });
 
   it('bewaart en wist spellen per pakket', () => {

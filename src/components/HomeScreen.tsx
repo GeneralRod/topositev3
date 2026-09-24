@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { PRACTICE_PACKAGE_ID, type Category } from '../content/catalog';
-import { getCityStats, getStars } from '../storage';
+import { getCityStats, getPlayMode, getStars, setPlayMode, type PlayMode } from '../storage';
 import { hardCities } from '../game/progress';
 import { BackLink, Card, CardGrid, Page, PageTitle, SectionTitle, Stars } from '../ui';
 
@@ -50,9 +50,59 @@ const VersionTag = styled.div`
   pointer-events: none;
 `;
 
+const ModeBar = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  color: #5f6368;
+  font-weight: 600;
+`;
+
+const ModeSwitch = styled.div`
+  display: inline-flex;
+  padding: 4px;
+  background: white;
+  border-radius: 999px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const ModeButton = styled.button<{ active: boolean }>`
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: ${(p) => (p.active ? '#1a73e8' : 'transparent')};
+  color: ${(p) => (p.active ? 'white' : '#1a73e8')};
+  transition: background-color 0.15s;
+
+  &:hover {
+    background: ${(p) => (p.active ? '#1a73e8' : '#e8f0fe')};
+  }
+`;
+
+const ModeHelp = styled.p`
+  color: #5f6368;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+`;
+
+const MODE_HELP: Record<PlayMode, string> = {
+  map: 'Klik op de kaart de stad aan die gevraagd wordt.',
+  choice:
+    'Er knippert een stip: kies de goede naam uit vier. Makkelijker, dus halve munten en geen sterren.',
+};
+
 const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
   const navigate = useNavigate();
   const stars = getStars();
+  const [mode, setMode] = useState<PlayMode>(getPlayMode);
+  const modeQuery = mode === 'choice' ? '?modus=meerkeuze' : '';
+  const chooseMode = (next: PlayMode) => {
+    setPlayMode(next);
+    setMode(next);
+  };
   const hardCount = hardCities(
     getCityStats(category.id),
     category.locations.map((l) => l.name),
@@ -62,6 +112,27 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
     <Page>
       <BackLink onClick={() => navigate('/categories')}>← Terug naar categorieën</BackLink>
       <PageTitle>{category.heading}</PageTitle>
+
+      <ModeBar>
+        Speelmanier:
+        <ModeSwitch role="group" aria-label="Speelmanier">
+          <ModeButton
+            active={mode === 'map'}
+            aria-pressed={mode === 'map'}
+            onClick={() => chooseMode('map')}
+          >
+            Aanwijzen
+          </ModeButton>
+          <ModeButton
+            active={mode === 'choice'}
+            aria-pressed={mode === 'choice'}
+            onClick={() => chooseMode('choice')}
+          >
+            Meerkeuze
+          </ModeButton>
+        </ModeSwitch>
+      </ModeBar>
+      <ModeHelp>{MODE_HELP[mode]}</ModeHelp>
 
       <SectionTitle>Oefenen</SectionTitle>
       <CardGrid>
@@ -74,7 +145,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
           }
           color="#e67e22"
           disabled={hardCount === 0}
-          onClick={() => navigate(`/game/${category.id}/${PRACTICE_PACKAGE_ID}`)}
+          onClick={() => navigate(`/game/${category.id}/${PRACTICE_PACKAGE_ID}${modeQuery}`)}
         />
       </CardGrid>
 
@@ -91,7 +162,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
                 extra={section.kind === 'game' ? <Stars count={stars[pkg.id] ?? 0} /> : undefined}
                 onClick={() =>
                   navigate(
-                    `/${section.kind === 'map' ? 'interactive' : 'game'}/${category.id}/${pkg.id}`,
+                    section.kind === 'map'
+                      ? `/interactive/${category.id}/${pkg.id}`
+                      : `/game/${category.id}/${pkg.id}${modeQuery}`,
                   )
                 }
               />

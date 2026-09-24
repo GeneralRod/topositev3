@@ -6,13 +6,14 @@ import {
   Route,
   useNavigate,
   useParams,
+  useSearchParams,
 } from 'react-router-dom';
 import styled from '@emotion/styled';
 import HomeScreen from './components/HomeScreen';
 import TitlePage from './components/TitlePage';
 import CategoryScreen from './components/CategoryScreen';
 import { findCategory, findPackage, locationsFor, PRACTICE_PACKAGE_ID } from './content/catalog';
-import { getCityStats } from './storage';
+import { getCityStats, type PlayMode } from './storage';
 import { hardCities } from './game/progress';
 
 // Deze schermen (met de kaartbibliotheek Leaflet) worden pas geladen als ze
@@ -58,22 +59,36 @@ function usePackageRoute(kind: 'game' | 'map') {
   };
 }
 
+/** Speelmanier uit de url: ?modus=meerkeuze, anders aanwijzen op de kaart. */
+function usePlayMode(): PlayMode {
+  const [params] = useSearchParams();
+  return params.get('modus') === 'meerkeuze' ? 'choice' : 'map';
+}
+
+/** Voortgang per speelmanier apart bewaren. */
+function gameKey(packageId: string, mode: PlayMode): string {
+  return mode === 'choice' ? `${packageId}@meerkeuze` : packageId;
+}
+
 const GameWrapper: React.FC = () => {
   const { category: categoryId, package: packageId } = useParams<{
     category: string;
     package: string;
   }>();
-  if (packageId === PRACTICE_PACKAGE_ID) return <PracticeWrapper categoryId={categoryId} />;
-  return <PackageGameWrapper />;
+  const mode = usePlayMode();
+  if (packageId === PRACTICE_PACKAGE_ID)
+    return <PracticeWrapper key={mode} categoryId={categoryId} mode={mode} />;
+  return <PackageGameWrapper mode={mode} />;
 };
 
-const PackageGameWrapper: React.FC = () => {
+const PackageGameWrapper: React.FC<{ mode: PlayMode }> = ({ mode }) => {
   const route = usePackageRoute('game');
   if (!route) return <Navigate to="/categories" replace />;
   return (
     <Game
-      key={route.pkg.id}
-      packageId={route.pkg.id}
+      key={gameKey(route.pkg.id, mode)}
+      packageId={gameKey(route.pkg.id, mode)}
+      mode={mode}
       categoryId={route.categoryId}
       countStars
       title={route.pkg.title}
@@ -84,7 +99,10 @@ const PackageGameWrapper: React.FC = () => {
 };
 
 // Oefenrondje: alleen de steden die je vaak fout hebt (zie game/progress.ts).
-const PracticeWrapper: React.FC<{ categoryId: string | undefined }> = ({ categoryId }) => {
+const PracticeWrapper: React.FC<{ categoryId: string | undefined; mode: PlayMode }> = ({
+  categoryId,
+  mode,
+}) => {
   const navigate = useNavigate();
   const category = findCategory(categoryId);
   // Lijst één keer bepalen bij het openen; tijdens het spel verandert hij niet.
@@ -102,7 +120,8 @@ const PracticeWrapper: React.FC<{ categoryId: string | undefined }> = ({ categor
     return <Navigate to={`/main/${categoryId ?? ''}`} replace />;
   return (
     <Game
-      packageId={`${PRACTICE_PACKAGE_ID}-${category.id}`}
+      packageId={gameKey(`${PRACTICE_PACKAGE_ID}-${category.id}`, mode)}
+      mode={mode}
       categoryId={category.id}
       countStars={false}
       title="Mijn lastige steden"

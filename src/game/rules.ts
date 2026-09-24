@@ -123,6 +123,8 @@ export function answer(
   clickedCity: string,
   secondsTaken: number,
   random: Random = Math.random,
+  /** Deel van de munten dat je krijgt (meerkeuze is makkelijker: 0,5). */
+  coinFactor = 1,
 ): { state: GameState; result: AnswerResult } {
   const target = state.currentCity;
   if (target === null) return { state, result: { kind: 'ignored' } };
@@ -139,7 +141,7 @@ export function answer(
   }
 
   const firstTry = state.attempts === 0;
-  const coins = coinsForCorrect(secondsTaken);
+  const coins = Math.round(coinsForCorrect(secondsTaken) * coinFactor);
   const answered: GameState = {
     ...state,
     status: { ...state.status, [target]: firstTry ? 'green' : 'blue' },
