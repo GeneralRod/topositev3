@@ -110,6 +110,7 @@ describe('overzetten van oude gegevens', () => {
       cityStats: {},
       stars: {},
       prefs: { playMode: 'map' },
+      daily: {},
     });
   });
 });
@@ -213,6 +214,21 @@ describe('opslag in de app', () => {
     storage.setPlayMode('choice');
     storage.setStoreForTesting(store);
     expect(storage.getPlayMode()).toBe('choice');
+  });
+
+  it('geeft de bonus van de dagelijkse uitdaging één keer per dag', () => {
+    expect(storage.completeDailyChallenge('capitals', '2026-09-24')).toEqual({
+      bonus: 50,
+      streak: 1,
+    });
+    expect(storage.completeDailyChallenge('capitals', '2026-09-24')).toEqual({
+      bonus: 0,
+      streak: 1,
+    });
+    expect(storage.getCoins()).toBe(70);
+    expect(storage.completeDailyChallenge('capitals', '2026-09-25').streak).toBe(2);
+    storage.setStoreForTesting(store);
+    expect(storage.getDaily('capitals')).toEqual({ lastCompleted: '2026-09-25', streak: 2 });
   });
 
   it('bewaart en wist spellen per pakket', () => {

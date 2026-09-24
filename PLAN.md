@@ -121,7 +121,8 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
 
 **Deel 4: dagelijkse uitdaging**
 
-- [ ] Elke dag 10 willekeurige steden; extra munten als je meerdere dagen achter elkaar speelt
+- [x] Elke dag 10 vaste steden (voor iedereen dezelfde); bonus 50 munten +10 per dag in je reeks
+      (max 120); één keer per dag (`src/game/daily.ts`)
 
 **Deel 5: meer om te verdienen**
 
