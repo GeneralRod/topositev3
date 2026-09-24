@@ -6,9 +6,9 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   build: {
-    // three.js (de wereldbol) is los ~540 kB. Dat stukje wordt pas na het
-    // tonen van de startpagina geladen, dus de standaardwaarschuwing (500 kB)
-    // is hier niet van toepassing.
-    chunkSizeWarningLimit: 600,
+    // Twee bewust grote stukken die pas later geladen worden: three.js voor de
+    // wereldbol (~540 kB) en de landenkaart van Natural Earth (~760 kB, 240 kB
+    // ingepakt). De standaardwaarschuwing (500 kB) is daarom te streng.
+    chunkSizeWarningLimit: 800,
   },
 });

@@ -81,7 +81,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
         <TrophyIcon>🏆</TrophyIcon>
         Prijzenkast
       </TrophyButton>
-      <VersionTag>Versie: 8.0</VersionTag>
+      <VersionTag>Versie: 9.0</VersionTag>
     </Page>
   );
 };
