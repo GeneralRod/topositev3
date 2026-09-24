@@ -126,8 +126,15 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
 
 **Deel 5: meer om te verdienen**
 
-- [ ] Extra prijzen en stickers
-- [ ] Prestatieprijzen (bijv. een pakket zonder fouten), niet te koop maar te verdienen
+- [x] Extra prijzen en stickers: vijfde plank "Wereldwonderen" (molen, Eiffeltoren, piramides,
+      Vrijheidsbeeld) en 4 stickers (tulp, palmboom, walvis, luchtballon)
+- [x] Prestatieprijzen, niet te koop maar te verdienen: 8 medailles (`src/game/achievements.ts`),
+      bijv. foutloos, 3 dagen op rij, pakket 1 + 2 + 3. De kast staat in het midden met links en
+      rechts een prestatiebord (makkelijk links, moeilijk rechts). Nieuwe medailles staan in het
+      eindscherm; wie al sterren had krijgt ze bij het openen van de kast. Geen munten erbij: de
+      medaille is de prijs.
+- [x] Opgelost: het oplichten van prijzen die je kunt kopen (en het 'plop'-effect na kopen)
+      werkte niet, omdat de animatie niet goed aan Emotion werd doorgegeven
 
 **Deel 6 en verder: nieuwe onderwerpen** (elk onderwerp een eigen deel)
 

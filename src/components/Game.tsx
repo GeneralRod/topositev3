@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import type { City } from '../data/cities';
-import { totalMistakes, useGame } from '../game/useGame';
+import { countsStars, totalMistakes, useGame } from '../game/useGame';
+import { findAchievement, type Achievement } from '../game/achievements';
 import { starsFor } from '../game/progress';
 import { hintRemovals, pickChoices, seededRandom } from '../game/choices';
 import type { PlayMode } from '../storage';
@@ -13,6 +14,7 @@ import {
   hintsLeft,
   isComplete,
   MAX_HINTS,
+  type GameKind,
 } from '../game/rules';
 import { Button, colors } from '../ui';
 import GameHeader from './game/GameHeader';
@@ -89,8 +91,7 @@ const EmptyMessage = styled.div`
 interface GameProps {
   packageId: string;
   categoryId: string;
-  /** Sterren tellen (niet bij het oefenrondje met lastige steden). */
-  countStars: boolean;
+  kind: GameKind;
   /** Aanwijzen op de kaart of meerkeuze. */
   mode: PlayMode;
   /**
@@ -112,7 +113,7 @@ interface FeedbackState {
 const Game: React.FC<GameProps> = ({
   packageId,
   categoryId,
-  countStars,
+  kind,
   mode,
   onComplete,
   title,
@@ -125,12 +126,10 @@ const Game: React.FC<GameProps> = ({
   const handleComplete = useCallback(() => {
     if (onComplete) setExtraMessage(onComplete());
   }, [onComplete]);
-  const { state, clickCity, showHint, restart } = useGame(packageId, cityNames, {
+  const { state, earned, clickCity, showHint, restart } = useGame(packageId, cityNames, {
     categoryId,
-    // Meerkeuze is makkelijker: halve munten en geen sterren.
-    countStars: countStars && !isChoice,
-    coinFactor: isChoice ? 0.5 : 1,
-    maxHints: MAX_HINTS[mode],
+    kind,
+    mode,
     onComplete: handleComplete,
   });
   const [wrongPicks, setWrongPicks] = useState<{ city: string | null; names: string[] }>({
@@ -254,7 +253,10 @@ const Game: React.FC<GameProps> = ({
           bonus={completionBonus(state.coinsThisGame)}
           hardest={hardestCities(state)}
           extraMessage={extraMessage}
-          stars={countStars && !isChoice ? starsFor(totalMistakes(state), cities.length) : null}
+          stars={countsStars(kind, mode) ? starsFor(totalMistakes(state), cities.length) : null}
+          achievements={earned
+            .map(findAchievement)
+            .filter((a): a is Achievement => a !== undefined)}
           onClose={() => {
             restart();
             onBack();

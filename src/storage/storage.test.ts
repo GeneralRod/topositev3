@@ -111,6 +111,7 @@ describe('overzetten van oude gegevens', () => {
       stars: {},
       prefs: { playMode: 'map' },
       daily: {},
+      achievements: [],
     });
   });
 });
@@ -124,6 +125,20 @@ describe('versie 2 zonder upgrades (van voor de werkplaats)', () => {
     expect(data.upgrades).toEqual([]);
     expect(data.style).toEqual({ finish: 'oak', extras: [] });
     expect(data.prizes).toEqual(['globe']);
+    // Van vóór het prestatiebord: nog geen prestaties, maar munten en prijzen blijven.
+    expect(data.achievements).toEqual([]);
+    expect(data.coins).toBe(5);
+  });
+
+  it('houdt verdiende prestaties en laat rommel weg', () => {
+    const store = fakeStore({
+      [STORAGE_KEY]: JSON.stringify({
+        version: 2,
+        coins: 5,
+        achievements: ['flawless', 7, 'flawless', 'streak-3'],
+      }),
+    });
+    expect(loadSaveData(store).achievements).toEqual(['flawless', 'streak-3']);
   });
 });
 
@@ -229,6 +244,28 @@ describe('opslag in de app', () => {
     expect(storage.completeDailyChallenge('capitals', '2026-09-25').streak).toBe(2);
     storage.setStoreForTesting(store);
     expect(storage.getDaily('capitals')).toEqual({ lastCompleted: '2026-09-25', streak: 2 });
+  });
+
+  it('geeft prestatieprijzen één keer en bewaart ze', () => {
+    expect(storage.getAchievements()).toEqual([]);
+    expect(storage.awardAchievements()).toEqual([]);
+    expect(storage.awardAchievements({ kind: 'package', mode: 'choice', mistakes: 0 })).toEqual([
+      'first-game',
+      'quiz-master',
+    ]);
+    expect(storage.awardAchievements({ kind: 'package', mode: 'choice', mistakes: 0 })).toEqual([]);
+    storage.setStoreForTesting(store);
+    expect(storage.getAchievements()).toEqual(['first-game', 'quiz-master']);
+    // Munten blijven gewoon staan: prestaties kosten niets.
+    expect(storage.getCoins()).toBe(20);
+  });
+
+  it('geeft prestaties voor sterren en reeksen die je al had', () => {
+    storage.recordStars('pakket1', 3);
+    for (const day of ['2026-09-24', '2026-09-25', '2026-09-26']) {
+      storage.completeDailyChallenge('capitals', day);
+    }
+    expect(storage.awardAchievements()).toEqual(['first-game', 'streak-3', 'flawless']);
   });
 
   it('bewaart en wist spellen per pakket', () => {

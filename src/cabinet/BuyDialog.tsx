@@ -3,12 +3,11 @@ import styled from '@emotion/styled';
 import { FaCoins } from 'react-icons/fa';
 import { Button } from '../ui';
 import type { CabinetItem } from './catalog';
-import { PrizeArt, StickerArt } from './art';
+import type { Achievement } from '../game/achievements';
+import { AchievementArt, PrizeArt, StickerArt } from './art';
 
-export interface Selection {
-  kind: 'prize' | 'sticker';
-  item: CabinetItem;
-}
+export type Selection =
+  { kind: 'prize' | 'sticker'; item: CabinetItem } | { kind: 'achievement'; item: Achievement };
 
 const Overlay = styled.div`
   position: fixed;
@@ -88,9 +87,6 @@ interface BuyDialogProps {
 }
 
 const BuyDialog: React.FC<BuyDialogProps> = ({ selection, coins, owned, onBuy, onClose }) => {
-  const { item, kind } = selection;
-  const canAfford = coins >= item.price;
-
   // Sluiten met Escape
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => event.key === 'Escape' && onClose();
@@ -101,46 +97,94 @@ const BuyDialog: React.FC<BuyDialogProps> = ({ selection, coins, owned, onBuy, o
   return (
     <Overlay onClick={onClose}>
       <Dialog role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
-        {kind === 'prize' ? (
-          <PrizeArt id={item.id} size={140} />
+        {selection.kind === 'achievement' ? (
+          <AchievementInfo achievement={selection.item} owned={owned} onClose={onClose} />
         ) : (
-          <StickerArt id={item.id} size={140} />
-        )}
-        <Name>{item.name}</Name>
-        <Description>{item.description}</Description>
-        {owned ? (
-          <>
-            <Message tone="good">
-              {kind === 'prize' ? 'Deze staat al in je kast!' : 'Deze sticker zit al op je kast!'}
-            </Message>
-            <Buttons>
-              <Button onClick={onClose}>Mooi!</Button>
-            </Buttons>
-          </>
-        ) : (
-          <>
-            <Price>
-              <FaCoins /> {item.price} munten
-            </Price>
-            {!canAfford && (
-              <Message tone="info">
-                Je hebt nog {item.price - coins} munten nodig. Speel nog een pakket!
-              </Message>
-            )}
-            <Buttons>
-              {canAfford && (
-                <BuyButton onClick={onBuy} autoFocus>
-                  Kopen!
-                </BuyButton>
-              )}
-              <Button variant="outline" onClick={onClose}>
-                {canAfford ? 'Nee, toch niet' : 'Oké'}
-              </Button>
-            </Buttons>
-          </>
+          <PrizeInfo
+            kind={selection.kind}
+            item={selection.item}
+            coins={coins}
+            owned={owned}
+            onBuy={onBuy}
+            onClose={onClose}
+          />
         )}
       </Dialog>
     </Overlay>
+  );
+};
+
+/** Prestatieprijzen kun je niet kopen: laat zien hoe je hem verdient. */
+const AchievementInfo: React.FC<{
+  achievement: Achievement;
+  owned: boolean;
+  onClose: () => void;
+}> = ({ achievement, owned, onClose }) => (
+  <>
+    <AchievementArt id={achievement.id} size={140} />
+    <Name>{achievement.name}</Name>
+    <Description>{achievement.goal}</Description>
+    <Message tone={owned ? 'good' : 'info'}>
+      {owned ? 'Deze prestatie heb je verdiend!' : 'Niet te koop: deze moet je verdienen!'}
+    </Message>
+    <Buttons>
+      <Button onClick={onClose} autoFocus>
+        {owned ? 'Mooi!' : 'Oké'}
+      </Button>
+    </Buttons>
+  </>
+);
+
+const PrizeInfo: React.FC<{
+  kind: 'prize' | 'sticker';
+  item: CabinetItem;
+  coins: number;
+  owned: boolean;
+  onBuy: () => void;
+  onClose: () => void;
+}> = ({ kind, item, coins, owned, onBuy, onClose }) => {
+  const canAfford = coins >= item.price;
+  return (
+    <>
+      {kind === 'prize' ? (
+        <PrizeArt id={item.id} size={140} />
+      ) : (
+        <StickerArt id={item.id} size={140} />
+      )}
+      <Name>{item.name}</Name>
+      <Description>{item.description}</Description>
+      {owned ? (
+        <>
+          <Message tone="good">
+            {kind === 'prize' ? 'Deze staat al in je kast!' : 'Deze sticker zit al op je kast!'}
+          </Message>
+          <Buttons>
+            <Button onClick={onClose}>Mooi!</Button>
+          </Buttons>
+        </>
+      ) : (
+        <>
+          <Price>
+            <FaCoins /> {item.price} munten
+          </Price>
+          {!canAfford && (
+            <Message tone="info">
+              Je hebt nog {item.price - coins} munten nodig. Speel nog een pakket!
+            </Message>
+          )}
+          <Buttons>
+            {canAfford && (
+              <BuyButton onClick={onBuy} autoFocus>
+                Kopen!
+              </BuyButton>
+            )}
+            <Button variant="outline" onClick={onClose}>
+              {canAfford ? 'Nee, toch niet' : 'Oké'}
+            </Button>
+          </Buttons>
+        </>
+      )}
+    </>
   );
 };
 

@@ -2,16 +2,27 @@
 // Alle beslissingen staan in rules.ts; hier alleen: bijhouden, bewaren, munten uitkeren.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { addCoins, clearGame, loadGame, recordCityAnswer, recordStars, saveGame } from '../storage';
+import {
+  addCoins,
+  awardAchievements,
+  clearGame,
+  loadGame,
+  recordCityAnswer,
+  recordStars,
+  saveGame,
+  type PlayMode,
+} from '../storage';
 import { starsFor } from './progress';
 import {
   answer,
   claimCompletionBonus,
   isComplete,
+  MAX_HINTS,
   newGame,
   restoreGame,
   takeHint,
   type AnswerResult,
+  type GameKind,
   type GameState,
 } from './rules';
 
@@ -23,12 +34,9 @@ function startGame(packageId: string, cityNames: string[]): GameState {
 export interface GameOptions {
   /** Onderwerp, voor het bijhouden van lastige steden. */
   categoryId: string;
-  /** Sterren bewaren bij een afgerond spel (niet bij het oefenrondje). */
-  countStars: boolean;
-  /** Deel van de munten (meerkeuze: 0,5). */
-  coinFactor?: number;
-  /** Maximaal aantal hints in dit spel. */
-  maxHints: number;
+  kind: GameKind;
+  /** Aanwijzen op de kaart of meerkeuze. */
+  mode: PlayMode;
   /** Wordt één keer aangeroepen op het moment dat het spel af is. */
   onComplete?: () => void;
 }
@@ -38,9 +46,22 @@ export function totalMistakes(state: GameState): number {
   return Object.values(state.mistakes).reduce((sum, n) => sum + n, 0);
 }
 
+/**
+ * Sterren tellen alleen bij gewone pakketten op de kaart: niet bij het
+ * oefenrondje, de dagelijkse uitdaging of meerkeuze (dat is makkelijker).
+ */
+export function countsStars(kind: GameKind, mode: PlayMode): boolean {
+  return kind === 'package' && mode === 'map';
+}
+
 export function useGame(packageId: string, cityNames: string[], options: GameOptions) {
-  const { categoryId, countStars, coinFactor = 1, maxHints, onComplete } = options;
+  const { categoryId, kind, mode, onComplete } = options;
+  const countStars = countsStars(kind, mode);
+  // Meerkeuze is makkelijker: halve munten.
+  const coinFactor = mode === 'choice' ? 0.5 : 1;
   const [state, setState] = useState(() => startGame(packageId, cityNames));
+  /** Prestatieprijzen die je met dit spel net hebt verdiend. */
+  const [earned, setEarned] = useState<string[]>([]);
   const questionStartedAt = useRef(0);
 
   // Start de klok voor de snelheidsbonus zodra er een nieuwe vraag is.
@@ -72,20 +93,23 @@ export function useGame(packageId: string, cityNames: string[], options: GameOpt
             recordStars(packageId, starsFor(totalMistakes(next), Object.keys(next.status).length));
           }
           onComplete?.();
+          // Pas na de sterren en de dagelijkse reeks, want daar kijken prestaties naar.
+          setEarned(awardAchievements({ kind, mode, mistakes: totalMistakes(next) }));
         }
       }
       setState(next);
       return result;
     },
-    [state, categoryId, countStars, packageId, coinFactor, onComplete],
+    [state, categoryId, countStars, packageId, coinFactor, onComplete, kind, mode],
   );
 
-  const showHint = useCallback(() => setState((s) => takeHint(s, maxHints)), [maxHints]);
+  const showHint = useCallback(() => setState((s) => takeHint(s, MAX_HINTS[mode])), [mode]);
 
   const restart = useCallback(() => {
     clearGame(packageId);
     setState(newGame(cityNames));
+    setEarned([]);
   }, [packageId, cityNames]);
 
-  return { state, clickCity, showHint, restart };
+  return { state, earned, clickCity, showHint, restart };
 }

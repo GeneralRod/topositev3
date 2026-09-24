@@ -11,7 +11,8 @@
 //      prijzen die niet meer bestaan worden omgezet in munten (zie migrations.ts).
 //      Later toegevoegd (zonder nieuw versienummer, ontbreekt = standaard):
 //      kast-upgrades en de gekozen kaststijl, statistieken per stad (lastige
-//      steden) en de beste sterren per pakket.
+//      steden), de beste sterren per pakket, de dagelijkse uitdaging en de
+//      verdiende prestatieprijzen.
 
 import type { CityStatus, GameState } from '../game/rules';
 import type { CityStats } from '../game/progress';
@@ -49,6 +50,8 @@ export interface SaveData {
   prefs: Prefs;
   /** Dagelijkse uitdaging per onderwerp (categorie-id). */
   daily: Record<string, DailyRecord>;
+  /** Id's van verdiende prestatieprijzen (niet te koop). */
+  achievements: string[];
 }
 
 export type PlayMode = 'map' | 'choice';
@@ -103,6 +106,7 @@ export function emptySaveData(): SaveData {
     stars: {},
     prefs: { playMode: 'map' },
     daily: {},
+    achievements: [],
   };
 }
 
@@ -166,6 +170,7 @@ export function upgradeV1(old: SaveDataV1): SaveData {
     stars: {},
     prefs: { playMode: 'map' },
     daily: {},
+    achievements: [],
   };
 }
 
@@ -294,6 +299,7 @@ export function parseSaveData(value: unknown): SaveData | null {
     stars: parseStars(value.stars),
     prefs: parsePrefs(value.prefs),
     daily: parseDaily(value.daily),
+    achievements: toIdList(value.achievements),
   };
 }
 

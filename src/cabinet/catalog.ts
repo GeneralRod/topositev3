@@ -137,6 +137,36 @@ export const shelves: Shelf[] = [
       },
     ],
   },
+  {
+    id: 'wonderen',
+    title: 'Wereldwonderen',
+    items: [
+      {
+        id: 'windmill',
+        name: 'Molen',
+        description: 'Een echte Hollandse molen. De wieken draaien in de wind!',
+        price: 700,
+      },
+      {
+        id: 'eiffel',
+        name: 'Eiffeltoren',
+        description: 'De beroemde ijzeren toren uit Parijs, in Frankrijk.',
+        price: 1400,
+      },
+      {
+        id: 'pyramids',
+        name: 'Piramides',
+        description: 'Duizenden jaren oud, in de woestijn bij Caïro in Egypte.',
+        price: 2200,
+      },
+      {
+        id: 'liberty',
+        name: 'Vrijheidsbeeld',
+        description: 'Ze houdt haar fakkel hoog in de haven van New York.',
+        price: 3500,
+      },
+    ],
+  },
 ];
 
 /** Stickers voor op de zijkanten van de kast. */
@@ -147,6 +177,10 @@ export const stickers: CabinetItem[] = [
   { id: 'anchor', name: 'Anker', description: 'Voor echte zeevaarders.', price: 150 },
   { id: 'rainbow', name: 'Regenboog', description: 'Alle kleuren van de wereld.', price: 200 },
   { id: 'rocket', name: 'Raket', description: 'Nog verder dan de hele wereld!', price: 250 },
+  { id: 'tulip', name: 'Tulp', description: 'De bekendste bloem van Nederland.', price: 150 },
+  { id: 'palm', name: 'Palmboom', description: 'Een zonnig eiland in de zee.', price: 200 },
+  { id: 'whale', name: 'Walvis', description: 'Het grootste dier van de oceaan.', price: 250 },
+  { id: 'balloon', name: 'Luchtballon', description: 'Zweef hoog boven de wereld.', price: 300 },
 ];
 
 export const allPrizes: CabinetItem[] = shelves.flatMap((shelf) => shelf.items);

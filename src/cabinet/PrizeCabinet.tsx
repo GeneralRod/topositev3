@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { keyframes } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaCoins, FaHammer } from 'react-icons/fa';
 import { BackLink } from '../ui';
 import {
+  awardAchievements,
   buyItem,
+  getAchievements,
   getCoins,
   getPrizes,
   getStickers,
@@ -22,7 +24,8 @@ import {
   type CabinetItem,
 } from './catalog';
 import { effectiveStyle, nextGoal, slotState, type CabinetStyle } from './rules';
-import { PrizeArt, StickerArt } from './art';
+import { AchievementArt, PrizeArt, StickerArt } from './art';
+import { achievements, findAchievement, type Achievement } from '../game/achievements';
 import BuyDialog, { type Selection } from './BuyDialog';
 import DevTools from './DevTools';
 import Workshop from './Workshop';
@@ -89,6 +92,7 @@ const Goal = styled.p`
 `;
 
 const Cabinet = styled.div`
+  grid-area: cabinet;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -230,8 +234,21 @@ const Slot = styled.button<{ state: 'owned' | 'affordable' | 'locked'; fresh: bo
     ${(p) => (p.state === 'owned' ? '' : 'filter: brightness(0); opacity: 0.16;')}
   }
 
-  ${(p) => (p.state === 'affordable' ? `& > span:first-of-type { animation: ${glow} 1.8s ease-in-out infinite; }` : '')}
-  ${(p) => (p.fresh ? `& > span:first-of-type { animation: ${pop} 0.7s ease-out; }` : '')}
+  /* Met css eromheen, anders plakt Emotion de animatie als gewone tekst in en doet hij niets. */
+  ${(p) =>
+    p.state === 'affordable' &&
+    css`
+      & > span:first-of-type {
+        animation: ${glow} 1.8s ease-in-out infinite;
+      }
+    `}
+  ${(p) =>
+    p.fresh &&
+    css`
+      & > span:first-of-type {
+        animation: ${pop} 0.7s ease-out;
+      }
+    `}
 
   &:hover {
     transform: translateY(-4px);
@@ -393,6 +410,97 @@ const CompassRose: React.FC = () => (
 
 const STICKER_TILTS = [-8, 6, -4, 7, -6, 5];
 
+/**
+ * De kast precies in het midden, met links en rechts een prestatiebord als
+ * vleugels. Te smal voor alle drie naast elkaar: kast boven, borden eronder.
+ */
+const Showroom = styled.div`
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-areas: 'left cabinet right';
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: auto auto;
+    grid-template-areas: 'cabinet cabinet' 'left right';
+    align-items: start;
+  }
+`;
+
+// Prestatiebord: groen vilt in een lijst van hetzelfde hout als de kast.
+const Board = styled.section<{ side: 'left' | 'right' }>`
+  grid-area: ${(p) => p.side};
+  justify-self: center;
+  width: 144px;
+  padding: 10px 8px 12px;
+  background-color: #2f5d50;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 6px 6px;
+  border: 10px solid var(--wood);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 3px var(--trim),
+    inset 0 0 18px rgba(0, 0, 0, 0.4),
+    0 12px 18px rgba(60, 35, 15, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+`;
+
+const BoardPlate = styled(NamePlate)`
+  padding: 1px 8px;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+`;
+
+const MedalColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+`;
+
+const MedalSpot = styled.button<{ earned: boolean; fresh: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 2px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: ${(p) => (p.earned ? '#ffe7a0' : 'rgba(232, 243, 238, 0.6)')};
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.2;
+  transition: transform 0.15s;
+
+  /* Nog niet verdiend: een grijze schim van de medaille. */
+  svg {
+    ${(p) => (p.earned ? '' : 'filter: grayscale(1) brightness(1.5); opacity: 0.3;')}
+  }
+
+  ${(p) =>
+    p.fresh &&
+    css`
+      & > span:first-of-type {
+        animation: ${pop} 0.7s ease-out;
+      }
+    `}
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+
+  &:hover svg {
+    ${(p) => (p.earned ? '' : 'opacity: 0.5;')}
+  }
+`;
+
 export const PrizeCabinet: React.FC = () => {
   const navigate = useNavigate();
   const showDevTools = new URLSearchParams(useLocation().search).has('ontwikkelaar');
@@ -404,6 +512,10 @@ export const PrizeCabinet: React.FC = () => {
   const [upgrades, setUpgrades] = useState(getUpgrades);
   const [style, setStyleState] = useState<CabinetStyle>(getStyle);
   const [workshopOpen, setWorkshopOpen] = useState(false);
+  // Eén keer bij het openen: prestaties die je al had verdiend (bijv. met sterren
+  // van vóór het prestatiebord) komen er nu bij. Die krijgen een feestelijk effect.
+  const [newlyEarned] = useState(() => awardAchievements());
+  const [earned, setEarned] = useState(getAchievements);
 
   const refresh = () => {
     setCoins(getCoins());
@@ -411,6 +523,7 @@ export const PrizeCabinet: React.FC = () => {
     setOwnedStickers(getStickers());
     setUpgrades(getUpgrades());
     setStyleState(getStyle());
+    setEarned(getAchievements());
   };
 
   const changeStyle = (next: CabinetStyle) => {
@@ -443,11 +556,18 @@ export const PrizeCabinet: React.FC = () => {
     '--wood-light': finish.woodLight,
     '--wood-dark': finish.woodDark,
     '--trim': has('gold-trim') ? '#c9a227' : finish.woodDark,
-    // Ruimte voor de windroos bovenop, zodat die niet over de knop valt.
-    marginTop: has('compass-rose') ? 28 : 0,
   } as React.CSSProperties;
+  const newNames = newlyEarned.flatMap((id) => findAchievement(id)?.name ?? []);
+  const newMessage =
+    newNames.length === 0
+      ? null
+      : newNames.length === 1
+        ? `Hoera, een nieuwe prestatie: ${newNames[0]}! Kijk maar naast je kast.`
+        : `Hoera, ${newNames.length} nieuwe prestaties: ${newNames.slice(0, -1).join(', ')} en ${newNames[newNames.length - 1]}! Kijk maar naast je kast.`;
 
   const buy = (selected: Selection) => {
+    // Prestatieprijzen zijn niet te koop.
+    if (selected.kind === 'achievement') return;
     if (buyItem(selected.kind, selected.item.id, selected.item.price)) {
       setFresh(selected.item.id);
       refresh();
@@ -457,6 +577,26 @@ export const PrizeCabinet: React.FC = () => {
 
   const goal = nextGoal(allPrizes, prizes);
   const half = Math.ceil(stickers.length / 2);
+  const medalHalf = Math.ceil(achievements.length / 2);
+  const earnedCount = `${earned.length} VAN ${achievements.length}`;
+
+  const renderMedal = (achievement: Achievement) => {
+    const isEarned = earned.includes(achievement.id);
+    return (
+      <MedalSpot
+        key={achievement.id}
+        earned={isEarned}
+        fresh={newlyEarned.includes(achievement.id)}
+        onClick={() => setSelection({ kind: 'achievement', item: achievement })}
+        aria-label={isEarned ? achievement.name : `${achievement.name}, nog niet verdiend`}
+      >
+        <ArtWrap>
+          <AchievementArt id={achievement.id} size={72} />
+        </ArtWrap>
+        {achievement.name}
+      </MedalSpot>
+    );
+  };
 
   const renderSticker = (item: CabinetItem, index: number) => {
     const owned = ownedStickers.includes(item.id);
@@ -499,79 +639,98 @@ export const PrizeCabinet: React.FC = () => {
       </TopBar>
 
       <Goal>
-        {goal
-          ? coins >= goal.price
-            ? `Je hebt genoeg munten voor: ${goal.name}! Klik op een lichtgevende plek.`
-            : `Volgend doel: ${goal.name}. Nog ${goal.price - coins} munten sparen!`
-          : 'Wauw, je kast is helemaal vol! Jij bent een echte topografiekampioen.'}
+        {newMessage
+          ? newMessage
+          : goal
+            ? coins >= goal.price
+              ? `Je hebt genoeg munten voor: ${goal.name}! Klik op een lichtgevende plek.`
+              : `Volgend doel: ${goal.name}. Nog ${goal.price - coins} munten sparen!`
+            : 'Wauw, je kast is helemaal vol! Jij bent een echte topografiekampioen.'}
       </Goal>
       <WorkshopButton onClick={() => setWorkshopOpen(true)}>
         <FaHammer /> Kast opknappen
       </WorkshopButton>
 
-      <Cabinet style={cabinetColors}>
-        {has('compass-rose') && (
-          <Topper>
-            <CompassRose />
-          </Topper>
-        )}
-        <Crown>
-          <NamePlate>PRIJZENKAST</NamePlate>
-        </Crown>
-        <Body>
-          <SidePanel>{stickers.slice(0, half).map((s, i) => renderSticker(s, i))}</SidePanel>
-          <Glass>
-            {has('sparkles') &&
-              SPARKLES.map(([x, y, delay], i) => (
-                <Sparkle key={i} x={x} y={y} delay={delay}>
-                  ✦
-                </Sparkle>
+      <Showroom style={cabinetColors}>
+        {/* Ruimte voor de windroos bovenop, zodat die niet over de knop valt. */}
+        <Cabinet style={{ marginTop: has('compass-rose') ? 28 : 0 }}>
+          {has('compass-rose') && (
+            <Topper>
+              <CompassRose />
+            </Topper>
+          )}
+          <Crown>
+            <NamePlate>PRIJZENKAST</NamePlate>
+          </Crown>
+          <Body>
+            <SidePanel>{stickers.slice(0, half).map((s, i) => renderSticker(s, i))}</SidePanel>
+            <Glass>
+              {has('sparkles') &&
+                SPARKLES.map(([x, y, delay], i) => (
+                  <Sparkle key={i} x={x} y={y} delay={delay}>
+                    ✦
+                  </Sparkle>
+                ))}
+              {shelves.map((shelf) => (
+                <React.Fragment key={shelf.id}>
+                  <ShelfRow lit={has('lights')}>
+                    {shelf.items.map((item) => {
+                      const state = slotState(item, prizes, coins);
+                      return (
+                        <Slot
+                          key={item.id}
+                          state={state.kind}
+                          fresh={fresh === item.id}
+                          onClick={() => setSelection({ kind: 'prize', item })}
+                          aria-label={
+                            state.kind === 'owned'
+                              ? item.name
+                              : `${item.name}, ${item.price} munten`
+                          }
+                          title={state.kind === 'owned' ? item.name : undefined}
+                        >
+                          <ArtWrap>
+                            <PrizeArt id={item.id} size={74} />
+                          </ArtWrap>
+                          {state.kind !== 'owned' && (
+                            <PriceTag affordable={state.kind === 'affordable'}>
+                              <FaCoins /> {item.price}
+                            </PriceTag>
+                          )}
+                        </Slot>
+                      );
+                    })}
+                  </ShelfRow>
+                  <ShelfBoard>
+                    <ShelfLabel>{shelf.title}</ShelfLabel>
+                  </ShelfBoard>
+                </React.Fragment>
               ))}
-            {shelves.map((shelf) => (
-              <React.Fragment key={shelf.id}>
-                <ShelfRow lit={has('lights')}>
-                  {shelf.items.map((item) => {
-                    const state = slotState(item, prizes, coins);
-                    return (
-                      <Slot
-                        key={item.id}
-                        state={state.kind}
-                        fresh={fresh === item.id}
-                        onClick={() => setSelection({ kind: 'prize', item })}
-                        aria-label={
-                          state.kind === 'owned' ? item.name : `${item.name}, ${item.price} munten`
-                        }
-                        title={state.kind === 'owned' ? item.name : undefined}
-                      >
-                        <ArtWrap>
-                          <PrizeArt id={item.id} size={74} />
-                        </ArtWrap>
-                        {state.kind !== 'owned' && (
-                          <PriceTag affordable={state.kind === 'affordable'}>
-                            <FaCoins /> {item.price}
-                          </PriceTag>
-                        )}
-                      </Slot>
-                    );
-                  })}
-                </ShelfRow>
-                <ShelfBoard>
-                  <ShelfLabel>{shelf.title}</ShelfLabel>
-                </ShelfBoard>
-              </React.Fragment>
-            ))}
-          </Glass>
-          <SidePanel>{stickers.slice(half).map((s, i) => renderSticker(s, i + half))}</SidePanel>
-        </Body>
-        <Base />
-        <Feet />
-      </Cabinet>
+            </Glass>
+            <SidePanel>{stickers.slice(half).map((s, i) => renderSticker(s, i + half))}</SidePanel>
+          </Body>
+          <Base />
+          <Feet />
+        </Cabinet>
+
+        {/* Links de makkelijkere prestaties, rechts de moeilijkere. */}
+        <Board side="left" aria-label="Prestaties">
+          <BoardPlate>PRESTATIES</BoardPlate>
+          <MedalColumn>{achievements.slice(0, medalHalf).map(renderMedal)}</MedalColumn>
+        </Board>
+        <Board side="right" aria-label={`Meer prestaties, ${earnedCount} verdiend`}>
+          <BoardPlate>{earnedCount}</BoardPlate>
+          <MedalColumn>{achievements.slice(medalHalf).map(renderMedal)}</MedalColumn>
+        </Board>
+      </Showroom>
 
       {selection && (
         <BuyDialog
           selection={selection}
           coins={coins}
-          owned={(selection.kind === 'prize' ? prizes : ownedStickers).includes(selection.item.id)}
+          owned={{ prize: prizes, sticker: ownedStickers, achievement: earned }[
+            selection.kind
+          ].includes(selection.item.id)}
           onBuy={() => buy(selection)}
           onClose={() => setSelection(null)}
         />

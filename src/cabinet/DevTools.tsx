@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { Button } from '../ui';
-import { getCoins, setCoins, setCollection } from '../storage';
+import { getCoins, setAchievements, setCoins, setCollection } from '../storage';
+import { achievements } from '../game/achievements';
 import { allPrizes, extras, finishes, stickers } from './catalog';
 
 // Alleen zichtbaar met ?ontwikkelaar in de url, om de kast te testen.
@@ -38,7 +39,16 @@ const DevTools: React.FC<{ onChange: () => void }> = ({ onChange }) => {
       >
         Kast vol
       </Button>
-      <Button variant="danger" onClick={run(() => setCollection([], []))}>
+      <Button onClick={run(() => setAchievements(achievements.map((a) => a.id)))}>
+        Alle prestaties
+      </Button>
+      <Button
+        variant="danger"
+        onClick={run(() => {
+          setCollection([], []);
+          setAchievements([]);
+        })}
+      >
         Kast leeg
       </Button>
       <Button variant="danger" onClick={run(() => setCoins(0))}>

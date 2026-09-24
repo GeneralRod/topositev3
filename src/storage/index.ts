@@ -4,6 +4,7 @@
 import type { GameState } from '../game/rules';
 import { recordAnswer, type AnswerKind, type CityStats } from '../game/progress';
 import { completeDaily, dailyBonus, doneToday, type DailyRecord } from '../game/daily';
+import { newAchievements, type FinishedGame } from '../game/achievements';
 import {
   loadSaveData,
   writeSaveData,
@@ -191,4 +192,30 @@ export function completeDailyChallenge(
     daily: { ...d.daily, [categoryId]: after },
   }));
   return { bonus, streak: after.streak };
+}
+
+export function getAchievements(): string[] {
+  return state().achievements;
+}
+
+/**
+ * Kijk of er nieuwe prestatieprijzen verdiend zijn (na een spel, of zonder spel
+ * bij het openen van de prijzenkast) en bewaar ze. Geeft de nieuwe id's terug.
+ */
+export function awardAchievements(finished?: FinishedGame): string[] {
+  const current = state();
+  const dailyStreak = Math.max(0, ...Object.values(current.daily).map((r) => r.streak));
+  const earned = newAchievements(
+    { stars: current.stars, dailyStreak, finished },
+    current.achievements,
+  );
+  if (earned.length > 0) {
+    update((d) => ({ ...d, achievements: [...d.achievements, ...earned] }));
+  }
+  return earned;
+}
+
+/** Alleen voor de ontwikkelaarsknoppen: prestaties direct zetten. */
+export function setAchievements(ids: string[]): void {
+  update((d) => ({ ...d, achievements: ids }));
 }
