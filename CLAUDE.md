@@ -23,7 +23,8 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 
 - `src/game/rules.ts`: spelregels als pure functies (met tests ernaast)
 - `src/game/useGame.ts`: koppelt spelregels aan React en opslag
-- `src/storage/`: alle localStorage-opslag, met migratie van de oude sleutels
+- `src/storage/`: alle localStorage-opslag (versie 2), met migratie van oude sleutels en versie 1
 - `src/content/catalog.ts`: categorieën en pakketten als data
+- `src/cabinet/`: de prijzenkast (catalogus, regels, tekeningen, scherm); testen met `?ontwikkelaar` in de url
 - `src/ui/`: gedeelde knoppen, kaarten en kleuren
 - `src/components/game/`: onderdelen van het spelscherm

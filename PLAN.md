@@ -85,7 +85,10 @@ Mobiel is daarom geen prioriteit; muis en toetsenbord wel.
 - [ ] Kaart met zoomen/slepen (met de muis; stippen in Europa liggen nu op elkaar)
 - [ ] Nieuwe categorieën (landen, wateren, gebergtes)
 - [ ] Oefenmodus "moeilijkste steden" en voortgangsoverzicht
-- [ ] Prijzensysteem afmaken
+- [x] Prijzenkast opnieuw ontworpen (`src/cabinet/`): houten ontdekkerskast met 4 thema-planken
+      × 4 plekken, eigen tekeningen, lege plekken als doel (schaduw + prijs), stickers op de
+      zijpanelen, kopen vanuit de kast. Oude prijzen blijven; linten en deurspullen worden
+      teruggegeven als munten (opslag versie 2). Ontwikkelaarsknoppen alleen met `?ontwikkelaar`.
 
 ### Fase 5: nieuw design
 

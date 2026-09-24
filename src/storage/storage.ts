@@ -4,11 +4,17 @@
 // losse sleutels worden bij het eerste bezoek automatisch overgezet, zodat
 // spelers hun munten, prijzen en voortgang houden. De oude sleutels blijven
 // staan (worden alleen gelezen), zodat terugrollen naar de oude site veilig is.
+//
+// Versies:
+//   1: munten, linten (aantallen), 'echte' prijzen en spellen
+//   2: munten, prijzen, stickers en spellen (nieuwe prijzenkast). Linten en
+//      prijzen die niet meer bestaan worden omgezet in munten (zie migrations.ts).
 
 import type { CityStatus, GameState } from '../game/rules';
+import { upgradeCollection } from './migrations';
 
 export const STORAGE_KEY = 'topografiewereld';
-export const STORAGE_VERSION = 1;
+export const STORAGE_VERSION = 2;
 
 export const LEGACY_KEYS = {
   coins: 'topositev2_total_coins',
@@ -20,11 +26,21 @@ export const LEGACY_KEYS = {
 export interface SaveData {
   version: number;
   coins: number;
-  /** Aantal linten per prijs-id. */
-  ribbons: Record<string, number>;
-  /** Id's van gekochte echte prijzen. */
-  realPrizes: string[];
+  /** Id's van gekochte prijzen in de prijzenkast. */
+  prizes: string[];
+  /** Id's van gekochte stickers. */
+  stickers: string[];
   /** Lopende spellen per pakket-id (bijv. 'pakket1-2'). */
+  games: Record<string, GameState>;
+}
+
+/** Het oude formaat (versie 1 en de losse sleutels daarvoor). */
+export interface SaveDataV1 {
+  coins: number;
+  /** Aantal linten per lint-id. */
+  ribbons: Record<string, number>;
+  /** Id's van gekochte 'echte' prijzen. */
+  realPrizes: string[];
   games: Record<string, GameState>;
 }
 
@@ -32,7 +48,28 @@ export interface SaveData {
 export type KeyValueStore = Pick<Storage, 'getItem' | 'setItem' | 'key' | 'length'>;
 
 export function emptySaveData(): SaveData {
-  return { version: STORAGE_VERSION, coins: 0, ribbons: {}, realPrizes: [], games: {} };
+  return { version: STORAGE_VERSION, coins: 0, prizes: [], stickers: [], games: {} };
+}
+
+function emptySaveDataV1(): SaveDataV1 {
+  return { coins: 0, ribbons: {}, realPrizes: [], games: {} };
+}
+
+function toIdList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return Array.from(new Set(value.filter((id): id is string => typeof id === 'string')));
+}
+
+/** Zet gegevens in het oude formaat om naar versie 2. */
+export function upgradeV1(old: SaveDataV1): SaveData {
+  const { prizes, refund } = upgradeCollection(old.realPrizes, old.ribbons);
+  return {
+    version: STORAGE_VERSION,
+    coins: old.coins + refund,
+    prizes,
+    stickers: [],
+    games: old.games,
+  };
 }
 
 function parseJson(raw: string | null): unknown {
@@ -104,18 +141,12 @@ export function migrateLegacyGame(value: unknown): GameState | null {
   };
 }
 
-/** Lees alle oude losse sleutels en zet ze om naar het nieuwe formaat. */
-export function migrateLegacy(store: KeyValueStore): SaveData {
-  const data = emptySaveData();
+/** Lees alle oude losse sleutels (van voor versie 1) in het oude formaat. */
+export function migrateLegacy(store: KeyValueStore): SaveDataV1 {
+  const data = emptySaveDataV1();
   data.coins = toCount(store.getItem(LEGACY_KEYS.coins));
-
-  const ribbons = parseJson(store.getItem(LEGACY_KEYS.ribbons));
-  data.ribbons = toCountMap(ribbons);
-
-  const realPrizes = parseJson(store.getItem(LEGACY_KEYS.realPrizes));
-  if (Array.isArray(realPrizes)) {
-    data.realPrizes = realPrizes.filter((id): id is string => typeof id === 'string');
-  }
+  data.ribbons = toCountMap(parseJson(store.getItem(LEGACY_KEYS.ribbons)));
+  data.realPrizes = toIdList(parseJson(store.getItem(LEGACY_KEYS.realPrizes)));
 
   for (let i = 0; i < store.length; i++) {
     const key = store.key(i);
@@ -127,32 +158,53 @@ export function migrateLegacy(store: KeyValueStore): SaveData {
   return data;
 }
 
-/** Controleer opgeslagen gegevens in het nieuwe formaat; ongeldige delen vallen weg. */
-export function parseSaveData(value: unknown): SaveData | null {
-  if (!isRecord(value) || typeof value.version !== 'number') return null;
-  const data = emptySaveData();
-  data.coins = toCount(value.coins);
-  data.ribbons = toCountMap(value.ribbons);
-  if (Array.isArray(value.realPrizes)) {
-    data.realPrizes = value.realPrizes.filter((id): id is string => typeof id === 'string');
-  }
-  if (isRecord(value.games)) {
-    for (const [packageId, raw] of Object.entries(value.games)) {
+function parseGames(value: unknown): Record<string, GameState> {
+  const games: Record<string, GameState> = {};
+  if (isRecord(value)) {
+    for (const [packageId, raw] of Object.entries(value)) {
       const game = toGameState(raw);
-      if (game) data.games[packageId] = game;
+      if (game) games[packageId] = game;
     }
   }
-  return data;
+  return games;
+}
+
+/**
+ * Controleer opgeslagen gegevens onder de nieuwe sleutel; ongeldige delen
+ * vallen weg. Versie 1 wordt meteen omgezet naar versie 2.
+ */
+export function parseSaveData(value: unknown): SaveData | null {
+  if (!isRecord(value) || typeof value.version !== 'number') return null;
+  if (value.version < 2) {
+    return upgradeV1({
+      coins: toCount(value.coins),
+      ribbons: toCountMap(value.ribbons),
+      realPrizes: toIdList(value.realPrizes),
+      games: parseGames(value.games),
+    });
+  }
+  return {
+    version: STORAGE_VERSION,
+    coins: toCount(value.coins),
+    prizes: toIdList(value.prizes),
+    stickers: toIdList(value.stickers),
+    games: parseGames(value.games),
+  };
 }
 
 /**
  * Laad de gegevens. Bestaat de nieuwe sleutel nog niet, dan worden de oude
- * sleutels overgezet en meteen in het nieuwe formaat bewaard.
+ * sleutels overgezet. Een omzetting wordt meteen bewaard, zodat die maar één
+ * keer gebeurt (en munten-terugbetaling dus ook maar één keer).
  */
 export function loadSaveData(store: KeyValueStore): SaveData {
-  const current = parseSaveData(parseJson(store.getItem(STORAGE_KEY)));
-  if (current) return current;
-  const migrated = migrateLegacy(store);
+  const raw = parseJson(store.getItem(STORAGE_KEY));
+  const current = parseSaveData(raw);
+  if (current) {
+    if (isRecord(raw) && raw.version !== STORAGE_VERSION) writeSaveData(store, current);
+    return current;
+  }
+  const migrated = upgradeV1(migrateLegacy(store));
   writeSaveData(store, migrated);
   return migrated;
 }

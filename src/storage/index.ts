@@ -70,20 +70,33 @@ export function spendCoins(amount: number): boolean {
   return true;
 }
 
-export function getRibbons(): Record<string, number> {
-  return state().ribbons;
+export function getPrizes(): string[] {
+  return state().prizes;
 }
 
-export function setRibbons(ribbons: Record<string, number>): void {
-  update((d) => ({ ...d, ribbons }));
+export function getStickers(): string[] {
+  return state().stickers;
 }
 
-export function getRealPrizes(): string[] {
-  return state().realPrizes;
+/**
+ * Koop een prijs of sticker: munten eraf en toevoegen in één stap.
+ * Lukt niet als je hem al hebt of niet genoeg munten hebt.
+ */
+export function buyItem(kind: 'prize' | 'sticker', id: string, price: number): boolean {
+  const current = state();
+  const owned = kind === 'prize' ? current.prizes : current.stickers;
+  if (owned.includes(id) || price < 0 || current.coins < price) return false;
+  update((d) =>
+    kind === 'prize'
+      ? { ...d, coins: d.coins - price, prizes: [...d.prizes, id] }
+      : { ...d, coins: d.coins - price, stickers: [...d.stickers, id] },
+  );
+  return true;
 }
 
-export function setRealPrizes(realPrizes: string[]): void {
-  update((d) => ({ ...d, realPrizes }));
+/** Alleen voor de ontwikkelaarsknoppen: kast helemaal leeg of vol zetten. */
+export function setCollection(prizes: string[], stickers: string[]): void {
+  update((d) => ({ ...d, prizes, stickers }));
 }
 
 export function loadGame(packageId: string): GameState | null {
