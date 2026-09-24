@@ -44,9 +44,10 @@ describe('overzetten van oude gegevens', () => {
 
     const data = loadSaveData(store);
 
-    expect(data.coins).toBe(345);
-    expect(data.ribbons).toEqual({ 'ribbon-red': 2 });
-    expect(data.realPrizes).toEqual(['globe']);
+    // 345 munten + 2 rode linten van 100 terugbetaald
+    expect(data.coins).toBe(545);
+    expect(data.prizes).toEqual(['globe']);
+    expect(data.stickers).toEqual([]);
     expect(Object.keys(data.games).sort()).toEqual(['pakket1', 'pakket1-2']);
     expect(data.games.pakket1).toEqual({
       status: { Parijs: 'green', Berlijn: 'blue', Rome: 'unanswered' },
@@ -62,7 +63,7 @@ describe('overzetten van oude gegevens', () => {
   it('bewaart het resultaat onder de nieuwe sleutel en laat de oude staan', () => {
     const store = fakeStore({ topositev2_total_coins: '10' });
     loadSaveData(store);
-    expect(JSON.parse(store.map.get(STORAGE_KEY)!)).toMatchObject({ version: 1, coins: 10 });
+    expect(JSON.parse(store.map.get(STORAGE_KEY)!)).toMatchObject({ version: 2, coins: 10 });
     expect(store.map.get('topositev2_total_coins')).toBe('10');
   });
 
@@ -91,20 +92,59 @@ describe('overzetten van oude gegevens', () => {
     });
     const data = loadSaveData(store);
     expect(data.coins).toBe(0);
-    expect(data.ribbons).toEqual({});
-    expect(data.realPrizes).toEqual(['globe']);
+    expect(data.prizes).toEqual(['globe']);
     expect(data.games.pakket2).toBeUndefined();
     expect(data.games.pakket3.status).toEqual({});
   });
 
   it('begint leeg voor een nieuwe speler', () => {
     expect(loadSaveData(fakeStore())).toEqual({
-      version: 1,
+      version: 2,
       coins: 0,
-      ribbons: {},
-      realPrizes: [],
+      prizes: [],
+      stickers: [],
+      upgrades: [],
+      style: { finish: 'oak', extras: [] },
       games: {},
     });
+  });
+});
+
+describe('versie 2 zonder upgrades (van voor de werkplaats)', () => {
+  it('krijgt de standaardkast', () => {
+    const store = fakeStore({
+      [STORAGE_KEY]: JSON.stringify({ version: 2, coins: 5, prizes: ['globe'], stickers: [] }),
+    });
+    const data = loadSaveData(store);
+    expect(data.upgrades).toEqual([]);
+    expect(data.style).toEqual({ finish: 'oak', extras: [] });
+    expect(data.prizes).toEqual(['globe']);
+  });
+});
+
+describe('van versie 1 naar versie 2 (nieuwe prijzenkast)', () => {
+  const v1 = {
+    version: 1,
+    coins: 50,
+    ribbons: { 'ribbon-red': 1, 'ribbon-gold': 2, onbekend: 3 },
+    realPrizes: ['globe', 'cup', 'door-sticker', 'globe', 'raar-ding'],
+    games: { pakket1: migrateLegacyGame(legacyGame) },
+  };
+
+  it('houdt bestaande prijzen en betaalt verdwenen spullen terug in munten', () => {
+    const store = fakeStore({ [STORAGE_KEY]: JSON.stringify(v1) });
+    const data = loadSaveData(store);
+    expect(data.prizes).toEqual(['globe', 'cup']);
+    // 50 + rood lint 100 + 2 gouden linten 400 + deur-sticker 150
+    expect(data.coins).toBe(700);
+    expect(data.games.pakket1.currentCity).toBe('Rome');
+  });
+
+  it('betaalt maar één keer terug', () => {
+    const store = fakeStore({ [STORAGE_KEY]: JSON.stringify(v1) });
+    loadSaveData(store);
+    expect(JSON.parse(store.map.get(STORAGE_KEY)!).version).toBe(2);
+    expect(loadSaveData(store).coins).toBe(700);
   });
 });
 
@@ -127,6 +167,25 @@ describe('opslag in de app', () => {
     expect(storage.spendCoins(50)).toBe(false);
     expect(storage.spendCoins(15)).toBe(true);
     expect(storage.getCoins()).toBe(5);
+  });
+
+  it('koopt een prijs alleen met genoeg munten en maar één keer', () => {
+    expect(storage.buyItem('prize', 'globe', 50)).toBe(false);
+    expect(storage.buyItem('prize', 'compass', 15)).toBe(true);
+    expect(storage.buyItem('prize', 'compass', 1)).toBe(false);
+    expect(storage.getPrizes()).toEqual(['compass']);
+    expect(storage.getCoins()).toBe(5);
+    expect(storage.buyItem('sticker', 'ster', 5)).toBe(true);
+    expect(storage.getStickers()).toEqual(['ster']);
+    expect(storage.getCoins()).toBe(0);
+  });
+
+  it('koopt kast-upgrades en bewaart de gekozen stijl', () => {
+    expect(storage.buyItem('upgrade', 'cherry', 20)).toBe(true);
+    storage.setStyle({ finish: 'cherry', extras: [] });
+    storage.setStoreForTesting(store);
+    expect(storage.getUpgrades()).toEqual(['cherry']);
+    expect(storage.getStyle()).toEqual({ finish: 'cherry', extras: [] });
   });
 
   it('bewaart en wist spellen per pakket', () => {

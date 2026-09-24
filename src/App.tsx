@@ -17,11 +17,7 @@ import { findCategory, findPackage, locationsFor } from './content/catalog';
 // geopend worden; dat maakt de eerste keer laden van de site sneller.
 const Game = lazy(() => import('./components/Game'));
 const InteractiveMap = lazy(() => import('./components/InteractiveMap'));
-const TrophyCabinet = lazy(() =>
-  import('./features/trophy-system/components/TrophyCabinet').then((m) => ({
-    default: m.TrophyCabinet,
-  })),
-);
+const PrizeCabinet = lazy(() => import('./cabinet/PrizeCabinet'));
 
 const AppContainer = styled.div`
   width: 100vw;
@@ -92,7 +88,7 @@ const App: React.FC = () => {
             <Route path="/main/:category" element={<HomeScreenWrapper />} />
             <Route path="/game/:category/:package" element={<GameWrapper />} />
             <Route path="/interactive/:category/:package" element={<InteractiveMapWrapper />} />
-            <Route path="/trophy-cabinet" element={<TrophyCabinet />} />
+            <Route path="/trophy-cabinet" element={<PrizeCabinet />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

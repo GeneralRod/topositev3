@@ -70,20 +70,45 @@ export function spendCoins(amount: number): boolean {
   return true;
 }
 
-export function getRibbons(): Record<string, number> {
-  return state().ribbons;
+export function getPrizes(): string[] {
+  return state().prizes;
 }
 
-export function setRibbons(ribbons: Record<string, number>): void {
-  update((d) => ({ ...d, ribbons }));
+export function getStickers(): string[] {
+  return state().stickers;
 }
 
-export function getRealPrizes(): string[] {
-  return state().realPrizes;
+/**
+ * Koop een prijs of sticker: munten eraf en toevoegen in één stap.
+ * Lukt niet als je hem al hebt of niet genoeg munten hebt.
+ */
+export type ItemKind = 'prize' | 'sticker' | 'upgrade';
+
+const LISTS = { prize: 'prizes', sticker: 'stickers', upgrade: 'upgrades' } as const;
+
+export function buyItem(kind: ItemKind, id: string, price: number): boolean {
+  const current = state();
+  const list = LISTS[kind];
+  if (current[list].includes(id) || price < 0 || current.coins < price) return false;
+  update((d) => ({ ...d, coins: d.coins - price, [list]: [...d[list], id] }));
+  return true;
 }
 
-export function setRealPrizes(realPrizes: string[]): void {
-  update((d) => ({ ...d, realPrizes }));
+export function getUpgrades(): string[] {
+  return state().upgrades;
+}
+
+export function getStyle(): SaveData['style'] {
+  return state().style;
+}
+
+export function setStyle(style: SaveData['style']): void {
+  update((d) => ({ ...d, style }));
+}
+
+/** Alleen voor de ontwikkelaarsknoppen: kast helemaal leeg of vol zetten. */
+export function setCollection(prizes: string[], stickers: string[], upgrades: string[] = []): void {
+  update((d) => ({ ...d, prizes, stickers, upgrades }));
 }
 
 export function loadGame(packageId: string): GameState | null {
