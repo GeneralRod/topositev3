@@ -141,22 +141,35 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
 - [ ] Nederland: provinciehoofdsteden en grote steden
 - [ ] Nederland: provincies, rivieren en wateren
 - [ ] Europa: landen en hoofdsteden
-- [ ] De wereld: landen, zeeën en gebergtes
+- [ ] De wereld: landen
+- Wateren en landschappen over de wereld (lijst van de eigenaar, 70 onderdelen in 4 pakketten;
+  staat helemaal in `scripts/wateren/items.mjs`):
+  - [x] Pakket 1 (40): oceanen, zeeën, rivieren, meren, woestijnen, gebergtes en bergen.
+        Interactieve kaart erbij. Meerkeuze kiest foute antwoorden van dezelfde soort.
+  - [ ] Pakket 2 t/m 4 (30), met de Marianentrog; gecombineerde pakketten
 
 **Aanpak voor precieze wateren, bergen en gebieden (besluit eigenaar)**
 
 Pakketten met bijvoorbeeld de Rijn, de Nijl of het Gardameer moeten visueel extreem precies zijn.
-Aanpak per pakket:
+Zo is het gebouwd (september 2026, akkoord eigenaar):
 
-- Precieze vorm per onderdeel ophalen uit OpenStreetMap (wereld) of PDOK/TOP10NL (Nederland);
-  alleen de onderdelen die in het pakket zitten.
-- Opslaan als eigen kaartbestand per pakket (GeoJSON/TopoJSON), alleen zo weinig vereenvoudigd
-  dat het met het oog niet te zien is. Pas laden als het pakket geopend wordt.
-- Meren/zeeën/gebieden: klikken binnen het vlak. Rivieren: onzichtbare bredere klikstrook
-  langs de lijn. Na het antwoord kleurt de hele vorm groen of rood.
+- Bron: Natural Earth 1:10 miljoen (publiek domein, dezelfde bron als de wereldkaart);
+  OpenStreetMap alleen als een onderdeel ingezoomd te grof oogt. OSM heeft oceanen, woestijnen
+  en gebergtes nauwelijks als vorm, en de rivieren zijn daar te zwaar voor de site.
+- `node scripts/wateren/build.mjs` maakt `src/data/wateren/places.json` (klein) en
+  `shapes.json` (vormen, ~340 KB ingepakt, pas geladen bij het spelen). Eén bestand per
+  onderwerp in plaats van per pakket, omdat de dagelijkse uitdaging en het oefenrondje over
+  pakketten heen gaan.
+- Zeeën: de grove zeevlakken van Natural Earth liggen ónder het land, zodat het land de precieze
+  kust tekent. Kleine baaien gaan vanzelf naar de buurzee met de langste gedeelde grens;
+  twijfelgevallen (Indonesische zeeën, Zuidelijke Oceaan) horen nergens bij.
+- Meren, rivieren, woestijnen en gebergtes liggen boven het land. Rivieren: klikken tot een
+  paar pixels naast de lijn telt ook. Bergtoppen: driehoekje op de precieze top.
+- Na het antwoord kleurt de vorm groen (in één keer goed) of paarsblauw (na een fout).
+- Inzoomen tot niveau 7: dieper laat alleen zien hoe grof de kust van de wereldkaart is.
 - Wordt het geheel te zwaar, dan overstappen op vector-tegels (PMTiles + MapLibre) op de eigen
   site. Geen externe kaartdienst of sleutel.
-- Bronvermelding (OpenStreetMap, PDOK) op de kaart.
+- Bronvermelding (Natural Earth; later OpenStreetMap, PDOK) op de kaart.
 
 **Later**
 

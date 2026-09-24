@@ -31,6 +31,31 @@ export function pickChoices(
   return shuffle([answer, ...others], random);
 }
 
+/** Soorten die op elkaar lijken: water bij water, rivieren bij rivieren, land bij land. */
+const KIND_GROUP: Record<string, string> = {
+  sea: 'water',
+  lake: 'water',
+  river: 'river',
+  desert: 'land',
+  range: 'land',
+  peak: 'land',
+};
+
+/**
+ * De namen waaruit de foute antwoorden komen: liefst plekken van dezelfde
+ * soort (anders is een rivier tussen drie zeeën te makkelijk). Zijn dat er te
+ * weinig, dan alle plekken.
+ */
+export function choicePool(
+  answer: string,
+  places: Array<{ name: string; kind?: string }>,
+): string[] {
+  const groupOf = (kind?: string) => KIND_GROUP[kind ?? 'city'] ?? 'city';
+  const group = groupOf(places.find((p) => p.name === answer)?.kind);
+  const similar = places.filter((p) => groupOf(p.kind) === group).map((p) => p.name);
+  return similar.length >= CHOICE_COUNT ? similar : places.map((p) => p.name);
+}
+
 /** Hint bij meerkeuze: twee foute antwoorden vallen weg (of minder als er minder zijn). */
 export function hintRemovals(choices: string[], answer: string): string[] {
   return choices.filter((name) => name !== answer).slice(0, 2);

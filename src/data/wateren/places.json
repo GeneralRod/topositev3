@@ -1,0 +1,322 @@
+[
+  {
+    "name": "Grote Oceaan",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "tussen Azië, Australië en Amerika",
+    "lat": 8,
+    "lng": -150
+  },
+  {
+    "name": "Atlantische Oceaan",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "tussen Amerika, Europa en Afrika",
+    "lat": 25,
+    "lng": -40
+  },
+  {
+    "name": "Indische Oceaan",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "tussen Afrika, Azië en Australië",
+    "lat": -22,
+    "lng": 78
+  },
+  {
+    "name": "Noordelijke IJszee",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "rond de Noordpool",
+    "lat": 80,
+    "lng": 150
+  },
+  {
+    "name": "Middellandse Zee",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "tussen Europa en Afrika",
+    "lat": 35.2287,
+    "lng": 18.2868
+  },
+  {
+    "name": "Golf van Mexico",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "Noord-Amerika",
+    "lat": 24.9377,
+    "lng": -92.6767
+  },
+  {
+    "name": "Arabische Zee",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "Azië, tussen Arabië en India",
+    "lat": 13.2795,
+    "lng": 63.4052
+  },
+  {
+    "name": "Zuid-Chinese Zee",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "Azië",
+    "lat": 13.9503,
+    "lng": 114.7371
+  },
+  {
+    "name": "Rode Zee",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "tussen Afrika en Azië",
+    "lat": 17.2947,
+    "lng": 40.4431
+  },
+  {
+    "name": "Perzische Golf",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "Azië (Midden-Oosten)",
+    "lat": 25.5483,
+    "lng": 52.9519
+  },
+  {
+    "name": "Beringzee",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "tussen Azië en Noord-Amerika",
+    "lat": 56.7144,
+    "lng": -175.5045
+  },
+  {
+    "name": "Koraalzee",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "bij Australië",
+    "lat": -17.6884,
+    "lng": 158.4184
+  },
+  {
+    "name": "Barentszee",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "ten noorden van Europa",
+    "lat": 74.3049,
+    "lng": 40.706
+  },
+  {
+    "name": "Hudsonbaai",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "Noord-Amerika",
+    "lat": 59.593,
+    "lng": -86.2519
+  },
+  {
+    "name": "Noordzee",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "Europa",
+    "lat": 56.9279,
+    "lng": 2.2693
+  },
+  {
+    "name": "Donau",
+    "package": "wateren1",
+    "kind": "river",
+    "hint": "Europa",
+    "lat": 45.2558,
+    "lng": 19.5576
+  },
+  {
+    "name": "Nijl",
+    "package": "wateren1",
+    "kind": "river",
+    "hint": "Afrika",
+    "lat": 18.1444,
+    "lng": 30.8075
+  },
+  {
+    "name": "Amazone",
+    "package": "wateren1",
+    "kind": "river",
+    "hint": "Zuid-Amerika",
+    "lat": -3.8348,
+    "lng": -63.8946
+  },
+  {
+    "name": "Wolga",
+    "package": "wateren1",
+    "kind": "river",
+    "hint": "Europa",
+    "lat": 48.4394,
+    "lng": 45.5948
+  },
+  {
+    "name": "Ganges",
+    "package": "wateren1",
+    "kind": "river",
+    "hint": "Azië",
+    "lat": 25.3102,
+    "lng": 82.1593
+  },
+  {
+    "name": "Chang Jiang",
+    "package": "wateren1",
+    "kind": "river",
+    "hint": "Azië",
+    "lat": 30.5795,
+    "lng": 108.3081
+  },
+  {
+    "name": "Mississippi",
+    "package": "wateren1",
+    "kind": "river",
+    "hint": "Noord-Amerika",
+    "lat": 43.576,
+    "lng": -91.2501
+  },
+  {
+    "name": "Paraná",
+    "package": "wateren1",
+    "kind": "river",
+    "hint": "Zuid-Amerika",
+    "lat": -20.4092,
+    "lng": -58.0464
+  },
+  {
+    "name": "Eufraat",
+    "package": "wateren1",
+    "kind": "river",
+    "hint": "Azië",
+    "lat": 33.4603,
+    "lng": 43.2488
+  },
+  {
+    "name": "Rijn",
+    "package": "wateren1",
+    "kind": "river",
+    "hint": "Europa",
+    "lat": 50.8305,
+    "lng": 6.9854
+  },
+  {
+    "name": "Zwarte Zee",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "tussen Europa en Azië",
+    "lat": 43.6088,
+    "lng": 31.2969
+  },
+  {
+    "name": "Kaspische Zee",
+    "package": "wateren1",
+    "kind": "sea",
+    "hint": "tussen Europa en Azië",
+    "lat": 38.753,
+    "lng": 51.3864
+  },
+  {
+    "name": "Victoriameer",
+    "package": "wateren1",
+    "kind": "lake",
+    "hint": "Afrika",
+    "lat": -0.7948,
+    "lng": 33.2201
+  },
+  {
+    "name": "Titicacameer",
+    "package": "wateren1",
+    "kind": "lake",
+    "hint": "Zuid-Amerika",
+    "lat": -15.7238,
+    "lng": -69.5149
+  },
+  {
+    "name": "Bajkalmeer",
+    "package": "wateren1",
+    "kind": "lake",
+    "hint": "Azië",
+    "lat": 54.3149,
+    "lng": 109.0459
+  },
+  {
+    "name": "Sahara",
+    "package": "wateren1",
+    "kind": "desert",
+    "hint": "Afrika",
+    "lat": 20.2324,
+    "lng": 25.3147
+  },
+  {
+    "name": "Kalahari",
+    "package": "wateren1",
+    "kind": "desert",
+    "hint": "Afrika",
+    "lat": -25.099,
+    "lng": 22.1476
+  },
+  {
+    "name": "Himalaya",
+    "package": "wateren1",
+    "kind": "range",
+    "hint": "Azië",
+    "lat": 31.96,
+    "lng": 78.2628
+  },
+  {
+    "name": "Rocky Mountains",
+    "package": "wateren1",
+    "kind": "range",
+    "hint": "Noord-Amerika",
+    "lat": 42.5852,
+    "lng": -109.1136
+  },
+  {
+    "name": "Andesgebergte",
+    "package": "wateren1",
+    "kind": "range",
+    "hint": "Zuid-Amerika",
+    "lat": -20.1609,
+    "lng": -66.6692
+  },
+  {
+    "name": "Appalachen",
+    "package": "wateren1",
+    "kind": "range",
+    "hint": "Noord-Amerika",
+    "lat": 36.3782,
+    "lng": -84.2744
+  },
+  {
+    "name": "Alpen",
+    "package": "wateren1",
+    "kind": "range",
+    "hint": "Europa",
+    "lat": 46.7653,
+    "lng": 10.888
+  },
+  {
+    "name": "Mount Everest",
+    "package": "wateren1",
+    "kind": "peak",
+    "hint": "Azië",
+    "lat": 27.9883,
+    "lng": 86.9253
+  },
+  {
+    "name": "Aconcagua",
+    "package": "wateren1",
+    "kind": "peak",
+    "hint": "Zuid-Amerika",
+    "lat": -32.6533,
+    "lng": -70.0108
+  },
+  {
+    "name": "Kilimanjaro",
+    "package": "wateren1",
+    "kind": "peak",
+    "hint": "Afrika",
+    "lat": -3.0758,
+    "lng": 37.3533
+  }
+]

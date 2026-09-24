@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hintRemovals, pickChoices, seededRandom } from './choices';
+import { choicePool, hintRemovals, pickChoices, seededRandom } from './choices';
 
 const POOL = ['Parijs', 'Berlijn', 'Rome', 'Madrid', 'Wenen', 'Oslo'];
 
@@ -31,6 +31,33 @@ describe('meerkeuze', () => {
     const removed = hintRemovals(['Parijs', 'Rome', 'Oslo', 'Wenen'], 'Rome');
     expect(removed).toHaveLength(2);
     expect(removed).not.toContain('Rome');
+  });
+});
+
+describe('foute antwoorden van dezelfde soort', () => {
+  const places = [
+    { name: 'Noordzee', kind: 'sea' },
+    { name: 'Rode Zee', kind: 'sea' },
+    { name: 'Zwarte Zee', kind: 'sea' },
+    { name: 'Bajkalmeer', kind: 'lake' },
+    { name: 'Nijl', kind: 'river' },
+    { name: 'Rijn', kind: 'river' },
+    { name: 'Alpen', kind: 'range' },
+  ];
+
+  it('kiest bij water alleen water (zeeën en meren)', () => {
+    expect(choicePool('Noordzee', places).sort()).toEqual(
+      ['Bajkalmeer', 'Noordzee', 'Rode Zee', 'Zwarte Zee'].sort(),
+    );
+  });
+
+  it('valt terug op alle plekken als er te weinig van dezelfde soort zijn', () => {
+    expect(choicePool('Nijl', places)).toHaveLength(places.length);
+  });
+
+  it('behandelt steden (zonder soort) als één groep', () => {
+    const cities = POOL.map((name) => ({ name }));
+    expect(choicePool('Rome', cities)).toEqual(POOL);
   });
 });
 

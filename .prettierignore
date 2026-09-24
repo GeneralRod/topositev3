@@ -1,2 +1,4 @@
 dist/
 node_modules/
+# Gegenereerd door scripts/wateren/build.mjs (één lange regel, niet opmaken)
+src/data/wateren/shapes.json
