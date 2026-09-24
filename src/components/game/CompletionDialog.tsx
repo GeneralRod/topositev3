@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { Button, Stars, colors } from '../../ui';
+import { AchievementArt } from '../../cabinet/art';
+import type { Achievement } from '../../game/achievements';
 
 const Overlay = styled.div`
   position: fixed;
@@ -113,6 +115,34 @@ const STAR_TEXT: Record<number, string> = {
   3: 'Foutloos! Je bent een echte kampioen.',
 };
 
+const NewAchievement = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: -0.5rem 0 1rem;
+  padding: 0.4rem 1rem 0.4rem 0.5rem;
+  background: #eef7f2;
+  border: 2px solid #3aa655;
+  border-radius: 10px;
+  text-align: left;
+  color: #1f5f33;
+  animation: medalPop 0.7s ease-out;
+
+  @keyframes medalPop {
+    0% {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+`;
+
 interface CompletionDialogProps {
   coins: number;
   bonus: number;
@@ -121,6 +151,8 @@ interface CompletionDialogProps {
   stars: number | null;
   /** Extra regel, bijv. over de dagelijkse uitdaging. */
   extraMessage?: string | null;
+  /** Prestatieprijzen die je met dit spel net hebt verdiend. */
+  achievements: Achievement[];
   onClose: () => void;
 }
 
@@ -130,6 +162,7 @@ const CompletionDialog: React.FC<CompletionDialogProps> = ({
   hardest,
   stars,
   extraMessage,
+  achievements,
   onClose,
 }) => (
   <Overlay>
@@ -142,6 +175,16 @@ const CompletionDialog: React.FC<CompletionDialogProps> = ({
         </StarLine>
       )}
       {extraMessage && <Extra>{extraMessage}</Extra>}
+      {achievements.map((achievement) => (
+        <NewAchievement key={achievement.id}>
+          <AchievementArt id={achievement.id} size={56} />
+          <div>
+            <b>Nieuwe prestatie: {achievement.name}!</b>
+            <br />
+            Hij hangt nu op het prestatiebord in je prijzenkast.
+          </div>
+        </NewAchievement>
+      ))}
       <CoinSummary>
         Munten dit spel: {coins} <br />
         Bonus: +{bonus} <br />

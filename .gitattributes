@@ -1,0 +1,3 @@
+# Altijd Unix-regeleinden (LF), ook op Windows. Anders keurt `npm run format:check`
+# (Prettier) op Windows alle bestanden af.
+* text=auto eol=lf

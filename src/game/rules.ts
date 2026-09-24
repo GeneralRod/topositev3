@@ -170,6 +170,9 @@ export function claimCompletionBonus(state: GameState): { state: GameState; bonu
   };
 }
 
+/** Een gewoon pakket, het oefenrondje met lastige steden of de dagelijkse uitdaging. */
+export type GameKind = 'package' | 'practice' | 'daily';
+
 /** Maximaal aantal hints per spel. */
 export const MAX_HINTS = { map: 5, choice: 3 } as const;
 

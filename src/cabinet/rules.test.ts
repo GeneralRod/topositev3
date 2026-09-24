@@ -2,15 +2,18 @@ import { describe, expect, it } from 'vitest';
 import { allPrizes, DEFAULT_FINISH, extras, finishes, shelves, stickers } from './catalog';
 import { effectiveStyle, nextGoal, slotState } from './rules';
 import { KEPT_PRIZE_IDS } from '../storage/migrations';
+import { achievements } from '../game/achievements';
 
 describe('catalogus van de prijzenkast', () => {
-  it('heeft 4 planken met elk 4 prijzen', () => {
-    expect(shelves).toHaveLength(4);
+  it('heeft 5 planken met elk 4 prijzen', () => {
+    expect(shelves).toHaveLength(5);
     for (const shelf of shelves) expect(shelf.items).toHaveLength(4);
   });
 
   it('heeft unieke id’s (dat zijn de sleutels in de opslag)', () => {
-    const ids = [...allPrizes, ...stickers, ...finishes, ...extras].map((item) => item.id);
+    const ids = [...allPrizes, ...stickers, ...finishes, ...extras, ...achievements].map(
+      (item) => item.id,
+    );
     expect(new Set(ids).size).toBe(ids.length);
   });
 

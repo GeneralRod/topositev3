@@ -318,6 +318,79 @@ const prizeArt: Record<string, () => React.ReactElement> = {
       <path d="M18 26 L20 36" {...shine} />
     </>
   ),
+
+  windmill: () => (
+    <>
+      <path d="M21 60 L25 27 H39 L43 60 Z" fill="#8b5a2b" {...line} />
+      <path d="M23 28 L32 17 L41 28 Z" fill="#c0392b" {...line} />
+      <path d="M29 60 V53 A3 3 0 0 1 35 53 V60 Z" fill="#5a3a24" {...line} strokeWidth={1.5} />
+      <circle cx="32" cy="40" r="3" fill="#fff3b0" {...line} strokeWidth={1.5} />
+      <g transform="rotate(20 32 25)">
+        <path d="M32 3 V47 M10 25 H54" stroke="#6b4226" strokeWidth={3} strokeLinecap="round" />
+        <rect x="33" y="5" width="7" height="17" fill="#fffbe8" {...line} strokeWidth={1.5} />
+        <rect x="24" y="28" width="7" height="17" fill="#fffbe8" {...line} strokeWidth={1.5} />
+        <rect x="12" y="17" width="17" height="7" fill="#fffbe8" {...line} strokeWidth={1.5} />
+        <rect x="35" y="26" width="17" height="7" fill="#fffbe8" {...line} strokeWidth={1.5} />
+      </g>
+      <circle cx="32" cy="25" r="3" fill={GOLD.dark} {...line} strokeWidth={1.5} />
+    </>
+  ),
+
+  eiffel: () => (
+    <>
+      <path
+        d="M13 60 C20 47 25 31 29 11 H35 C39 31 44 47 51 60 H42 C40 53 36 49 32 49 C28 49 24 53 22 60 Z"
+        fill="#9a7650"
+        {...line}
+      />
+      <rect x="18" y="42" width="28" height="4" rx="1" fill="#6e5236" {...line} strokeWidth={1.5} />
+      <rect x="24" y="27" width="16" height="3" rx="1" fill="#6e5236" {...line} strokeWidth={1.5} />
+      <path
+        d="M24 42 L31 31 M40 42 L33 31 M28 27 L31 15 M36 27 L33 15"
+        stroke="#6e5236"
+        strokeWidth={1.5}
+      />
+      <rect x="30" y="4" width="4" height="8" fill="#6e5236" {...line} strokeWidth={1.5} />
+    </>
+  ),
+
+  pyramids: () => (
+    <>
+      <circle cx="52" cy="12" r="6" fill="#f7c531" {...line} />
+      <path d="M14 60 L37 20 L60 60 Z" fill="#edc56b" {...line} />
+      <path d="M37 20 L60 60 H43 Z" fill="#c9953a" {...line} />
+      <path d="M27 38 H45 M21 48 H50" stroke="#b07f2a" strokeWidth={1.5} strokeDasharray="4 3" />
+      <path d="M3 60 L18 36 L33 60 Z" fill="#edc56b" {...line} />
+      <path d="M18 36 L33 60 H23 Z" fill="#c9953a" {...line} />
+      <path d="M2 60 H62" {...line} strokeWidth={3} stroke="#b07f2a" />
+    </>
+  ),
+
+  liberty: () => (
+    <>
+      <rect x="20" y="46" width="24" height="4" rx="1" fill="#b8a488" {...line} />
+      <rect x="23" y="50" width="18" height="10" fill="#c9b79c" {...line} />
+      <path d="M25 46 L27 27 C28 23 36 23 37 27 L39 46 Z" fill="#6fbfa8" {...line} />
+      <path d="M30 30 L29 44 M34 30 L35 44" stroke="#3f8f7f" strokeWidth={1.5} />
+      <path d="M35 29 L39 13 L42 14 L39 30 Z" fill="#6fbfa8" {...line} strokeWidth={1.5} />
+      <path d="M38 13 L43 13 L42 9 H39 Z" fill={GOLD.dark} {...line} strokeWidth={1.5} />
+      <path
+        d="M40.5 9 C38 6 40 3 40.5 1 C42.5 3 44 6 40.5 9 Z"
+        fill="#f7c531"
+        stroke="#e67e22"
+        strokeWidth={1.5}
+        strokeLinejoin="round"
+      />
+      <rect x="21" y="29" width="6" height="9" rx="1" fill="#6fbfa8" {...line} strokeWidth={1.5} />
+      <circle cx="32" cy="20" r="4.5" fill="#6fbfa8" {...line} strokeWidth={1.5} />
+      <path
+        d="M27.5 17 L25 12 M30 15.5 L29.5 10 M32 15 V9 M34 15.5 L34.5 10 M36.5 17 L39 12"
+        stroke="#3f8f7f"
+        strokeWidth={2}
+        strokeLinecap="round"
+      />
+    </>
+  ),
 };
 
 const stickerArt: Record<string, () => React.ReactElement> = {
@@ -395,6 +468,210 @@ const stickerArt: Record<string, () => React.ReactElement> = {
       <path d="M27 44 L32 56 L37 44 Z" fill="#f39c12" {...line} />
     </>
   ),
+  tulip: () => (
+    <>
+      <path d="M32 52 V32" stroke="#3aa655" strokeWidth={3} strokeLinecap="round" />
+      <path d="M32 48 C24 46 20 40 20 33 C26 35 30 40 32 46 Z" fill="#57b85a" {...line} />
+      <path d="M32 46 C35 40 39 37 44 37 C44 43 40 47 32 50 Z" fill="#57b85a" {...line} />
+      <path
+        d="M22 16 L27 21 L32 12 L37 21 L42 16 L41 27 C40 32 36 34 32 34 C28 34 24 32 23 27 Z"
+        fill="#e74c3c"
+        {...line}
+      />
+      <path d="M26 24 C26 27 27 29 29 30" {...shine} strokeWidth={2} />
+    </>
+  ),
+  whale: () => (
+    <>
+      <path
+        d="M26 24 C26 18 22 16 19 14 M26 24 C26 18 30 16 33 14"
+        fill="none"
+        stroke="#6cb4ee"
+        strokeWidth={2.5}
+        strokeLinecap="round"
+      />
+      <path
+        d="M11 38 C11 28 21 25 31 27 C41 29 45 35 49 33 L55 26 L54 36 L58 43 L50 40 C46 46 38 48 28 48 C18 48 11 44 11 38 Z"
+        fill="#4a90d9"
+        {...line}
+      />
+      <path
+        d="M15 42 C21 46 33 46 41 43"
+        fill="none"
+        stroke="#bfe3ff"
+        strokeWidth={3}
+        strokeLinecap="round"
+      />
+      <circle cx="19" cy="35" r="1.8" fill={INK} />
+    </>
+  ),
+  palm: () => (
+    <>
+      <path
+        d="M10 52 C16 50 20 54 26 52 C32 50 36 54 42 52 C48 50 52 54 56 52"
+        fill="none"
+        stroke="#6cb4ee"
+        strokeWidth={2.5}
+        strokeLinecap="round"
+      />
+      <path d="M15 49 C19 42 45 42 49 49 Z" fill="#f3d78a" {...line} />
+      <path
+        d="M30 45 C30 35 32 27 36 20"
+        fill="none"
+        stroke="#8b5a2b"
+        strokeWidth={4}
+        strokeLinecap="round"
+      />
+      <path d="M36 20 C30 14 22 15 17 20 C24 18 30 19 36 20 Z" fill="#3aa655" {...line} />
+      <path d="M36 20 C40 12 48 12 52 17 C46 16 40 17 36 20 Z" fill="#3aa655" {...line} />
+      <path d="M36 20 C44 20 50 26 50 32 C46 26 40 23 36 20 Z" fill="#57b85a" {...line} />
+      <path d="M36 20 C30 22 25 28 24 34 C28 28 32 24 36 20 Z" fill="#57b85a" {...line} />
+      <circle cx="34" cy="23" r="2" fill="#6b4226" />
+      <circle cx="38" cy="23" r="2" fill="#6b4226" />
+    </>
+  ),
+  balloon: () => (
+    <>
+      <path
+        d="M32 8 C44 8 50 17 50 25 C50 34 40 40 36 44 H28 C24 40 14 34 14 25 C14 17 20 8 32 8 Z"
+        fill="#e74c3c"
+        {...line}
+      />
+      <path d="M32 8 C26 14 24 30 28 44 H36 C40 30 38 14 32 8 Z" fill="#f7c531" {...line} />
+      <path d="M29 44 L28 49 M35 44 L36 49" stroke={INK} strokeWidth={1.5} />
+      <rect x="26" y="49" width="12" height="7" rx="1.5" fill="#b07a45" {...line} />
+      <path d="M20 18 C18 22 18 26 19 29" {...shine} />
+    </>
+  ),
+};
+
+// Prestatieprijzen: een medaille aan een lint, met een eigen teken in het midden.
+
+function starPoints(cx: number, cy: number, r: number): string {
+  return Array.from({ length: 10 }, (_, i) => {
+    const radius = i % 2 === 0 ? r : r * 0.45;
+    const angle = (Math.PI / 5) * i - Math.PI / 2;
+    return `${(cx + radius * Math.cos(angle)).toFixed(1)},${(cy + radius * Math.sin(angle)).toFixed(1)}`;
+  }).join(' ');
+}
+
+function Flame({ label }: { label: string }) {
+  return (
+    <>
+      <path
+        d="M32 29 C36 34 41 37 41 44 C41 50 37 53 32 53 C27 53 23 50 23 44 C23 39 27 37 28 32 C30 35 31 36 32 29 Z"
+        fill="#f39c12"
+        {...line}
+        strokeWidth={1.5}
+      />
+      <path
+        d="M32 40 C35 43 37 45 37 48 C37 51 35 52 32 52 C29 52 27 51 27 48 C27 45 30 43 32 40 Z"
+        fill="#f7c531"
+      />
+      <text x="32" y="51" textAnchor="middle" fontSize="11" fontWeight="bold" fill={INK}>
+        {label}
+      </text>
+    </>
+  );
+}
+
+interface MedalLook {
+  ribbon: [string, string];
+  metal: Metal;
+  emblem: (metal: Metal) => React.ReactElement;
+}
+
+const medals: Record<string, MedalLook> = {
+  'first-game': {
+    ribbon: ['#3f7fd9', '#e74c3c'],
+    metal: BRONZE,
+    emblem: () => (
+      <>
+        <path d="M27 53 V32" {...line} strokeWidth={2.5} />
+        <path d="M27 32 L40 37 L27 42 Z" fill="#e74c3c" {...line} strokeWidth={1.5} />
+      </>
+    ),
+  },
+  practice: {
+    ribbon: ['#3aa655', '#2b7f40'],
+    metal: BRONZE,
+    emblem: () => (
+      <>
+        <circle cx="32" cy="42" r="10" fill="#ffffff" {...line} strokeWidth={1.5} />
+        <circle cx="32" cy="42" r="6.5" fill="#e74c3c" {...line} strokeWidth={1.5} />
+        <circle cx="32" cy="42" r="3" fill="#ffffff" {...line} strokeWidth={1.5} />
+        <path d="M32 42 L41 33 M38 32 L41 33 L42 36" {...line} fill="none" strokeWidth={2} />
+      </>
+    ),
+  },
+  'streak-3': {
+    ribbon: ['#f39c12', '#e74c3c'],
+    metal: SILVER,
+    emblem: () => <Flame label="3" />,
+  },
+  flawless: {
+    ribbon: ['#3aa655', '#3f7fd9'],
+    metal: SILVER,
+    emblem: () => (
+      <path
+        d="M24 42 L30 48 L41 35"
+        fill="none"
+        stroke="#2b7f40"
+        strokeWidth={4.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ),
+  },
+  'quiz-master': {
+    ribbon: ['#9b59b6', '#3f7fd9'],
+    metal: SILVER,
+    emblem: () => (
+      <text x="32" y="50" textAnchor="middle" fontSize="22" fontWeight="bold" fill="#7b3fa0">
+        ?
+      </text>
+    ),
+  },
+  'streak-7': {
+    ribbon: ['#e74c3c', '#f39c12'],
+    metal: GOLD,
+    emblem: () => <Flame label="7" />,
+  },
+  'all-stars': {
+    ribbon: ['#3f7fd9', '#f7c531'],
+    metal: GOLD,
+    emblem: (metal) => (
+      <>
+        {[
+          [32, 36, 6.5],
+          [25, 46, 5.5],
+          [39, 46, 5.5],
+        ].map(([cx, cy, r]) => (
+          <polygon
+            key={`${cx}-${cy}`}
+            points={starPoints(cx, cy, r)}
+            fill="#fff3b0"
+            stroke={metal.dark}
+            strokeWidth={1.5}
+            strokeLinejoin="round"
+          />
+        ))}
+      </>
+    ),
+  },
+  'world-tour': {
+    ribbon: ['#1abc9c', '#3f7fd9'],
+    metal: GOLD,
+    emblem: () => (
+      <>
+        <circle cx="32" cy="42" r="10" fill="#4aa3df" {...line} strokeWidth={1.5} />
+        <path d="M25 37 C28 35 31 38 29 41 C27 44 31 46 34 44 C36 43 36 48 33 50" fill="#57b85a" />
+        <path d="M35 34 C39 34 41 38 38 40 C36 41 34 38 35 34 Z" fill="#57b85a" />
+        <circle cx="32" cy="42" r="10" fill="none" {...line} strokeWidth={1.5} />
+        <ellipse cx="32" cy="42" rx="4.5" ry="10" fill="none" stroke={INK} strokeWidth={1} />
+      </>
+    ),
+  },
 };
 
 interface ArtProps {
@@ -426,6 +703,25 @@ export const StickerArt: React.FC<ArtProps> = ({ id, size = 64 }) => {
       <circle cx="32" cy="32" r="30" fill="#ffffff" stroke="#e5d6bf" strokeWidth={2} />
       <circle cx="32" cy="32" r="26" fill="#fff8e7" />
       {Art && <Art />}
+    </svg>
+  );
+};
+
+/** Medaille van een prestatieprijs. */
+export const AchievementArt: React.FC<ArtProps> = ({ id, size = 64 }) => {
+  const look = medals[id];
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+      {look && (
+        <>
+          <path d="M19 3 H30 L36 27 H27 Z" fill={look.ribbon[0]} {...line} />
+          <path d="M45 3 H34 L28 27 H37 Z" fill={look.ribbon[1]} {...line} />
+          <circle cx="32" cy="42" r="18" fill={look.metal.body} {...line} />
+          <circle cx="32" cy="42" r="14" fill="none" stroke={look.metal.dark} strokeWidth={2} />
+          {look.emblem(look.metal)}
+          <path d="M19 36 C20 33 22 30 25 28" {...shine} />
+        </>
+      )}
     </svg>
   );
 };

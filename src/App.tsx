@@ -99,7 +99,7 @@ const PackageGameWrapper: React.FC<{ mode: PlayMode }> = ({ mode }) => {
       packageId={gameKey(route.pkg.id, mode)}
       mode={mode}
       categoryId={route.categoryId}
-      countStars
+      kind="package"
       title={route.pkg.title}
       cities={route.cities}
       onBack={route.onBack}
@@ -132,7 +132,7 @@ const PracticeWrapper: React.FC<{ categoryId: string | undefined; mode: PlayMode
       packageId={gameKey(`${PRACTICE_PACKAGE_ID}-${category.id}`, mode)}
       mode={mode}
       categoryId={category.id}
-      countStars={false}
+      kind="practice"
       title="Mijn lastige steden"
       cities={cities}
       onBack={() => navigate(`/main/${category.id}`)}
@@ -176,7 +176,7 @@ const DailyWrapper: React.FC<{ categoryId: string | undefined; mode: PlayMode }>
     <Game
       packageId={gameKey(`${DAILY_PACKAGE_ID}-${category.id}-${today}`, mode)}
       categoryId={category.id}
-      countStars={false}
+      kind="daily"
       mode={mode}
       onComplete={onComplete}
       title="Uitdaging van vandaag"
