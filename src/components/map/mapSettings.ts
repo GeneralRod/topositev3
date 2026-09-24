@@ -4,8 +4,13 @@ import type { LatLngBoundsExpression, LatLngTuple } from 'leaflet';
 
 // Kaart zonder namen (CARTO Voyager 'nolabels'), zodat inzoomen het antwoord
 // niet verraadt. Gratis voor niet-commercieel gebruik, met bronvermelding.
+// CARTO vraagt een sleutel; die staat als VITE_CARTO_KEY in de instellingen van
+// Netlify (niet in de code). Zonder sleutel werkt de kaart ook, maar met een
+// watermerk.
+const CARTO_KEY = import.meta.env.VITE_CARTO_KEY ?? '';
 export const TILE_URL =
-  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png';
+  'https://basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png' +
+  (CARTO_KEY ? `?key=${encodeURIComponent(CARTO_KEY)}` : '');
 export const TILE_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
