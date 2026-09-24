@@ -55,6 +55,7 @@ describe('overzetten van oude gegevens', () => {
       currentCity: 'Rome',
       attempts: 1,
       hintUsed: true,
+      hintsUsed: 0,
       coinsThisGame: 17,
       bonusPaid: false,
     });

@@ -6,7 +6,14 @@ import { starsFor } from '../game/progress';
 import { hintRemovals, pickChoices, seededRandom } from '../game/choices';
 import type { PlayMode } from '../storage';
 import ChoicePanel from './game/ChoicePanel';
-import { completionBonus, foundCount, hardestCities, isComplete } from '../game/rules';
+import {
+  completionBonus,
+  foundCount,
+  hardestCities,
+  hintsLeft,
+  isComplete,
+  MAX_HINTS,
+} from '../game/rules';
 import { Button, colors } from '../ui';
 import GameHeader from './game/GameHeader';
 import GameMap from './game/GameMap';
@@ -113,6 +120,7 @@ const Game: React.FC<GameProps> = ({
     // Meerkeuze is makkelijker: halve munten en geen sterren.
     countStars: countStars && !isChoice,
     coinFactor: isChoice ? 0.5 : 1,
+    maxHints: MAX_HINTS[mode],
   });
   const [wrongPicks, setWrongPicks] = useState<{ city: string | null; names: string[] }>({
     city: null,
@@ -202,6 +210,7 @@ const Game: React.FC<GameProps> = ({
         found={foundCount(state)}
         total={cities.length}
         onHint={showHint}
+        hintsLeft={hintsLeft(state, MAX_HINTS[mode])}
         onRestart={restart}
         onBack={onBack}
       />

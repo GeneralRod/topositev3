@@ -10,6 +10,7 @@ import {
   isComplete,
   newGame,
   restoreGame,
+  takeHint,
   type AnswerResult,
   type GameState,
 } from './rules';
@@ -26,6 +27,8 @@ export interface GameOptions {
   countStars: boolean;
   /** Deel van de munten (meerkeuze: 0,5). */
   coinFactor?: number;
+  /** Maximaal aantal hints in dit spel. */
+  maxHints: number;
 }
 
 /** Totaal aantal fouten in een spel. */
@@ -34,7 +37,7 @@ export function totalMistakes(state: GameState): number {
 }
 
 export function useGame(packageId: string, cityNames: string[], options: GameOptions) {
-  const { categoryId, countStars, coinFactor = 1 } = options;
+  const { categoryId, countStars, coinFactor = 1, maxHints } = options;
   const [state, setState] = useState(() => startGame(packageId, cityNames));
   const questionStartedAt = useRef(0);
 
@@ -74,7 +77,7 @@ export function useGame(packageId: string, cityNames: string[], options: GameOpt
     [state, categoryId, countStars, packageId, coinFactor],
   );
 
-  const showHint = useCallback(() => setState((s) => ({ ...s, hintUsed: true })), []);
+  const showHint = useCallback(() => setState((s) => takeHint(s, maxHints)), [maxHints]);
 
   const restart = useCallback(() => {
     clearGame(packageId);

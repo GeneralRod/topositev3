@@ -193,6 +193,7 @@ function toGameState(value: unknown): GameState | null {
     currentCity: typeof value.currentCity === 'string' ? value.currentCity : null,
     attempts: toCount(value.attempts),
     hintUsed: value.hintUsed === true,
+    hintsUsed: toCount(value.hintsUsed),
     coinsThisGame: toCount(value.coinsThisGame),
     bonusPaid: value.bonusPaid === true,
   };
@@ -214,6 +215,7 @@ export function migrateLegacyGame(value: unknown): GameState | null {
     currentCity: typeof current === 'string' ? current : null,
     attempts: toCount(value.currentAttempts),
     hintUsed: value.hintUsed === true,
+    hintsUsed: toCount(value.hintsUsed),
     coinsThisGame: toCount(value.coinsThisGame),
     bonusPaid: Object.keys(status).length > 0 && allGreen,
   };

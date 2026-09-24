@@ -11,6 +11,8 @@ import {
   pickNextCity,
   restoreGame,
   speedBonus,
+  takeHint,
+  hintsLeft,
   type GameState,
 } from './rules';
 
@@ -194,5 +196,25 @@ describe('moeilijkste steden', () => {
       { city: 'Rome', mistakes: 3 },
       { city: 'Parijs', mistakes: 1 },
     ]);
+  });
+});
+
+describe('hints', () => {
+  it('telt gebruikte hints en stopt bij het maximum', () => {
+    let state = game();
+    state = takeHint(state, 2);
+    expect(state.hintUsed).toBe(true);
+    expect(hintsLeft(state, 2)).toBe(1);
+    // nog een keer op dezelfde vraag telt niet dubbel
+    expect(takeHint(state, 2)).toBe(state);
+    state = answer(state, 'Parijs', 1, first).state;
+    state = takeHint(state, 2);
+    expect(hintsLeft(state, 2)).toBe(0);
+    state = answer(state, state.currentCity!, 1, first).state;
+    expect(takeHint(state, 2).hintUsed).toBe(false);
+  });
+
+  it('nieuw spel begint met alle hints', () => {
+    expect(hintsLeft(newGame(CITIES), 5)).toBe(5);
   });
 });
