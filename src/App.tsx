@@ -12,7 +12,6 @@ import HomeScreen from './components/HomeScreen';
 import TitlePage from './components/TitlePage';
 import CategoryScreen from './components/CategoryScreen';
 import { findCategory, findPackage, locationsFor } from './content/catalog';
-import './App.css';
 
 // Deze schermen (met de kaartbibliotheek Leaflet) worden pas geladen als ze
 // geopend worden; dat maakt de eerste keer laden van de site sneller.
