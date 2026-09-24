@@ -14,6 +14,7 @@ npm install      # afhankelijkheden installeren
 npm run dev      # ontwikkelserver op http://localhost:5173/
 npm run build    # typecheck + productiebuild naar dist/
 npm run lint     # ESLint
+npm test         # unit tests (Vitest)
 npm run format   # code netjes opmaken met Prettier
 ```
 
@@ -23,7 +24,7 @@ De site wordt gehost op **Netlify**. Alles wat op `main` komt, wordt automatisch
 gepubliceerd (zie `netlify.toml`). Werk daarom nooit direct op `main`: maak een branch, open een
 pull request en bekijk eerst de deploy-preview die Netlify bij de pull request plaatst.
 
-Elke pull request wordt door GitHub Actions gecontroleerd (lint, opmaak, typecheck en build).
+Elke pull request wordt door GitHub Actions gecontroleerd (lint, opmaak, tests, typecheck en build).
 
 ## Techniek
 

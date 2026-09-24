@@ -1,77 +1,12 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import BackButton from './BackButton';
+import type { Category } from '../content/catalog';
+import { BackLink, Card, CardGrid, Page, PageTitle, SectionTitle } from '../ui';
 
 interface HomeScreenProps {
-  onSelectPackage: (packageName: string) => void;
-  category: string;
+  category: Category;
 }
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
-  overflow-y: auto;
-  overflow-x: hidden;
-`;
-
-const Title = styled.h1`
-  color: #1a73e8;
-  margin-bottom: 2rem;
-  text-align: center;
-  font-size: 2.9rem;
-`;
-
-const PackageGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 1200px;
-  margin-bottom: 2rem;
-`;
-
-const PackageCard = styled.div<{ color: string }>`
-  background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-  border-top: 4px solid ${(props) => props.color};
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-`;
-
-const PackageTitle = styled.h2`
-  color: #202124;
-  margin: 0 0 0.5rem 0;
-  font-size: 1.25rem;
-`;
-
-const PackageDescription = styled.p`
-  color: #5f6368;
-  margin: 0;
-  font-size: 0.9rem;
-`;
-
-const SectionTitle = styled.h2`
-  color: #202124;
-  margin: 2rem 0 1rem 0;
-  width: 100%;
-  max-width: 1200px;
-  font-size: 1.5rem;
-`;
 
 const TrophyButton = styled.button`
   background: #f1c40f;
@@ -113,72 +48,41 @@ const VersionTag = styled.div`
   pointer-events: none;
 `;
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectPackage, category }) => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
   const navigate = useNavigate();
 
   return (
-    <Container>
-      <BackButton onClick={() => navigate('/categories')}>← Terug naar categorieën</BackButton>
-      {category === 'capitals' && (
-        <>
-          <Title>Topografie Wereld: hoofd- en wereldsteden</Title>
+    <Page>
+      <BackLink onClick={() => navigate('/categories')}>← Terug naar categorieën</BackLink>
+      <PageTitle>{category.heading}</PageTitle>
 
-          <SectionTitle>Oefenpakketten</SectionTitle>
-          <PackageGrid>
-            <PackageCard color="#1a73e8" onClick={() => onSelectPackage('pakket1')}>
-              <PackageTitle>Pakket 1</PackageTitle>
-              <PackageDescription>Basis steden over de hele wereld</PackageDescription>
-            </PackageCard>
-            <PackageCard color="#34a853" onClick={() => onSelectPackage('pakket2')}>
-              <PackageTitle>Pakket 2</PackageTitle>
-              <PackageDescription>Extra steden over de wereld</PackageDescription>
-            </PackageCard>
-            <PackageCard color="#fbbc05" onClick={() => onSelectPackage('pakket3')}>
-              <PackageTitle>Pakket 3</PackageTitle>
-              <PackageDescription>Extra steden over de wereld</PackageDescription>
-            </PackageCard>
-          </PackageGrid>
-
-          <SectionTitle>Gecombineerde Pakketten</SectionTitle>
-          <PackageGrid>
-            <PackageCard color="#ea4335" onClick={() => onSelectPackage('pakket1-2')}>
-              <PackageTitle>Pakket 1 + 2</PackageTitle>
-              <PackageDescription>Alle steden uit pakket 1 en 2</PackageDescription>
-            </PackageCard>
-            <PackageCard color="#9334e6" onClick={() => onSelectPackage('pakket2-3')}>
-              <PackageTitle>Pakket 2 + 3</PackageTitle>
-              <PackageDescription>Alle steden uit pakket 2 en 3</PackageDescription>
-            </PackageCard>
-            <PackageCard color="#4285f4" onClick={() => onSelectPackage('pakket1-2-3')}>
-              <PackageTitle>Pakket 1 + 2 + 3</PackageTitle>
-              <PackageDescription>Alle steden uit alle pakketten</PackageDescription>
-            </PackageCard>
-          </PackageGrid>
-
-          <SectionTitle>Interactieve Kaarten</SectionTitle>
-          <PackageGrid>
-            <PackageCard color="#1a73e8" onClick={() => onSelectPackage('interactive1')}>
-              <PackageTitle>Interactieve kaart pakket 1</PackageTitle>
-              <PackageDescription>Bekijk alle steden uit pakket 1</PackageDescription>
-            </PackageCard>
-            <PackageCard color="#34a853" onClick={() => onSelectPackage('interactive2')}>
-              <PackageTitle>Interactieve kaart pakket 2</PackageTitle>
-              <PackageDescription>Bekijk alle steden uit pakket 2</PackageDescription>
-            </PackageCard>
-            <PackageCard color="#fbbc05" onClick={() => onSelectPackage('interactive3')}>
-              <PackageTitle>Interactieve kaart pakket 3</PackageTitle>
-              <PackageDescription>Bekijk alle steden uit pakket 3</PackageDescription>
-            </PackageCard>
-          </PackageGrid>
-        </>
-      )}
+      {category.sections.map((section) => (
+        <React.Fragment key={section.title}>
+          <SectionTitle>{section.title}</SectionTitle>
+          <CardGrid>
+            {section.packages.map((pkg) => (
+              <Card
+                key={pkg.id}
+                title={pkg.title}
+                description={pkg.description}
+                color={pkg.color}
+                onClick={() =>
+                  navigate(
+                    `/${section.kind === 'map' ? 'interactive' : 'game'}/${category.id}/${pkg.id}`,
+                  )
+                }
+              />
+            ))}
+          </CardGrid>
+        </React.Fragment>
+      ))}
 
       <TrophyButton onClick={() => navigate('/trophy-cabinet')}>
         <TrophyIcon>🏆</TrophyIcon>
         Prijzenkast
       </TrophyButton>
-      <VersionTag>Versie: 7.3</VersionTag>
-    </Container>
+      <VersionTag>Versie: 8.0</VersionTag>
+    </Page>
   );
 };
 

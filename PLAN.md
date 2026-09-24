@@ -59,21 +59,21 @@ zonder dat de live site ooit stuk gaat tijdens het werk.
 
 ### Fase 2: nieuwe fundering
 
-- [ ] Testopzet met Vitest
-- [ ] Spelregels als pure functies (`src/game/`): volgende stad kiezen, antwoord verwerken,
+- [x] Testopzet met Vitest
+- [x] Spelregels als pure functies (`src/game/`): volgende stad kiezen, antwoord verwerken,
       munten/bonus berekenen, voltooiing. Met unit tests.
-- [ ] Eén opslaglaag met versienummer en migratie van de huidige localStorage-sleutels
+- [x] Eén opslaglaag met versienummer en migratie van de huidige localStorage-sleutels
       (`topografie_game_state_*`, `topositev2_total_coins`, `topositev2_ribbons_owned`,
       `topositev2_real_prizes_owned`)
-- [ ] Inhoud als data: categorieën → pakketten → locaties, zodat een nieuw onderwerp alleen data is
-- [ ] `Game.tsx` opsplitsen in kleine componenten die de spelregels gebruiken
-- [ ] Gedeelde UI-componenten (knoppen, kaarten, header) in plaats van kopieën per scherm
+- [x] Inhoud als data: categorieën → pakketten → locaties, zodat een nieuw onderwerp alleen data is
+- [x] `Game.tsx` opsplitsen in kleine componenten die de spelregels gebruiken
+- [x] Gedeelde UI-componenten (knoppen, kaarten, header) in plaats van kopieën per scherm
 
 ### Fase 3: sneller
 
 - [ ] Routes lazy laden (code splitting); three.js alleen op de startpagina
 - [ ] Animatielek fixen; lichtere wereldbol, texture zelf hosten
-- [ ] Marker-iconen lokaal
+- [x] Marker-iconen lokaal (niet meer nodig: het spel gebruikt eigen stippen, CDN-verwijzing is weg)
 
 ### Fase 4: nieuwe features
 
