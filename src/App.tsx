@@ -12,8 +12,15 @@ import styled from '@emotion/styled';
 import HomeScreen from './components/HomeScreen';
 import TitlePage from './components/TitlePage';
 import CategoryScreen from './components/CategoryScreen';
-import { findCategory, findPackage, locationsFor, PRACTICE_PACKAGE_ID } from './content/catalog';
-import { getCityStats, type PlayMode } from './storage';
+import {
+  DAILY_PACKAGE_ID,
+  findCategory,
+  findPackage,
+  locationsFor,
+  PRACTICE_PACKAGE_ID,
+} from './content/catalog';
+import { completeDailyChallenge, getCityStats, getDaily, type PlayMode } from './storage';
+import { dailyCities, dateKey, doneToday } from './game/daily';
 import { hardCities } from './game/progress';
 
 // Deze schermen (met de kaartbibliotheek Leaflet) worden pas geladen als ze
@@ -76,6 +83,8 @@ const GameWrapper: React.FC = () => {
     package: string;
   }>();
   const mode = usePlayMode();
+  if (packageId === DAILY_PACKAGE_ID)
+    return <DailyWrapper key={mode} categoryId={categoryId} mode={mode} />;
   if (packageId === PRACTICE_PACKAGE_ID)
     return <PracticeWrapper key={mode} categoryId={categoryId} mode={mode} />;
   return <PackageGameWrapper mode={mode} />;
@@ -125,6 +134,52 @@ const PracticeWrapper: React.FC<{ categoryId: string | undefined; mode: PlayMode
       categoryId={category.id}
       countStars={false}
       title="Mijn lastige steden"
+      cities={cities}
+      onBack={() => navigate(`/main/${category.id}`)}
+    />
+  );
+};
+
+// Dagelijkse uitdaging: elke dag 10 vaste steden (zie game/daily.ts).
+const DailyWrapper: React.FC<{ categoryId: string | undefined; mode: PlayMode }> = ({
+  categoryId,
+  mode,
+}) => {
+  const navigate = useNavigate();
+  const category = findCategory(categoryId);
+  // Datum één keer vastleggen: wie na middernacht doorspeelt, maakt de uitdaging
+  // van de dag waarop hij begon af.
+  const [today] = React.useState(() => dateKey(new Date()));
+  const [cities] = React.useState(() => {
+    if (!category) return [];
+    const names = new Set(
+      dailyCities(
+        category.locations.map((l) => l.name),
+        today,
+        category.id,
+      ),
+    );
+    return category.locations.filter((l) => names.has(l.name));
+  });
+  const [alreadyDone] = React.useState(() =>
+    category ? doneToday(getDaily(category.id), today) : true,
+  );
+  const onComplete = React.useCallback(() => {
+    if (!category) return null;
+    const { bonus, streak } = completeDailyChallenge(category.id, today);
+    if (bonus === 0) return null;
+    return `Uitdaging van vandaag klaar! Reeks: ${streak} ${streak === 1 ? 'dag' : 'dagen'} 🔥 +${bonus} bonusmunten`;
+  }, [category, today]);
+  if (!category || cities.length === 0 || alreadyDone)
+    return <Navigate to={`/main/${categoryId ?? ''}`} replace />;
+  return (
+    <Game
+      packageId={gameKey(`${DAILY_PACKAGE_ID}-${category.id}-${today}`, mode)}
+      categoryId={category.id}
+      countStars={false}
+      mode={mode}
+      onComplete={onComplete}
+      title="Uitdaging van vandaag"
       cities={cities}
       onBack={() => navigate(`/main/${category.id}`)}
     />

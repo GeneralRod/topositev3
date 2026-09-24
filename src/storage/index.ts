@@ -3,6 +3,7 @@
 
 import type { GameState } from '../game/rules';
 import { recordAnswer, type AnswerKind, type CityStats } from '../game/progress';
+import { completeDaily, dailyBonus, doneToday, type DailyRecord } from '../game/daily';
 import {
   loadSaveData,
   writeSaveData,
@@ -166,4 +167,28 @@ export function getPlayMode(): PlayMode {
 
 export function setPlayMode(playMode: PlayMode): void {
   update((d) => ({ ...d, prefs: { ...d.prefs, playMode } }));
+}
+
+export function getDaily(categoryId: string): DailyRecord {
+  return state().daily[categoryId] ?? { lastCompleted: null, streak: 0 };
+}
+
+/**
+ * Uitdaging van vandaag afgerond: reeks bijwerken en bonusmunten geven.
+ * Twee keer op dezelfde dag levert niets extra op.
+ */
+export function completeDailyChallenge(
+  categoryId: string,
+  today: string,
+): { bonus: number; streak: number } {
+  const before = getDaily(categoryId);
+  if (doneToday(before, today)) return { bonus: 0, streak: before.streak };
+  const after = completeDaily(before, today);
+  const bonus = dailyBonus(after.streak);
+  update((d) => ({
+    ...d,
+    coins: d.coins + bonus,
+    daily: { ...d.daily, [categoryId]: after },
+  }));
+  return { bonus, streak: after.streak };
 }

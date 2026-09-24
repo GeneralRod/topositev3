@@ -144,3 +144,6 @@ export function locationsFor(category: Category, pkg: GamePackage): City[] {
 
 /** Pakket-id van het oefenrondje met je lastige steden (in de url). */
 export const PRACTICE_PACKAGE_ID = 'lastig';
+
+/** Pakket-id van de dagelijkse uitdaging (in de url). */
+export const DAILY_PACKAGE_ID = 'vandaag';

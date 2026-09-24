@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { PRACTICE_PACKAGE_ID, type Category } from '../content/catalog';
-import { getCityStats, getPlayMode, getStars, setPlayMode, type PlayMode } from '../storage';
+import { DAILY_PACKAGE_ID, PRACTICE_PACKAGE_ID, type Category } from '../content/catalog';
+import {
+  getCityStats,
+  getDaily,
+  getPlayMode,
+  getStars,
+  setPlayMode,
+  type PlayMode,
+} from '../storage';
+import { currentStreak, dailyBonus, dateKey, doneToday } from '../game/daily';
 import { hardCities } from '../game/progress';
 import { BackLink, Card, CardGrid, Page, PageTitle, SectionTitle, Stars } from '../ui';
 
@@ -99,6 +107,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
   const stars = getStars();
   const [mode, setMode] = useState<PlayMode>(getPlayMode);
   const modeQuery = mode === 'choice' ? '?modus=meerkeuze' : '';
+  const today = dateKey(new Date());
+  const daily = getDaily(category.id);
+  const dailyDone = doneToday(daily, today);
+  const streak = currentStreak(daily, today);
+  const streakText = streak > 0 ? ` Reeks: ${streak} ${streak === 1 ? 'dag' : 'dagen'} 🔥` : '';
   const chooseMode = (next: PlayMode) => {
     setPlayMode(next);
     setMode(next);
@@ -136,6 +149,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
 
       <SectionTitle>Oefenen</SectionTitle>
       <CardGrid>
+        <Card
+          title="Uitdaging van vandaag"
+          description={
+            dailyDone
+              ? `Klaar voor vandaag! Kom morgen terug.${streakText}`
+              : `10 steden, elke dag nieuw. +${dailyBonus(streak + 1)} bonusmunten.${streakText}`
+          }
+          color="#8e44ad"
+          disabled={dailyDone}
+          onClick={() => navigate(`/game/${category.id}/${DAILY_PACKAGE_ID}${modeQuery}`)}
+        />
         <Card
           title="Mijn lastige steden"
           description={

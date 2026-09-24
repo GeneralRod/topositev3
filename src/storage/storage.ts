@@ -15,6 +15,7 @@
 
 import type { CityStatus, GameState } from '../game/rules';
 import type { CityStats } from '../game/progress';
+import type { DailyRecord } from '../game/daily';
 import { upgradeCollection } from './migrations';
 
 export const STORAGE_KEY = 'topografiewereld';
@@ -46,6 +47,8 @@ export interface SaveData {
   stars: Record<string, number>;
   /** Voorkeuren van de speler. */
   prefs: Prefs;
+  /** Dagelijkse uitdaging per onderwerp (categorie-id). */
+  daily: Record<string, DailyRecord>;
 }
 
 export type PlayMode = 'map' | 'choice';
@@ -53,6 +56,20 @@ export type PlayMode = 'map' | 'choice';
 export interface Prefs {
   /** Aanwijzen op de kaart of meerkeuze. */
   playMode: PlayMode;
+}
+
+function parseDaily(value: unknown): Record<string, DailyRecord> {
+  const out: Record<string, DailyRecord> = {};
+  if (!isRecord(value)) return out;
+  for (const [categoryId, record] of Object.entries(value)) {
+    if (!isRecord(record)) continue;
+    const last = record.lastCompleted;
+    out[categoryId] = {
+      lastCompleted: typeof last === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(last) ? last : null,
+      streak: toCount(record.streak),
+    };
+  }
+  return out;
 }
 
 function parsePrefs(value: unknown): Prefs {
@@ -85,6 +102,7 @@ export function emptySaveData(): SaveData {
     cityStats: {},
     stars: {},
     prefs: { playMode: 'map' },
+    daily: {},
   };
 }
 
@@ -147,6 +165,7 @@ export function upgradeV1(old: SaveDataV1): SaveData {
     cityStats: {},
     stars: {},
     prefs: { playMode: 'map' },
+    daily: {},
   };
 }
 
@@ -274,6 +293,7 @@ export function parseSaveData(value: unknown): SaveData | null {
     cityStats: parseCityStats(value.cityStats),
     stars: parseStars(value.stars),
     prefs: parsePrefs(value.prefs),
+    daily: parseDaily(value.daily),
   };
 }
 

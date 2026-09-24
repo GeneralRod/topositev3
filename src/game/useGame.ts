@@ -29,6 +29,8 @@ export interface GameOptions {
   coinFactor?: number;
   /** Maximaal aantal hints in dit spel. */
   maxHints: number;
+  /** Wordt één keer aangeroepen op het moment dat het spel af is. */
+  onComplete?: () => void;
 }
 
 /** Totaal aantal fouten in een spel. */
@@ -37,7 +39,7 @@ export function totalMistakes(state: GameState): number {
 }
 
 export function useGame(packageId: string, cityNames: string[], options: GameOptions) {
-  const { categoryId, countStars, coinFactor = 1, maxHints } = options;
+  const { categoryId, countStars, coinFactor = 1, maxHints, onComplete } = options;
   const [state, setState] = useState(() => startGame(packageId, cityNames));
   const questionStartedAt = useRef(0);
 
@@ -69,12 +71,13 @@ export function useGame(packageId: string, cityNames: string[], options: GameOpt
           if (countStars) {
             recordStars(packageId, starsFor(totalMistakes(next), Object.keys(next.status).length));
           }
+          onComplete?.();
         }
       }
       setState(next);
       return result;
     },
-    [state, categoryId, countStars, packageId, coinFactor],
+    [state, categoryId, countStars, packageId, coinFactor, onComplete],
   );
 
   const showHint = useCallback(() => setState((s) => takeHint(s, maxHints)), [maxHints]);

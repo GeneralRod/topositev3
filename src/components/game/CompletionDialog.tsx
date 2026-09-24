@@ -84,6 +84,16 @@ const Mistakes = styled.span`
   font-weight: 500;
 `;
 
+const Extra = styled.div`
+  margin: -0.5rem 0 1rem;
+  padding: 0.6rem 1rem;
+  background: #fff3e0;
+  border: 2px solid #ffb74d;
+  border-radius: 10px;
+  color: #a55a00;
+  font-weight: 700;
+`;
+
 const StarLine = styled.div`
   display: flex;
   flex-direction: column;
@@ -109,6 +119,8 @@ interface CompletionDialogProps {
   hardest: Array<{ city: string; mistakes: number }>;
   /** Behaalde sterren; null bij het oefenrondje. */
   stars: number | null;
+  /** Extra regel, bijv. over de dagelijkse uitdaging. */
+  extraMessage?: string | null;
   onClose: () => void;
 }
 
@@ -117,6 +129,7 @@ const CompletionDialog: React.FC<CompletionDialogProps> = ({
   bonus,
   hardest,
   stars,
+  extraMessage,
   onClose,
 }) => (
   <Overlay>
@@ -128,6 +141,7 @@ const CompletionDialog: React.FC<CompletionDialogProps> = ({
           <StarText>{STAR_TEXT[stars]}</StarText>
         </StarLine>
       )}
+      {extraMessage && <Extra>{extraMessage}</Extra>}
       <CoinSummary>
         Munten dit spel: {coins} <br />
         Bonus: +{bonus} <br />

@@ -93,6 +93,11 @@ interface GameProps {
   countStars: boolean;
   /** Aanwijzen op de kaart of meerkeuze. */
   mode: PlayMode;
+  /**
+   * Extra actie als het spel af is (bijv. dagelijkse uitdaging); geeft een
+   * extra regel terug voor het eindscherm.
+   */
+  onComplete?: () => string | null;
   title: string;
   cities: City[];
   onBack: () => void;
@@ -109,18 +114,24 @@ const Game: React.FC<GameProps> = ({
   categoryId,
   countStars,
   mode,
+  onComplete,
   title,
   cities,
   onBack,
 }) => {
   const cityNames = useMemo(() => cities.map((c) => c.name), [cities]);
   const isChoice = mode === 'choice';
+  const [extraMessage, setExtraMessage] = useState<string | null>(null);
+  const handleComplete = useCallback(() => {
+    if (onComplete) setExtraMessage(onComplete());
+  }, [onComplete]);
   const { state, clickCity, showHint, restart } = useGame(packageId, cityNames, {
     categoryId,
     // Meerkeuze is makkelijker: halve munten en geen sterren.
     countStars: countStars && !isChoice,
     coinFactor: isChoice ? 0.5 : 1,
     maxHints: MAX_HINTS[mode],
+    onComplete: handleComplete,
   });
   const [wrongPicks, setWrongPicks] = useState<{ city: string | null; names: string[] }>({
     city: null,
@@ -242,6 +253,7 @@ const Game: React.FC<GameProps> = ({
           coins={state.coinsThisGame}
           bonus={completionBonus(state.coinsThisGame)}
           hardest={hardestCities(state)}
+          extraMessage={extraMessage}
           stars={countStars && !isChoice ? starsFor(totalMistakes(state), cities.length) : null}
           onClose={() => {
             restart();
