@@ -45,16 +45,20 @@ zonder dat de live site ooit stuk gaat tijdens het werk.
 ## Fases
 
 ### Fase 1: veiligheidsnet en opruimen
-- [ ] `dist/`, `.jest-cache/`, `.env`, `*.tsbuildinfo` uit git en in `.gitignore`
-- [ ] Ongebruikte bestanden verwijderen
-- [ ] CI naar Node 22; één workflow die lint + typecheck + test + build draait op PR's
-- [ ] GitHub Pages-deploy-workflow, `gh-pages`-script/dependency en `public/404.html`-hack weghalen;
+
+- [x] `dist/`, `.jest-cache/`, `.env`, `*.tsbuildinfo` uit git en in `.gitignore`
+- [x] Ongebruikte bestanden verwijderen
+- [x] CI naar Node 22; één workflow die lint + typecheck + test + build draait op PR's
+- [x] GitHub Pages-deploy-workflow, `gh-pages`-script/dependency en `public/404.html`-hack weghalen;
       `vite.config.ts` base op `/`. (GitHub Pages zelf uitzetten in de repo-instellingen doet de
       eigenaar, of na expliciete toestemming.)
-- [ ] `package.json` naam/versie, README bijwerken
-- [ ] Openstaande dependabot-PR's beoordelen (o.a. Vite 8)
+- [x] `package.json` naam/versie, README bijwerken
+- [x] Openstaande dependabot-PR's beoordelen (o.a. Vite 8): Vite 8, @vitejs/plugin-react 6,
+      react-icons 5.6 en eslint-plugin-react-refresh 0.5 zijn meegenomen. ESLint 10 (#64) wacht nog:
+      nog niet alle lint-plugins ondersteunen ESLint 10.
 
 ### Fase 2: nieuwe fundering
+
 - [ ] Testopzet met Vitest
 - [ ] Spelregels als pure functies (`src/game/`): volgende stad kiezen, antwoord verwerken,
       munten/bonus berekenen, voltooiing. Met unit tests.
@@ -66,15 +70,18 @@ zonder dat de live site ooit stuk gaat tijdens het werk.
 - [ ] Gedeelde UI-componenten (knoppen, kaarten, header) in plaats van kopieën per scherm
 
 ### Fase 3: sneller
+
 - [ ] Routes lazy laden (code splitting); three.js alleen op de startpagina
 - [ ] Animatielek fixen; lichtere wereldbol, texture zelf hosten
 - [ ] Marker-iconen lokaal
 
 ### Fase 4: nieuwe features
+
 - [ ] Kaart met zoomen/slepen (ook mobiel)
 - [ ] Nieuwe categorieën (landen, wateren, gebergtes)
 - [ ] Oefenmodus "moeilijkste steden" en voortgangsoverzicht
 - [ ] Prijzensysteem afmaken
 
 ### Fase 5: nieuw design
+
 - [ ] Consistente stijl (kleuren, typografie), mobile-first

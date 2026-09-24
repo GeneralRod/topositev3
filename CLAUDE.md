@@ -13,6 +13,7 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 
 ## Commando's
 
-- `npm run dev`: dev-server (lokaal op `/topositev3/`, zolang `base` in `vite.config.ts` zo staat)
+- `npm run dev`: dev-server op http://localhost:5173/
+- `npm run format`: code opmaken met Prettier (CI controleert dit met `npm run format:check`)
 - `npm run build`: productiebuild naar `dist/`
 - `npm run lint`: ESLint
