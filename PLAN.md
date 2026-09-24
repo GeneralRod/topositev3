@@ -89,6 +89,8 @@ Mobiel is daarom geen prioriteit; muis en toetsenbord wel.
       × 4 plekken, eigen tekeningen, lege plekken als doel (schaduw + prijs), stickers op de
       zijpanelen, kopen vanuit de kast. Oude prijzen blijven; linten en deurspullen worden
       teruggegeven als munten (opslag versie 2). Ontwikkelaarsknoppen alleen met `?ontwikkelaar`.
+- [x] Werkplaats: kast opknappen met kleuren (kersen, walnoot, zeeblauw, mintgroen, snoeproze)
+      en extra's (lampjes, windroos, gouden randen, glitters); gekocht = altijd wisselbaar.
 
 ### Fase 5: nieuw design
 

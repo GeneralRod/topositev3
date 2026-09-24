@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { Button } from '../ui';
 import { getCoins, setCoins, setCollection } from '../storage';
-import { allPrizes, stickers } from './catalog';
+import { allPrizes, extras, finishes, stickers } from './catalog';
 
 // Alleen zichtbaar met ?ontwikkelaar in de url, om de kast te testen.
 
@@ -32,6 +32,7 @@ const DevTools: React.FC<{ onChange: () => void }> = ({ onChange }) => {
           setCollection(
             allPrizes.map((item) => item.id),
             stickers.map((item) => item.id),
+            [...finishes, ...extras].map((item) => item.id),
           ),
         )}
       >

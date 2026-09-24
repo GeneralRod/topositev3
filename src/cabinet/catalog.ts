@@ -150,3 +150,97 @@ export const stickers: CabinetItem[] = [
 ];
 
 export const allPrizes: CabinetItem[] = shelves.flatMap((shelf) => shelf.items);
+
+/** Kleur van de kast. Eikenhout heb je altijd; de rest kun je kopen. */
+export interface Finish extends CabinetItem {
+  wood: string;
+  woodLight: string;
+  woodDark: string;
+}
+
+export const DEFAULT_FINISH = 'oak';
+
+export const finishes: Finish[] = [
+  {
+    id: 'oak',
+    name: 'Eikenhout',
+    description: 'De gewone houten kast.',
+    price: 0,
+    wood: '#8b5a2b',
+    woodLight: '#b07a45',
+    woodDark: '#6b4226',
+  },
+  {
+    id: 'cherry',
+    name: 'Kersenhout',
+    description: 'Warm roodbruin hout.',
+    price: 400,
+    wood: '#9b3b2a',
+    woodLight: '#c0604a',
+    woodDark: '#6e2518',
+  },
+  {
+    id: 'walnut',
+    name: 'Walnoot',
+    description: 'Chic donker hout.',
+    price: 600,
+    wood: '#5a3a24',
+    woodLight: '#7a5236',
+    woodDark: '#3a2415',
+  },
+  {
+    id: 'sea-blue',
+    name: 'Zeeblauw',
+    description: 'Geverfd in de kleur van de oceaan.',
+    price: 900,
+    wood: '#3f6f9f',
+    woodLight: '#5f8fbf',
+    woodDark: '#2a4d70',
+  },
+  {
+    id: 'mint',
+    name: 'Mintgroen',
+    description: 'Fris geverfd, zoals een jungle.',
+    price: 900,
+    wood: '#4f9e80',
+    woodLight: '#75bfa1',
+    woodDark: '#35735b',
+  },
+  {
+    id: 'pink',
+    name: 'Snoeproze',
+    description: 'Zo roze als een zuurstok.',
+    price: 900,
+    wood: '#d1719a',
+    woodLight: '#e897b9',
+    woodDark: '#a04c70',
+  },
+];
+
+/** Extra's die je aan en uit kunt zetten zodra je ze hebt. */
+export const extras: CabinetItem[] = [
+  {
+    id: 'lights',
+    name: 'Lampjes',
+    description: 'Warme lampjes die je prijzen laten stralen.',
+    price: 1000,
+  },
+  {
+    id: 'compass-rose',
+    name: 'Windroos bovenop',
+    description: 'Een gouden windroos boven op de kast.',
+    price: 1200,
+  },
+  {
+    id: 'gold-trim',
+    name: 'Gouden randen',
+    description: 'Alle randen en pootjes van goud.',
+    price: 1500,
+  },
+  {
+    id: 'sparkles',
+    name: 'Glitters',
+    description: 'Twinkelende sterretjes achter het glas.',
+    price: 2000,
+  },
+];

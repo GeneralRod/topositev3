@@ -103,8 +103,22 @@ describe('overzetten van oude gegevens', () => {
       coins: 0,
       prizes: [],
       stickers: [],
+      upgrades: [],
+      style: { finish: 'oak', extras: [] },
       games: {},
     });
+  });
+});
+
+describe('versie 2 zonder upgrades (van voor de werkplaats)', () => {
+  it('krijgt de standaardkast', () => {
+    const store = fakeStore({
+      [STORAGE_KEY]: JSON.stringify({ version: 2, coins: 5, prizes: ['globe'], stickers: [] }),
+    });
+    const data = loadSaveData(store);
+    expect(data.upgrades).toEqual([]);
+    expect(data.style).toEqual({ finish: 'oak', extras: [] });
+    expect(data.prizes).toEqual(['globe']);
   });
 });
 
@@ -164,6 +178,14 @@ describe('opslag in de app', () => {
     expect(storage.buyItem('sticker', 'ster', 5)).toBe(true);
     expect(storage.getStickers()).toEqual(['ster']);
     expect(storage.getCoins()).toBe(0);
+  });
+
+  it('koopt kast-upgrades en bewaart de gekozen stijl', () => {
+    expect(storage.buyItem('upgrade', 'cherry', 20)).toBe(true);
+    storage.setStyle({ finish: 'cherry', extras: [] });
+    storage.setStoreForTesting(store);
+    expect(storage.getUpgrades()).toEqual(['cherry']);
+    expect(storage.getStyle()).toEqual({ finish: 'cherry', extras: [] });
   });
 
   it('bewaart en wist spellen per pakket', () => {

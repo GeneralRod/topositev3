@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { allPrizes, shelves, stickers } from './catalog';
-import { nextGoal, slotState } from './rules';
+import { allPrizes, DEFAULT_FINISH, extras, finishes, shelves, stickers } from './catalog';
+import { effectiveStyle, nextGoal, slotState } from './rules';
 import { KEPT_PRIZE_IDS } from '../storage/migrations';
 
 describe('catalogus van de prijzenkast', () => {
@@ -10,7 +10,7 @@ describe('catalogus van de prijzenkast', () => {
   });
 
   it('heeft unieke id’s (dat zijn de sleutels in de opslag)', () => {
-    const ids = [...allPrizes, ...stickers].map((item) => item.id);
+    const ids = [...allPrizes, ...stickers, ...finishes, ...extras].map((item) => item.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
@@ -51,5 +51,33 @@ describe('plekken in de kast', () => {
         allPrizes.map((item) => item.id),
       ),
     ).toBeNull();
+  });
+});
+
+describe('kast opknappen', () => {
+  const finishIds = finishes.map((f) => f.id);
+  const style = (finish: string, extraIds: string[] = []) => ({ finish, extras: extraIds });
+
+  it('eikenhout is gratis en altijd beschikbaar', () => {
+    expect(finishes.find((f) => f.id === DEFAULT_FINISH)?.price).toBe(0);
+    expect(effectiveStyle(style('oak'), [], finishIds, DEFAULT_FINISH).finish).toBe('oak');
+  });
+
+  it('toont alleen gekochte kleuren en extra’s', () => {
+    const shown = effectiveStyle(
+      style('pink', ['lights', 'sparkles']),
+      ['lights'],
+      finishIds,
+      DEFAULT_FINISH,
+    );
+    expect(shown).toEqual({ finish: 'oak', extras: ['lights'] });
+  });
+
+  it('toont een gekochte kleur', () => {
+    expect(effectiveStyle(style('pink'), ['pink'], finishIds, DEFAULT_FINISH).finish).toBe('pink');
+  });
+
+  it('valt terug op eikenhout bij een onbekende kleur', () => {
+    expect(effectiveStyle(style('paars'), ['paars'], finishIds, DEFAULT_FINISH).finish).toBe('oak');
   });
 });

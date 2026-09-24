@@ -9,6 +9,8 @@
 //   1: munten, linten (aantallen), 'echte' prijzen en spellen
 //   2: munten, prijzen, stickers en spellen (nieuwe prijzenkast). Linten en
 //      prijzen die niet meer bestaan worden omgezet in munten (zie migrations.ts).
+//      Later toegevoegd (zonder nieuw versienummer, ontbreekt = standaard):
+//      kast-upgrades en de gekozen kaststijl.
 
 import type { CityStatus, GameState } from '../game/rules';
 import { upgradeCollection } from './migrations';
@@ -30,6 +32,10 @@ export interface SaveData {
   prizes: string[];
   /** Id's van gekochte stickers. */
   stickers: string[];
+  /** Id's van gekochte kast-upgrades (kleuren en extra's). */
+  upgrades: string[];
+  /** Hoe de kast er nu uitziet. */
+  style: { finish: string; extras: string[] };
   /** Lopende spellen per pakket-id (bijv. 'pakket1-2'). */
   games: Record<string, GameState>;
 }
@@ -48,7 +54,27 @@ export interface SaveDataV1 {
 export type KeyValueStore = Pick<Storage, 'getItem' | 'setItem' | 'key' | 'length'>;
 
 export function emptySaveData(): SaveData {
-  return { version: STORAGE_VERSION, coins: 0, prizes: [], stickers: [], games: {} };
+  return {
+    version: STORAGE_VERSION,
+    coins: 0,
+    prizes: [],
+    stickers: [],
+    upgrades: [],
+    style: defaultStyle(),
+    games: {},
+  };
+}
+
+export function defaultStyle(): SaveData['style'] {
+  return { finish: 'oak', extras: [] };
+}
+
+function parseStyle(value: unknown): SaveData['style'] {
+  if (!isRecord(value)) return defaultStyle();
+  return {
+    finish: typeof value.finish === 'string' ? value.finish : 'oak',
+    extras: toIdList(value.extras),
+  };
 }
 
 function emptySaveDataV1(): SaveDataV1 {
@@ -68,6 +94,8 @@ export function upgradeV1(old: SaveDataV1): SaveData {
     coins: old.coins + refund,
     prizes,
     stickers: [],
+    upgrades: [],
+    style: defaultStyle(),
     games: old.games,
   };
 }
@@ -188,6 +216,8 @@ export function parseSaveData(value: unknown): SaveData | null {
     coins: toCount(value.coins),
     prizes: toIdList(value.prizes),
     stickers: toIdList(value.stickers),
+    upgrades: toIdList(value.upgrades),
+    style: parseStyle(value.style),
     games: parseGames(value.games),
   };
 }

@@ -2,18 +2,34 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FaCoins } from 'react-icons/fa';
+import { FaCoins, FaHammer } from 'react-icons/fa';
 import { BackLink } from '../ui';
-import { buyItem, getCoins, getPrizes, getStickers } from '../storage';
-import { allPrizes, shelves, stickers, type CabinetItem } from './catalog';
-import { nextGoal, slotState } from './rules';
+import {
+  buyItem,
+  getCoins,
+  getPrizes,
+  getStickers,
+  getStyle,
+  getUpgrades,
+  setStyle,
+} from '../storage';
+import {
+  allPrizes,
+  DEFAULT_FINISH,
+  finishes,
+  shelves,
+  stickers,
+  type CabinetItem,
+} from './catalog';
+import { effectiveStyle, nextGoal, slotState, type CabinetStyle } from './rules';
 import { PrizeArt, StickerArt } from './art';
 import BuyDialog, { type Selection } from './BuyDialog';
 import DevTools from './DevTools';
+import Workshop from './Workshop';
 
-const WOOD = '#8b5a2b';
-const WOOD_DARK = '#6b4226';
-const WOOD_LIGHT = '#b07a45';
+// Kleur van teksten rond de kast; de kast zelf krijgt zijn kleuren via
+// CSS-variabelen, zodat spelers hem kunnen opknappen (zie upgrades).
+const TEXT_BROWN = '#6b4226';
 
 const Room = styled.div`
   width: 100%;
@@ -44,7 +60,7 @@ const TopBar = styled.div`
 `;
 
 const Title = styled.h1`
-  color: ${WOOD_DARK};
+  color: ${TEXT_BROWN};
   font-size: 2rem;
 `;
 
@@ -58,7 +74,7 @@ const CoinBadge = styled.div`
   border-radius: 999px;
   font-size: 1.25rem;
   font-weight: 700;
-  color: ${WOOD_DARK};
+  color: ${TEXT_BROWN};
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
 
   svg {
@@ -68,11 +84,12 @@ const CoinBadge = styled.div`
 
 const Goal = styled.p`
   margin: 0.25rem 0 0.75rem;
-  color: ${WOOD_DARK};
+  color: ${TEXT_BROWN};
   font-size: 1.05rem;
 `;
 
 const Cabinet = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -82,8 +99,8 @@ const Cabinet = styled.div`
 const Crown = styled.div`
   width: calc(100% - 40px);
   height: 46px;
-  background: linear-gradient(${WOOD_LIGHT}, ${WOOD});
-  border: 3px solid ${WOOD_DARK};
+  background: linear-gradient(var(--wood-light), var(--wood));
+  border: 3px solid var(--trim);
   border-bottom: none;
   border-radius: 50% 50% 0 0 / 100% 100% 0 0;
   display: flex;
@@ -104,8 +121,8 @@ const NamePlate = styled.div`
 
 const Body = styled.div`
   display: flex;
-  background: ${WOOD};
-  border: 3px solid ${WOOD_DARK};
+  background: var(--wood);
+  border: 3px solid var(--trim);
   border-radius: 8px;
   padding: 10px;
   gap: 10px;
@@ -117,8 +134,8 @@ const SidePanel = styled.div`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  background: linear-gradient(90deg, ${WOOD_LIGHT}, ${WOOD} 70%);
-  border: 2px solid ${WOOD_DARK};
+  background: linear-gradient(90deg, var(--wood-light), var(--wood) 70%);
+  border: 2px solid var(--trim);
   border-radius: 6px;
   padding: 12px 0;
 `;
@@ -126,7 +143,7 @@ const SidePanel = styled.div`
 const Glass = styled.div`
   position: relative;
   background: linear-gradient(#f5e6cc, #ead3ad);
-  border: 3px solid ${WOOD_DARK};
+  border: 3px solid var(--trim);
   border-radius: 4px;
   box-shadow: inset 0 0 24px rgba(90, 55, 20, 0.35);
   padding: 8px 12px 0;
@@ -148,20 +165,27 @@ const Glass = styled.div`
   }
 `;
 
-const ShelfRow = styled.div`
+const ShelfRow = styled.div<{ lit: boolean }>`
   display: grid;
   grid-template-columns: repeat(4, 120px);
   gap: 8px;
   align-items: end;
   height: 98px;
+  margin: 0 -12px;
+  padding: 0 12px;
+  /* Lampjes: warm licht dat van boven op de plank schijnt. */
+  background: ${(p) =>
+    p.lit
+      ? 'radial-gradient(ellipse 45% 85% at 12.5% 0%, rgba(255, 214, 110, 0.6), transparent), radial-gradient(ellipse 45% 85% at 37.5% 0%, rgba(255, 214, 110, 0.6), transparent), radial-gradient(ellipse 45% 85% at 62.5% 0%, rgba(255, 214, 110, 0.6), transparent), radial-gradient(ellipse 45% 85% at 87.5% 0%, rgba(255, 214, 110, 0.6), transparent)'
+      : 'none'};
 `;
 
 const ShelfBoard = styled.div`
   height: 22px;
   margin: 0 -12px;
-  background: linear-gradient(${WOOD_LIGHT} 0 5px, ${WOOD} 5px);
-  border-top: 2px solid ${WOOD_DARK};
-  border-bottom: 2px solid ${WOOD_DARK};
+  background: linear-gradient(var(--wood-light) 0 5px, var(--wood) 5px);
+  border-top: 2px solid var(--trim);
+  border-bottom: 2px solid var(--trim);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -234,7 +258,7 @@ const PriceTag = styled.span<{ affordable: boolean }>`
   font-size: 0.8rem;
   font-weight: 700;
   background: ${(p) => (p.affordable ? '#3aa655' : 'rgba(255, 255, 255, 0.9)')};
-  color: ${(p) => (p.affordable ? 'white' : WOOD_DARK)};
+  color: ${(p) => (p.affordable ? 'white' : TEXT_BROWN)};
   border: 2px solid ${(p) => (p.affordable ? '#2b7f40' : '#d9bf94')};
 
   svg {
@@ -268,8 +292,8 @@ const StickerSpot = styled.button<{ owned: boolean; tilt: number }>`
 const Base = styled.div`
   width: calc(100% + 20px);
   height: 22px;
-  background: linear-gradient(${WOOD}, ${WOOD_DARK});
-  border: 3px solid ${WOOD_DARK};
+  background: linear-gradient(var(--wood), var(--wood-dark));
+  border: 3px solid var(--trim);
   border-radius: 0 0 6px 6px;
 `;
 
@@ -283,10 +307,89 @@ const Feet = styled.div`
     content: '';
     width: 34px;
     height: 16px;
-    background: ${WOOD_DARK};
+    background: var(--trim);
     border-radius: 0 0 10px 10px;
   }
 `;
+
+const WorkshopButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+  padding: 0.45rem 1.1rem;
+  background: #fff3d6;
+  color: ${TEXT_BROWN};
+  border: 2px solid #e0a526;
+  border-radius: 999px;
+  font-weight: 700;
+  transition:
+    transform 0.15s,
+    background-color 0.15s;
+
+  &:hover {
+    background: #ffe7a8;
+    transform: translateY(-2px);
+  }
+`;
+
+const twinkle = keyframes`
+  0%, 100% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 1; transform: scale(1); }
+`;
+
+const Sparkle = styled.span<{ x: number; y: number; delay: number }>`
+  position: absolute;
+  left: ${(p) => p.x}%;
+  top: ${(p) => p.y}%;
+  color: #fff6c2;
+  font-size: 14px;
+  text-shadow: 0 0 6px #ffd84d;
+  pointer-events: none;
+  z-index: 1;
+  animation: ${twinkle} 2.4s ease-in-out ${(p) => p.delay}s infinite;
+`;
+
+const SPARKLES = [
+  [8, 12, 0],
+  [30, 40, 0.8],
+  [55, 8, 1.6],
+  [78, 30, 0.4],
+  [92, 60, 1.2],
+  [20, 70, 2],
+  [48, 58, 0.6],
+  [70, 85, 1.4],
+  [5, 90, 1],
+  [88, 12, 1.8],
+] as const;
+
+const Topper = styled.div`
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  line-height: 0;
+  z-index: 1;
+`;
+
+/** Gouden windroos voor bovenop de kast. */
+const CompassRose: React.FC = () => (
+  <svg width="58" height="58" viewBox="0 0 64 64" aria-hidden="true">
+    <circle cx="32" cy="32" r="14" fill="none" stroke="#9c7412" strokeWidth="3" />
+    <path
+      d="M32 2 L37 27 L62 32 L37 37 L32 62 L27 37 L2 32 L27 27 Z"
+      fill="#f7c531"
+      stroke="#9c7412"
+      strokeWidth="2"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M32 2 L37 27 L32 32 Z M62 32 L37 37 L32 32 Z M32 62 L27 37 L32 32 Z M2 32 L27 27 L32 32 Z"
+      fill="#d9a929"
+    />
+    <circle cx="32" cy="32" r="4" fill="#e74c3c" stroke="#9c7412" strokeWidth="1.5" />
+  </svg>
+);
 
 const STICKER_TILTS = [-8, 6, -4, 7, -6, 5];
 
@@ -298,12 +401,51 @@ export const PrizeCabinet: React.FC = () => {
   const [ownedStickers, setOwnedStickers] = useState(getStickers);
   const [selection, setSelection] = useState<Selection | null>(null);
   const [fresh, setFresh] = useState<string | null>(null);
+  const [upgrades, setUpgrades] = useState(getUpgrades);
+  const [style, setStyleState] = useState<CabinetStyle>(getStyle);
+  const [workshopOpen, setWorkshopOpen] = useState(false);
 
   const refresh = () => {
     setCoins(getCoins());
     setPrizes(getPrizes());
     setOwnedStickers(getStickers());
+    setUpgrades(getUpgrades());
+    setStyleState(getStyle());
   };
+
+  const changeStyle = (next: CabinetStyle) => {
+    setStyle(next);
+    setStyleState(next);
+  };
+
+  const buyUpgrade = (item: CabinetItem) => {
+    if (!buyItem('upgrade', item.id, item.price)) return;
+    // Meteen gebruiken wat je net gekocht hebt.
+    const isFinish = finishes.some((f) => f.id === item.id);
+    changeStyle(
+      isFinish
+        ? { ...style, finish: item.id }
+        : { ...style, extras: [...style.extras.filter((id) => id !== item.id), item.id] },
+    );
+    refresh();
+  };
+
+  const shown = effectiveStyle(
+    style,
+    upgrades,
+    finishes.map((f) => f.id),
+    DEFAULT_FINISH,
+  );
+  const finish = finishes.find((f) => f.id === shown.finish) ?? finishes[0];
+  const has = (extra: string) => shown.extras.includes(extra);
+  const cabinetColors = {
+    '--wood': finish.wood,
+    '--wood-light': finish.woodLight,
+    '--wood-dark': finish.woodDark,
+    '--trim': has('gold-trim') ? '#c9a227' : finish.woodDark,
+    // Ruimte voor de windroos bovenop, zodat die niet over de knop valt.
+    marginTop: has('compass-rose') ? 28 : 0,
+  } as React.CSSProperties;
 
   const buy = (selected: Selection) => {
     if (buyItem(selected.kind, selected.item.id, selected.item.price)) {
@@ -363,17 +505,31 @@ export const PrizeCabinet: React.FC = () => {
             : `Volgend doel: ${goal.name}. Nog ${goal.price - coins} munten sparen!`
           : 'Wauw, je kast is helemaal vol! Jij bent een echte topografiekampioen.'}
       </Goal>
+      <WorkshopButton onClick={() => setWorkshopOpen(true)}>
+        <FaHammer /> Kast opknappen
+      </WorkshopButton>
 
-      <Cabinet>
+      <Cabinet style={cabinetColors}>
+        {has('compass-rose') && (
+          <Topper>
+            <CompassRose />
+          </Topper>
+        )}
         <Crown>
           <NamePlate>PRIJZENKAST</NamePlate>
         </Crown>
         <Body>
           <SidePanel>{stickers.slice(0, half).map((s, i) => renderSticker(s, i))}</SidePanel>
           <Glass>
+            {has('sparkles') &&
+              SPARKLES.map(([x, y, delay], i) => (
+                <Sparkle key={i} x={x} y={y} delay={delay}>
+                  ✦
+                </Sparkle>
+              ))}
             {shelves.map((shelf) => (
               <React.Fragment key={shelf.id}>
-                <ShelfRow>
+                <ShelfRow lit={has('lights')}>
                   {shelf.items.map((item) => {
                     const state = slotState(item, prizes, coins);
                     return (
@@ -418,6 +574,17 @@ export const PrizeCabinet: React.FC = () => {
           owned={(selection.kind === 'prize' ? prizes : ownedStickers).includes(selection.item.id)}
           onBuy={() => buy(selection)}
           onClose={() => setSelection(null)}
+        />
+      )}
+
+      {workshopOpen && (
+        <Workshop
+          coins={coins}
+          owned={upgrades}
+          style={shown}
+          onBuy={buyUpgrade}
+          onStyleChange={changeStyle}
+          onClose={() => setWorkshopOpen(false)}
         />
       )}
 
