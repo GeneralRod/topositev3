@@ -131,6 +131,21 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
 - [ ] Europa: landen en hoofdsteden
 - [ ] De wereld: landen, zeeën en gebergtes
 
+**Aanpak voor precieze wateren, bergen en gebieden (besluit eigenaar)**
+
+Pakketten met bijvoorbeeld de Rijn, de Nijl of het Gardameer moeten visueel extreem precies zijn.
+Aanpak per pakket:
+
+- Precieze vorm per onderdeel ophalen uit OpenStreetMap (wereld) of PDOK/TOP10NL (Nederland);
+  alleen de onderdelen die in het pakket zitten.
+- Opslaan als eigen kaartbestand per pakket (GeoJSON/TopoJSON), alleen zo weinig vereenvoudigd
+  dat het met het oog niet te zien is. Pas laden als het pakket geopend wordt.
+- Meren/zeeën/gebieden: klikken binnen het vlak. Rivieren: onzichtbare bredere klikstrook
+  langs de lijn. Na het antwoord kleurt de hele vorm groen of rood.
+- Wordt het geheel te zwaar, dan overstappen op vector-tegels (PMTiles + MapLibre) op de eigen
+  site. Geen externe kaartdienst of sleutel.
+- Bronvermelding (OpenStreetMap, PDOK) op de kaart.
+
 **Later**
 
 - [ ] Geluidjes bij goed en fout (met aan/uit-knop)
