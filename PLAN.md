@@ -146,7 +146,9 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
   staat helemaal in `scripts/wateren/items.mjs`):
   - [x] Pakket 1 (40): oceanen, zeeën, rivieren, meren, woestijnen, gebergtes en bergen.
         Interactieve kaart erbij. Meerkeuze kiest foute antwoorden van dezelfde soort.
-  - [ ] Pakket 2 t/m 4 (30), met de Marianentrog; gecombineerde pakketten
+  - [x] Pakket 2 (10) en gecombineerd pakket 1 + 2. Zeegrenzen worden per paar zeeën bewaard,
+        zodat een pakket alleen de grenzen toont van zijn eigen zeeën.
+  - [ ] Pakket 3 en 4 (20), met de Marianentrog; verdere gecombineerde pakketten
 
 **Aanpak voor precieze wateren, bergen en gebieden (besluit eigenaar)**
 

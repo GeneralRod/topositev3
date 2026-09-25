@@ -29,7 +29,7 @@ import { items, neutralMarine } from './items.mjs';
 const SEA_SIMPLIFY = 1e-3;
 
 /** Pakketten die nu in de site staan. */
-const ENABLED = new Set(['wateren1']);
+const ENABLED = new Set(['wateren1', 'wateren2']);
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../..');
@@ -191,18 +191,27 @@ function buildSeas(marine) {
     shapes.set(item.name, merge(topo, parts));
   }
 
-  // Grenzen tussen twee verschillende zeeën, als er minstens één in de site staat.
+  // Grenzen tussen twee verschillende zeeën, als er minstens één in de site staat. Per
+  // paar opgeslagen, zodat het spel alleen de grenzen toont van zeeën die meedoen.
   const enabledSea = new Set(
     items.filter((i) => i.marine && ENABLED.has(i.pkg)).map((i) => i.name),
   );
-  const borders = mesh(
-    topo,
-    topo.objects.seas,
-    (a, b) =>
-      a !== b &&
-      a.properties.group !== b.properties.group &&
-      (enabledSea.has(a.properties.group) || enabledSea.has(b.properties.group)),
-  );
+  const pairs = new Set();
+  for (const geomIds of owners.values()) {
+    const groups = [...new Set(geomIds.map((gi) => geoms[gi].properties.group ?? '-'))];
+    if (groups.length === 2 && groups.some((g) => enabledSea.has(g))) {
+      pairs.add(groups.sort().join('|'));
+    }
+  }
+  const borders = [...pairs].sort().map((pair) => {
+    const [first, second] = pair.split('|');
+    const lines = mesh(topo, topo.objects.seas, (a, b) => {
+      const ga = a.properties.group ?? '-';
+      const gb = b.properties.group ?? '-';
+      return a !== b && ((ga === first && gb === second) || (ga === second && gb === first));
+    });
+    return { between: [first, second], ...round(lines, 3) };
+  });
 
   const leftover = geoms.filter((g) => g.properties.group === null).map((g) => g.properties.ne);
   return { shapes, borders, leftover };
@@ -287,7 +296,7 @@ fs.writeFileSync(
   JSON.stringify({
     type: 'FeatureCollection',
     features,
-    seaBorders: round(seas.borders, 3),
+    seaBorders: seas.borders,
   }),
 );
 

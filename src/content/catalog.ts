@@ -155,6 +155,26 @@ export const categories: Category[] = [
             color: '#0f8b8d',
             groups: ['wateren1'],
           },
+          {
+            id: 'wateren2',
+            title: 'Pakket 2',
+            description: 'Oostzee, Tasmanzee, Lena, Zambezi, Tigris, Atlas, Oeral en drie bergen',
+            color: '#2e7d32',
+            groups: ['wateren2'],
+          },
+        ],
+      },
+      {
+        title: 'Gecombineerde Pakketten',
+        kind: 'game',
+        packages: [
+          {
+            id: 'wateren1-2',
+            title: 'Pakket 1 + 2',
+            description: 'Alles uit pakket 1 en 2',
+            color: '#6d4c41',
+            groups: ['wateren1', 'wateren2'],
+          },
         ],
       },
       {
@@ -167,6 +187,13 @@ export const categories: Category[] = [
             description: 'Bekijk alle wateren en landschappen uit pakket 1',
             color: '#0f8b8d',
             groups: ['wateren1'],
+          },
+          {
+            id: 'wateren-kaart2',
+            title: 'Interactieve kaart pakket 2',
+            description: 'Bekijk alle wateren en landschappen uit pakket 2',
+            color: '#2e7d32',
+            groups: ['wateren2'],
           },
         ],
       },

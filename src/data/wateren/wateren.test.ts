@@ -12,8 +12,9 @@ const features = shapes.features as Array<{
 }>;
 
 describe('wateren en landschappen: gegevens', () => {
-  it('heeft pakket 1 met de 40 onderdelen van de lijst', () => {
+  it('heeft pakket 1 en 2 met de 40 en 10 onderdelen van de lijst', () => {
     expect(places.filter((p) => p.package === 'wateren1')).toHaveLength(40);
+    expect(places.filter((p) => p.package === 'wateren2')).toHaveLength(10);
     const names = places.map((p) => p.name);
     expect(new Set(names).size).toBe(names.length);
   });

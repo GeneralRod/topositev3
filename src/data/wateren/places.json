@@ -318,5 +318,85 @@
     "hint": "Afrika",
     "lat": -3.0758,
     "lng": 37.3533
+  },
+  {
+    "name": "Oostzee",
+    "package": "wateren2",
+    "kind": "sea",
+    "hint": "Europa",
+    "lat": 61.9115,
+    "lng": 19.744
+  },
+  {
+    "name": "Tasmanzee",
+    "package": "wateren2",
+    "kind": "sea",
+    "hint": "bij Australië",
+    "lat": -40.1451,
+    "lng": 160.5942
+  },
+  {
+    "name": "Lena",
+    "package": "wateren2",
+    "kind": "river",
+    "hint": "Azië",
+    "lat": 64.2244,
+    "lng": 126.8526
+  },
+  {
+    "name": "Zambezi",
+    "package": "wateren2",
+    "kind": "river",
+    "hint": "Afrika",
+    "lat": -15.2922,
+    "lng": 22.991
+  },
+  {
+    "name": "Tigris",
+    "package": "wateren2",
+    "kind": "river",
+    "hint": "Azië",
+    "lat": 33.8355,
+    "lng": 44.4099
+  },
+  {
+    "name": "Atlasgebergte",
+    "package": "wateren2",
+    "kind": "range",
+    "hint": "Afrika",
+    "lat": 33.2154,
+    "lng": -3.7863
+  },
+  {
+    "name": "Oeralgebergte",
+    "package": "wateren2",
+    "kind": "range",
+    "hint": "tussen Europa en Azië",
+    "lat": 56.2213,
+    "lng": 58.8574
+  },
+  {
+    "name": "Mont Blanc",
+    "package": "wateren2",
+    "kind": "peak",
+    "hint": "Europa",
+    "lat": 45.8328,
+    "lng": 6.865
+  },
+  {
+    "name": "Mount McKinley",
+    "package": "wateren2",
+    "kind": "peak",
+    "hint": "Noord-Amerika",
+    "lat": 63.069,
+    "lng": -151.0063
+  },
+  {
+    "name": "K2",
+    "package": "wateren2",
+    "kind": "peak",
+    "hint": "Azië",
+    "lat": 35.8825,
+    "lng": 76.5133
   }
 ]

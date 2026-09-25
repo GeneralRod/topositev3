@@ -145,8 +145,15 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
     );
   }, [byName, names]);
   const seaCopies = useMemo(() => dateLineCopies(seas), [seas]);
-  // Zonder de kunstmatige knip langs de datumgrens (dat is geen echte zeegrens).
-  const seaBorders = useMemo(() => data && splitAtDateLine(data.seaBorders), [data]);
+  // Alleen grenzen van zeeën die meedoen, en zonder de kunstmatige knip langs de
+  // datumgrens (dat is geen echte zeegrens).
+  const seaBorders = useMemo(() => {
+    const inGame = new Set(seas.map((f) => f.properties.name));
+    const lines = (data?.seaBorders ?? [])
+      .filter((border) => border.between.some((name) => inGame.has(name)))
+      .flatMap((border) => border.coordinates);
+    return splitAtDateLine({ type: 'MultiLineString', coordinates: lines });
+  }, [data, seas]);
 
   const pick = (name: string, latlng: L.LatLng) => {
     if (explore) setPopup({ name, latlng });

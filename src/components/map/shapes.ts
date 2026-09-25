@@ -8,8 +8,11 @@ import type { PlaceKind } from '../../data/cities';
 import type { CityStatus } from '../../game/rules';
 
 export interface ShapeData extends FeatureCollection<Geometry, { name: string; kind: PlaceKind }> {
-  /** Grenzen tussen zeeën (in open water), om te zien waar de ene zee ophoudt. */
-  seaBorders: MultiLineString;
+  /**
+   * Grenzen tussen zeeën (in open water), om te zien waar de ene zee ophoudt. Per
+   * paar zeeën; '-' is zee die bij geen onderdeel hoort.
+   */
+  seaBorders: Array<MultiLineString & { between: [string, string] }>;
 }
 
 export type ShapeFeature = Feature<Geometry, { name: string; kind: PlaceKind }>;

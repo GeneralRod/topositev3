@@ -41,11 +41,12 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 
 - Live: fase 1 t/m 3, nieuwe prijzenkast met werkplaats, fase 6 deel 1 t/m 5 (kaart, lastige
   steden en sterren, meerkeuze, dagelijkse uitdaging, extra prijzen en prestatiebord).
-- Open: pull request met de nieuwe categorie "Wateren en landschappen over de wereld", pakket 1
-  (40 onderdelen), wacht op test/oké van de eigenaar.
-- Volgende: pakket 2 t/m 4 van die categorie (in `items.mjs` staan ze al; zet ze in `ENABLED`
+- Open: pull requests met de nieuwe categorie "Wateren en landschappen over de wereld":
+  #78 (pakket 1, 40 onderdelen) en daarop pakket 2 + "Pakket 1 + 2". Wachten op oké eigenaar.
+- Volgende: pakket 3 en 4 van die categorie (in `items.mjs` staan ze al; zet ze in `ENABLED`
   in `build.mjs`, controleer elk onderdeel op de kaart, en bedenk een lijn voor de Marianentrog),
   daarna Nederland. Zie `PLAN.md` fase 6.
+- Kaartprecisie nooit lager dan nu (Natural Earth 10m, `SEA_SIMPLIFY = 1e-3`): wens eigenaar.
 - Pakket-id's moeten uniek zijn over alle categorieën (sterren en spellen worden per id bewaard).
 - Testen in de browser: `npm run build && npx vite preview`, prijzenkast met `?ontwikkelaar`.
 - GitHub Pages uitzetten (Settings → Pages) moet de eigenaar zelf nog doen.
