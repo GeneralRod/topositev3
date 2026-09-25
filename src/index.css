@@ -111,8 +111,17 @@ button:focus-visible {
   }
 }
 
-/* Berg: driehoekje op de kaart (zie ShapeLayers). */
+/* Berg: driehoekje op de kaart (zie ShapeLayers); groter als je hem aanwijst. */
 .peak-icon {
   background: none;
   border: none;
+}
+
+.peak-icon svg {
+  transition: transform 0.15s;
+  transform-origin: 50% 70%;
+}
+
+.peak-icon:hover svg {
+  transform: scale(1.35);
 }

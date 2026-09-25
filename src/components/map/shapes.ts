@@ -47,8 +47,7 @@ export const SHAPE_COLORS = {
   found: '#34a853',
   /** Gevonden na een fout (komt nog terug). Paarsblauw: valt op tegen blauw water. */
   retry: '#6c5ce7',
-  sea: '#5b9bd5',
-  seaBorder: '#4a7fae',
+  seaBorder: '#1f4e79',
   lake: '#6fb0e0',
   lakeEdge: '#3f7fb5',
   river: '#2f7fc1',
@@ -59,40 +58,90 @@ export const SHAPE_COLORS = {
   highlight: '#ff9800',
 } as const;
 
-/** Stijl van een vorm, afhankelijk van soort en of hij al gevonden is. */
-export function shapeStyle(kind: PlaceKind, status: CityStatus): PathOptions {
+/**
+ * Tinten voor zeeën die meedoen. Buurzeeën krijgen een andere tint (zie seaTints),
+ * zodat je ziet waar de ene zee ophoudt en de andere begint. Geen groen of paars:
+ * die betekenen 'gevonden'.
+ */
+export const SEA_TINTS = ['#2f7fd8', '#22a3c4', '#2d5fa8', '#56aee8', '#4f7fb0'] as const;
+
+/**
+ * Geef elke zee een tint (nummer in SEA_TINTS), zo dat twee zeeën met een
+ * gedeelde grens nooit dezelfde krijgen. Vast per naam, dus in elk pakket gelijk.
+ */
+export function seaTints(
+  names: string[],
+  borders: Array<{ between: [string, string] }>,
+): Record<string, number> {
+  const neighbours = new Map<string, Set<string>>();
+  for (const { between } of borders) {
+    const [a, b] = between;
+    if (a === '-' || b === '-') continue;
+    neighbours.set(a, (neighbours.get(a) ?? new Set()).add(b));
+    neighbours.set(b, (neighbours.get(b) ?? new Set()).add(a));
+  }
+  const tints: Record<string, number> = {};
+  for (const name of [...names].sort((x, y) => x.localeCompare(y))) {
+    const taken = new Set([...(neighbours.get(name) ?? [])].map((n) => tints[n]));
+    let tint = 0;
+    while (taken.has(tint)) tint++;
+    tints[name] = tint;
+  }
+  return tints;
+}
+
+export interface StyleOptions {
+  /** Muis staat erop: laat duidelijk zien wat je aanklikt. */
+  hovered?: boolean;
+  /** Tint van een zee (zie seaTints). */
+  tint?: number;
+}
+
+/** Stijl van een vorm, afhankelijk van soort, of hij al gevonden is en of de muis erop staat. */
+export function shapeStyle(
+  kind: PlaceKind,
+  status: CityStatus,
+  { hovered = false, tint = 0 }: StyleOptions = {},
+): PathOptions {
   const done = status === 'green' || status === 'blue';
   const doneColor = status === 'green' ? SHAPE_COLORS.found : SHAPE_COLORS.retry;
   switch (kind) {
     case 'sea':
       return {
-        stroke: false,
-        fillColor: done ? doneColor : SHAPE_COLORS.sea,
-        fillOpacity: done ? 0.6 : 0.3,
+        // De rand valt aan de kust onder het land; in open water zie je hem bij aanwijzen.
+        stroke: hovered,
+        color: '#ffffff',
+        weight: 2.5,
+        fillColor: done ? doneColor : SEA_TINTS[tint % SEA_TINTS.length],
+        fillOpacity: hovered ? 0.85 : done ? 0.6 : 0.5,
       };
     case 'lake':
       return {
         color: done ? doneColor : SHAPE_COLORS.lakeEdge,
-        weight: 1,
+        weight: hovered ? 3 : 1,
         fillColor: done ? doneColor : SHAPE_COLORS.lake,
         fillOpacity: done ? 0.75 : 0.9,
       };
     case 'river':
-      return { color: done ? doneColor : SHAPE_COLORS.river, weight: done ? 4 : 2.5, fill: false };
+      return {
+        color: done ? doneColor : SHAPE_COLORS.river,
+        weight: (done ? 4 : 2.5) + (hovered ? 2.5 : 0),
+        fill: false,
+      };
     case 'desert':
       return {
         color: done ? doneColor : SHAPE_COLORS.desertEdge,
-        weight: 1.5,
+        weight: hovered ? 3 : 1.5,
         dashArray: done ? undefined : '5 4',
         fillColor: done ? doneColor : SHAPE_COLORS.desert,
-        fillOpacity: done ? 0.55 : 0.45,
+        fillOpacity: (done ? 0.55 : 0.45) + (hovered ? 0.25 : 0),
       };
     default:
       return {
         color: done ? doneColor : SHAPE_COLORS.rangeEdge,
-        weight: 1.5,
+        weight: hovered ? 3 : 1.5,
         fillColor: done ? doneColor : SHAPE_COLORS.range,
-        fillOpacity: done ? 0.55 : 0.4,
+        fillOpacity: (done ? 0.55 : 0.4) + (hovered ? 0.25 : 0),
       };
   }
 }

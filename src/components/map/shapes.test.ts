@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Polygon, MultiPolygon } from 'geojson';
-import { containsPoint, shapeStyle } from './shapes';
+import { containsPoint, SEA_TINTS, seaTints, shapeStyle } from './shapes';
+import shapes from '../../data/wateren/shapes.json';
 
 // Vierkant van 0 tot 10 met een 'eiland' (gat) van 4 tot 6.
 const square: Polygon = {
@@ -80,5 +81,50 @@ describe('kleuren van vormen', () => {
 
   it('tekent zeeën zonder rand (de kust komt van de wereldkaart)', () => {
     expect(shapeStyle('sea', 'unanswered').stroke).toBe(false);
+  });
+
+  it('laat zien wat je aanwijst', () => {
+    const sea = shapeStyle('sea', 'unanswered', { hovered: true });
+    expect(sea.fillOpacity).toBeGreaterThan(shapeStyle('sea', 'unanswered').fillOpacity!);
+    expect(sea.stroke).toBe(true);
+    expect(shapeStyle('river', 'unanswered', { hovered: true }).weight).toBeGreaterThan(
+      shapeStyle('river', 'unanswered').weight!,
+    );
+  });
+
+  it('kleurt een zee met zijn eigen tint', () => {
+    expect(shapeStyle('sea', 'unanswered', { tint: 1 }).fillColor).toBe(SEA_TINTS[1]);
+    // Gevonden gaat voor de tint.
+    expect(shapeStyle('sea', 'green', { tint: 1 }).fillColor).toBe('#34a853');
+  });
+});
+
+describe('tinten van zeeën', () => {
+  const borders: Array<{ between: [string, string] }> = [
+    { between: ['Noordzee', 'Atlantische Oceaan'] },
+    { between: ['Noordzee', 'Oostzee'] },
+    { between: ['Atlantische Oceaan', 'Oostzee'] },
+    { between: ['Atlantische Oceaan', '-'] },
+  ];
+  const names = ['Noordzee', 'Atlantische Oceaan', 'Oostzee', 'Zwarte Zee'];
+
+  it('geeft buurzeeën nooit dezelfde tint', () => {
+    const tints = seaTints(names, borders);
+    for (const { between } of borders) {
+      if (between.includes('-')) continue;
+      expect(tints[between[0]], between.join('/')).not.toBe(tints[between[1]]);
+    }
+  });
+
+  it('geeft steeds dezelfde tinten, ook in een andere volgorde', () => {
+    expect(seaTints([...names].reverse(), borders)).toEqual(seaTints(names, borders));
+  });
+
+  it('heeft genoeg tinten voor alle zeeën van de echte kaart', () => {
+    const tints = seaTints(
+      shapes.features.filter((f) => f.properties.kind === 'sea').map((f) => f.properties.name),
+      shapes.seaBorders as unknown as Array<{ between: [string, string] }>,
+    );
+    expect(Math.max(...Object.values(tints))).toBeLessThan(SEA_TINTS.length);
   });
 });

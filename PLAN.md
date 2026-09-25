@@ -168,6 +168,10 @@ Zo is het gebouwd (september 2026, akkoord eigenaar):
 - Meren, rivieren, woestijnen en gebergtes liggen boven het land. Rivieren: klikken tot een
   paar pixels naast de lijn telt ook. Bergtoppen: driehoekje op de precieze top.
 - Na het antwoord kleurt de vorm groen (in één keer goed) of paarsblauw (na een fout).
+- Goed zichtbaar waar je kunt klikken (wens eigenaar): elke zee die meedoet heeft een eigen tint
+  blauw (buurzeeën altijd verschillend), water dat niet meedoet blijft lichtblauw. Wijs je iets
+  aan, dan licht het op (zee: voller met witte rand; rivier: dikker; gebied: voller) en wordt de
+  muis een handje, ook boven zeeën.
 - Inzoomen tot niveau 7: dieper laat alleen zien hoe grof de kust van de wereldkaart is.
 - Wordt het geheel te zwaar, dan overstappen op vector-tegels (PMTiles + MapLibre) op de eigen
   site. Geen externe kaartdienst of sleutel.

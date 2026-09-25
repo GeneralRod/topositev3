@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GeoJSON, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import type { City } from '../../data/cities';
@@ -7,6 +7,7 @@ import { PULSE_ICON, peakIcon } from './icons';
 import {
   containsPoint,
   highlightStyle,
+  seaTints,
   SHAPE_COLORS,
   shapeStyle,
   type ShapeData,
@@ -155,6 +156,25 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
     return splitAtDateLine({ type: 'MultiLineString', coordinates: lines });
   }, [data, seas]);
 
+  // Elke zee een eigen tint, buurzeeën altijd verschillend (vast per naam).
+  const tints = useMemo(() => {
+    const seaNames = (data?.features ?? [])
+      .filter((f) => f.properties.kind === 'sea')
+      .map((f) => f.properties.name);
+    return seaTints(seaNames, data?.seaBorders ?? []);
+  }, [data]);
+
+  // Waar de muis op staat: een vorm boven het land (via Leaflet) of een zee (zelf getest).
+  const [hoverShape, setHoverShape] = useState<string | null>(null);
+  const [hoverSea, setHoverSea] = useState<string | null>(null);
+  const dragging = useRef(false);
+  const map = useMap();
+
+  const seaAt = (latlng: L.LatLng): ShapeFeature | undefined => {
+    if (isOnLand(latlng.lng, latlng.lat)) return undefined;
+    return seas.find((f) => containsPoint(f.geometry, wrapLng(latlng.lng), latlng.lat));
+  };
+
   const pick = (name: string, latlng: L.LatLng) => {
     if (explore) setPopup({ name, latlng });
     else onPick?.(name);
@@ -163,13 +183,35 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
   useMapEvents({
     click(event) {
       if (choosing) return;
-      const { lng, lat } = event.latlng;
-      if (isOnLand(lng, lat)) return;
-      const sea = seas.find((f) => containsPoint(f.geometry, wrapLng(lng), lat));
+      const sea = seaAt(event.latlng);
       if (sea) pick(sea.properties.name, event.latlng);
       else setPopup(null);
     },
+    mousemove(event) {
+      if (choosing || dragging.current) return;
+      const name = hoverShape ? null : (seaAt(event.latlng)?.properties.name ?? null);
+      if (name !== hoverSea) setHoverSea(name);
+    },
+    mouseout() {
+      setHoverSea(null);
+    },
+    dragstart() {
+      dragging.current = true;
+      setHoverSea(null);
+    },
+    dragend() {
+      dragging.current = false;
+    },
   });
+
+  // Zeeën liggen onder het land en krijgen zelf geen muis: zet het handje dus zelf.
+  useEffect(() => {
+    const container = map.getContainer();
+    container.style.cursor = hoverSea ? 'pointer' : '';
+    return () => {
+      container.style.cursor = '';
+    };
+  }, [map, hoverSea]);
 
   if (!data) return null;
 
@@ -206,7 +248,10 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
           data={f}
           pane={SEA_PANE}
           interactive={false}
-          style={shapeStyle('sea', statusOf(f.properties.name))}
+          style={shapeStyle('sea', statusOf(f.properties.name), {
+            hovered: hoverSea === f.properties.name,
+            tint: tints[f.properties.name],
+          })}
         />
       ))}
       {seas.length > 0 && seaBorders && (
@@ -214,7 +259,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
           data={seaBorders}
           pane={SEA_PANE}
           interactive={false}
-          style={{ color: SHAPE_COLORS.seaBorder, weight: 1, dashArray: '4 4', opacity: 0.7 }}
+          style={{ color: SHAPE_COLORS.seaBorder, weight: 1.5, dashArray: '6 4', opacity: 0.8 }}
         />
       )}
       {onLand.map((place) => (
@@ -223,8 +268,17 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
           data={byName.get(place.name)!}
           {...withRenderer(canvas)}
           bubblingMouseEvents={false}
-          style={shapeStyle(place.kind!, statusOf(place.name))}
-          eventHandlers={{ click: (event) => pick(place.name, event.latlng) }}
+          style={shapeStyle(place.kind!, statusOf(place.name), {
+            hovered: hoverShape === place.name,
+          })}
+          eventHandlers={{
+            click: (event) => pick(place.name, event.latlng),
+            mouseover: () => {
+              setHoverShape(place.name);
+              setHoverSea(null);
+            },
+            mouseout: () => setHoverShape((current) => (current === place.name ? null : current)),
+          }}
         >
           {explore && <Tooltip sticky>{place.name}</Tooltip>}
         </GeoJSON>
