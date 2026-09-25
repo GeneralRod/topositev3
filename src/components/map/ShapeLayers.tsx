@@ -7,6 +7,7 @@ import { PULSE_ICON, peakIcon } from './icons';
 import {
   containsPoint,
   highlightStyle,
+  PLAIN_LAKE_STYLE,
   seaTints,
   SHAPE_COLORS,
   shapeStyle,
@@ -232,12 +233,27 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
 
   if (!data) return null;
 
+  /** Alle meren die niet meedoen als gewoon water: de wereldkaart heeft zelf geen meren. */
+  const plainLakes = (exclude: string[]) =>
+    [...byName.values()]
+      .filter((f) => f.properties.kind === 'lake' && !exclude.includes(f.properties.name))
+      .map((f) => (
+        <GeoJSON
+          key={`water-${f.properties.name}`}
+          data={f}
+          {...withRenderer(canvas)}
+          interactive={false}
+          style={PLAIN_LAKE_STYLE}
+        />
+      ));
+
   if (choosing) {
     const place = places.find((p) => p.name === highlight);
     if (!place) return null;
     const shape = byName.get(place.name);
     return (
       <>
+        {plainLakes([place.name])}
         {shape && (
           <GeoJSON
             key={`blink-${place.name}`}
@@ -256,6 +272,34 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
   const onLand = places
     .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
     .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
+  // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
+  const isArea = (p: City) => p.kind === 'range' || p.kind === 'desert';
+
+  const renderShape = (place: City) => (
+    <GeoJSON
+      key={place.name}
+      data={byName.get(place.name)!}
+      {...withRenderer(canvas)}
+      bubblingMouseEvents={false}
+      style={shapeStyle(place.kind!, statusOf(place.name), {
+        hovered: hoverShape === place.name,
+      })}
+      eventHandlers={{
+        click: (event) => pick(place.name, event.latlng),
+        mouseover: () => {
+          hoverShapeNow.current = place.name;
+          setHoverShape(place.name);
+          setHoverSea(null);
+        },
+        mouseout: () => {
+          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
+          setHoverShape((current) => (current === place.name ? null : current));
+        },
+      }}
+    >
+      {explore && <Tooltip sticky>{place.name}</Tooltip>}
+    </GeoJSON>
+  );
 
   return (
     <>
@@ -279,31 +323,9 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
           style={{ color: SHAPE_COLORS.seaBorder, weight: 1.5, dashArray: '6 4', opacity: 0.8 }}
         />
       )}
-      {onLand.map((place) => (
-        <GeoJSON
-          key={place.name}
-          data={byName.get(place.name)!}
-          {...withRenderer(canvas)}
-          bubblingMouseEvents={false}
-          style={shapeStyle(place.kind!, statusOf(place.name), {
-            hovered: hoverShape === place.name,
-          })}
-          eventHandlers={{
-            click: (event) => pick(place.name, event.latlng),
-            mouseover: () => {
-              hoverShapeNow.current = place.name;
-              setHoverShape(place.name);
-              setHoverSea(null);
-            },
-            mouseout: () => {
-              if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
-              setHoverShape((current) => (current === place.name ? null : current));
-            },
-          }}
-        >
-          {explore && <Tooltip sticky>{place.name}</Tooltip>}
-        </GeoJSON>
-      ))}
+      {onLand.filter(isArea).map(renderShape)}
+      {plainLakes(onLand.map((p) => p.name))}
+      {onLand.filter((p) => !isArea(p)).map(renderShape)}
       {places
         .filter((p) => p.kind === 'peak')
         .map((place) => (
