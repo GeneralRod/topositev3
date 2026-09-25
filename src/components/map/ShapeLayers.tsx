@@ -166,9 +166,15 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
 
   // Waar de muis op staat: een vorm boven het land (via Leaflet) of een zee (zelf getest).
   const [hoverShape, setHoverShape] = useState<string | null>(null);
+  // Zelfde, maar meteen bijgewerkt: Leaflet meldt 'muis van de rivier af' en 'muis
+  // bewogen' in één keer, nog voordat React de nieuwe stand heeft.
+  const hoverShapeNow = useRef<string | null>(null);
   const [hoverSea, setHoverSea] = useState<string | null>(null);
   const dragging = useRef(false);
   const map = useMap();
+  // Naamlabel dat met de muis meeloopt boven een zee (zelf beheerd, zodat niet de
+  // hele kaart opnieuw hoeft te tekenen bij elke muisbeweging).
+  const seaTooltip = useMemo(() => L.tooltip({ direction: 'auto' }), []);
 
   const seaAt = (latlng: L.LatLng): ShapeFeature | undefined => {
     if (isOnLand(latlng.lng, latlng.lat)) return undefined;
@@ -189,15 +195,24 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
     },
     mousemove(event) {
       if (choosing || dragging.current) return;
-      const name = hoverShape ? null : (seaAt(event.latlng)?.properties.name ?? null);
+      const name = hoverShapeNow.current ? null : (seaAt(event.latlng)?.properties.name ?? null);
       if (name !== hoverSea) setHoverSea(name);
+      // Verkenkaart: naam van de zee meteen tonen, net als bij rivieren en gebieden.
+      if (explore && name) {
+        seaTooltip.setLatLng(event.latlng).setContent(name);
+        if (!map.hasLayer(seaTooltip)) map.openTooltip(seaTooltip);
+      } else if (map.hasLayer(seaTooltip)) {
+        map.closeTooltip(seaTooltip);
+      }
     },
     mouseout() {
       setHoverSea(null);
+      map.closeTooltip(seaTooltip);
     },
     dragstart() {
       dragging.current = true;
       setHoverSea(null);
+      map.closeTooltip(seaTooltip);
     },
     dragend() {
       dragging.current = false;
@@ -212,6 +227,8 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
       container.style.cursor = '';
     };
   }, [map, hoverSea]);
+
+  useEffect(() => () => void map.closeTooltip(seaTooltip), [map, seaTooltip]);
 
   if (!data) return null;
 
@@ -274,10 +291,14 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
           eventHandlers={{
             click: (event) => pick(place.name, event.latlng),
             mouseover: () => {
+              hoverShapeNow.current = place.name;
               setHoverShape(place.name);
               setHoverSea(null);
             },
-            mouseout: () => setHoverShape((current) => (current === place.name ? null : current)),
+            mouseout: () => {
+              if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
+              setHoverShape((current) => (current === place.name ? null : current));
+            },
           }}
         >
           {explore && <Tooltip sticky>{place.name}</Tooltip>}
