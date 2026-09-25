@@ -3,7 +3,7 @@
 Een Nederlandstalige oefensite voor topografie: hoofdsteden en wereldsteden aanwijzen op de kaart,
 munten verdienen en prijzen verzamelen in de prijzenkast.
 
-Live: [topografiewereldtest.netlify.app](https://topografiewereldtest.netlify.app)
+Live: [topografiewereld.netlify.app](https://topografiewereld.netlify.app)
 
 ## Aan de slag
 

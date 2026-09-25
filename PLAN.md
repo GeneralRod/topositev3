@@ -5,7 +5,7 @@ zonder dat de live site ooit stuk gaat tijdens het werk.
 
 ## Werkafspraken (sandbox)
 
-- **`main` = de live site.** Netlify (`topografiewereldtest.netlify.app`) bouwt en publiceert
+- **`main` = de live site.** Netlify (`topografiewereld.netlify.app`) bouwt en publiceert
   automatisch alles wat op `main` komt. Er wordt dus **nooit direct op `main` gepusht**.
 - Al het werk gebeurt op branch `herbouw` (of een branch daarvan) en gaat via een pull request.
   De eigenaar bekijkt de preview en merget zelf pas als alles werkt.
@@ -176,6 +176,8 @@ Zo is het gebouwd (september 2026, akkoord eigenaar):
   blauw (buurzeeën altijd verschillend), water dat niet meedoet blijft lichtblauw. Wijs je iets
   aan, dan licht het op (zee: voller met witte rand; rivier: dikker; gebied: voller) en wordt de
   muis een handje, ook boven zeeën.
+- Meren die niet in het pakket zitten staan er altijd als gewoon lichtblauw water (niet aan te
+  klikken), want de wereldkaart zelf heeft geen meren (besluit eigenaar).
 - Inzoomen tot niveau 7: dieper laat alleen zien hoe grof de kust van de wereldkaart is.
 - Wordt het geheel te zwaar, dan overstappen op vector-tegels (PMTiles + MapLibre) op de eigen
   site. Geen externe kaartdienst of sleutel.

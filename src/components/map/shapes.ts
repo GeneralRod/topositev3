@@ -6,6 +6,7 @@ import type { Feature, FeatureCollection, Geometry, MultiLineString, Position } 
 import type { PathOptions } from 'leaflet';
 import type { PlaceKind } from '../../data/cities';
 import type { CityStatus } from '../../game/rules';
+import { COAST_COLOR, WATER_COLOR } from './mapSettings';
 
 export interface ShapeData extends FeatureCollection<Geometry, { name: string; kind: PlaceKind }> {
   /**
@@ -60,6 +61,17 @@ export const SHAPE_COLORS = {
   trenchEdge: '#0d1540',
   highlight: '#ff9800',
 } as const;
+
+/**
+ * Meer dat niet in het pakket zit: gewoon water, net als de zee op de wereldkaart
+ * (die heeft zelf geen meren). Niet aan te klikken.
+ */
+export const PLAIN_LAKE_STYLE: PathOptions = {
+  color: COAST_COLOR,
+  weight: 1,
+  fillColor: WATER_COLOR,
+  fillOpacity: 1,
+};
 
 /**
  * Tinten voor zeeën die meedoen. Buurzeeën krijgen een andere tint (zie seaTints),
