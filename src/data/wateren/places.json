@@ -398,5 +398,85 @@
     "hint": "Azië",
     "lat": 35.8825,
     "lng": 76.5133
+  },
+  {
+    "name": "Golf van Bengalen",
+    "package": "wateren3",
+    "kind": "sea",
+    "hint": "Azië",
+    "lat": 12.5417,
+    "lng": 86.5002
+  },
+  {
+    "name": "Caribische Zee",
+    "package": "wateren3",
+    "kind": "sea",
+    "hint": "Midden-Amerika",
+    "lat": 13.7961,
+    "lng": -78.9362
+  },
+  {
+    "name": "Ob",
+    "package": "wateren3",
+    "kind": "river",
+    "hint": "Azië",
+    "lat": 59.7869,
+    "lng": 79.1755
+  },
+  {
+    "name": "Huang He",
+    "package": "wateren3",
+    "kind": "river",
+    "hint": "Azië",
+    "lat": 37.1527,
+    "lng": 104.3256
+  },
+  {
+    "name": "Bovenmeer",
+    "package": "wateren3",
+    "kind": "lake",
+    "hint": "Noord-Amerika",
+    "lat": 47.4712,
+    "lng": -86.8142
+  },
+  {
+    "name": "Michiganmeer",
+    "package": "wateren3",
+    "kind": "lake",
+    "hint": "Noord-Amerika",
+    "lat": 42.7771,
+    "lng": -86.9963
+  },
+  {
+    "name": "Pyreneeën",
+    "package": "wateren3",
+    "kind": "range",
+    "hint": "Europa",
+    "lat": 42.6137,
+    "lng": 1.3037
+  },
+  {
+    "name": "Karpaten",
+    "package": "wateren3",
+    "kind": "range",
+    "hint": "Europa",
+    "lat": 46.7727,
+    "lng": 24.7128
+  },
+  {
+    "name": "Mount Cook",
+    "package": "wateren3",
+    "kind": "peak",
+    "hint": "Oceanië",
+    "lat": -43.5956,
+    "lng": 170.1408
+  },
+  {
+    "name": "Elbrus",
+    "package": "wateren3",
+    "kind": "peak",
+    "hint": "Europa",
+    "lat": 43.3531,
+    "lng": 42.4369
   }
 ]

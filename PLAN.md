@@ -148,7 +148,9 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
         Interactieve kaart erbij. Meerkeuze kiest foute antwoorden van dezelfde soort.
   - [x] Pakket 2 (10) en gecombineerd pakket 1 + 2. Zeegrenzen worden per paar zeeën bewaard,
         zodat een pakket alleen de grenzen toont van zijn eigen zeeën.
-  - [ ] Pakket 3 en 4 (20), met de Marianentrog; verdere gecombineerde pakketten
+  - [x] Pakket 3 (10) met "Pakket 2 + 3" en "Pakket 1 + 2 + 3". Lago de Maracaibo (een meer)
+        telt niet als Caribische Zee.
+  - [ ] Pakket 4 (10), met de Marianentrog; gecombineerde pakketten met pakket 4
 
 **Aanpak voor precieze wateren, bergen en gebieden (besluit eigenaar)**
 
