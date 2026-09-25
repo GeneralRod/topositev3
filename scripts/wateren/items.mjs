@@ -422,4 +422,6 @@ export const neutralMarine = [
   'Arafura Sea',
   'Gulf of Carpentaria',
   'Garabogaz Bay',
+  // Een meer (lagune) in Venezuela, geen deel van de Caribische Zee.
+  'Lago de Maracaibo',
 ];

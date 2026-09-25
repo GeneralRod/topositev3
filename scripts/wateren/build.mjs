@@ -29,7 +29,7 @@ import { items, neutralMarine } from './items.mjs';
 const SEA_SIMPLIFY = 1e-3;
 
 /** Pakketten die nu in de site staan. */
-const ENABLED = new Set(['wateren1', 'wateren2']);
+const ENABLED = new Set(['wateren1', 'wateren2', 'wateren3']);
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../..');
