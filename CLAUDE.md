@@ -43,11 +43,12 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   steden en sterren, meerkeuze, dagelijkse uitdaging, extra prijzen en prestatiebord), en de
   categorie "Wateren en landschappen over de wereld" compleet: alle 70 onderdelen in pakket
   1 t/m 4 (met tinten per zee, oplichten bij aanwijzen, namen op de interactieve kaart).
-- Open: pull request "meren altijd als water" (meren buiten het pakket als gewoon water),
-  wacht op oké eigenaar.
+- Ook live: meren buiten het pakket altijd als gewoon water.
+- Open: pull request met fase 7 in het plan (alleen tekst), wacht op oké eigenaar.
 - Netlify heet nu `topografiewereld` (live: https://topografiewereld.netlify.app); voorbeeldlinks
   zijn `deploy-preview-<nummer>--topografiewereld.netlify.app`.
-- Volgende: Nederland. Zie `PLAN.md` fase 6.
+- Volgende: Nederland. Zie `PLAN.md` fase 6. Voor later: optionele accounts voor kinderen en
+  leerkrachten (`PLAN.md` fase 7); oefenen zonder account moet altijd blijven werken.
 - Kaartprecisie nooit lager dan nu (Natural Earth 10m, `SEA_SIMPLIFY = 1e-3`): wens eigenaar.
 - Pakket-id's moeten uniek zijn over alle categorieën (sterren en spellen worden per id bewaard).
 - Testen in de browser: `npm run build && npx vite preview`, prijzenkast met `?ontwikkelaar`.

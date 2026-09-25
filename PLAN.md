@@ -186,3 +186,47 @@ Zo is het gebouwd (september 2026, akkoord eigenaar):
 **Later**
 
 - [ ] Geluidjes bij goed en fout (met aan/uit-knop)
+
+### Fase 7: accounts (optioneel, toekomst)
+
+Wens eigenaar (september 2026): een account voor kinderen én leerkrachten, zodat voortgang
+overal meegaat en de leerkracht inzicht heeft. **Inloggen blijft optioneel**: gewoon oefenen
+zonder account moet altijd direct kunnen, zonder gedoe.
+
+**Uitgangspunten**
+
+- Zonder account verandert er niets: voortgang blijft in de browser (localStorage), zoals nu.
+- Met account wordt dezelfde voortgang óók online bewaard en is hij op elke computer terug.
+  Wie later inlogt op een computer waar al gespeeld is, neemt die voortgang mee in het account;
+  er gaat niets verloren (regels voor samenvoegen van munten, sterren, reeksen vooraf vastleggen).
+- Alle opslag loopt al via `src/storage`; het account komt daar bij, de spellen zelf hoeven
+  nauwelijks te veranderen.
+- Inloggen voor kinderen zonder e-mailadres: de leerkracht maakt een klas en krijgt een
+  klascode; een kind logt in met klascode + voornaam of bijnaam + plaatjes- of cijfercode
+  (eventueel inlogkaartjes met QR-code). Thuis op dezelfde manier.
+- Leerkracht: overzicht per klas (welke pakketten, hoeveel sterren, lastige plekken van de klas,
+  reeksen) en eventueel pakketten als huiswerk klaarzetten.
+
+**Techniek (voorstel)**
+
+- Een kleine online dienst met database en inloggen, bijv. Supabase (opslag in de EU/Frankfurt,
+  gratis voor klein gebruik) of Firebase. Geen eigen server nodig.
+
+**Privacy (AVG) gaat vóór de techniek**
+
+- Zo min mogelijk bewaren: bijnaam en spelgegevens; geen achternamen, e-mail of geboortedatum
+  van kinderen.
+- Gebruik via scholen: de school is verantwoordelijk, met een verwerkersovereenkomst. Gebruik
+  thuis zonder school: toestemming van ouders nodig voor kinderen onder de 16.
+- Gegevens in Europa, een duidelijke privacyverklaring en een manier om gegevens van een kind
+  te verwijderen.
+
+**Stappen** (elk een eigen pull request)
+
+- [ ] Beslissingen vastleggen: dienst (Supabase/Firebase), wie verantwoordelijk is voor de
+      gegevens, samenvoegregels, privacyverklaring
+- [ ] Online opslag en inloggen, eerst voor leerkrachten
+- [ ] Klassen en kind-inlog met klascode; voortgang synchroniseren (browser blijft werken zonder
+      internet of account)
+- [ ] Overzicht voor de leerkracht
+- [ ] Privacyverklaring en gegevens verwijderen
