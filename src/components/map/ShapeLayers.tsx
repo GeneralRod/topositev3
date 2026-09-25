@@ -84,7 +84,7 @@ function wrapLng(lng: number): number {
 }
 
 /** Tekenvolgorde boven het land: grote vlakken eerst, rivieren bovenop. */
-const DRAW_ORDER = ['range', 'desert', 'lake', 'river'];
+const DRAW_ORDER = ['range', 'desert', 'lake', 'trench', 'river'];
 
 function usePanes(): void {
   const map = useMap();

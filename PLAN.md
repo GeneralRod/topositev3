@@ -150,7 +150,9 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
         zodat een pakket alleen de grenzen toont van zijn eigen zeeën.
   - [x] Pakket 3 (10) met "Pakket 2 + 3" en "Pakket 1 + 2 + 3". Lago de Maracaibo (een meer)
         telt niet als Caribische Zee.
-  - [ ] Pakket 4 (10), met de Marianentrog; gecombineerde pakketten met pakket 4
+  - [x] Pakket 4 (10) met "Pakket 3 + 4" en "Alle pakketten" (70). De Marianentrog komt uit de
+        dieptekaart van Natural Earth: de stukken dieper dan 6000 m langs de Marianen waar ook
+        een plek dieper dan 7000 m in ligt (zonder de gaatjes van onderzeese bergen).
 
 **Aanpak voor precieze wateren, bergen en gebieden (besluit eigenaar)**
 

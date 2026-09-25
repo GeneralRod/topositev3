@@ -35,6 +35,7 @@ export function pickChoices(
 const KIND_GROUP: Record<string, string> = {
   sea: 'water',
   lake: 'water',
+  trench: 'water',
   river: 'river',
   desert: 'land',
   range: 'land',

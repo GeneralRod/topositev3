@@ -10,6 +10,7 @@
 //   desert    woestijn: vlak op het land
 //   range     gebergte: vlak op het land
 //   peak      berg: punt (precieze top)
+//   trench    trog in de oceaanbodem: vlak boven de zee
 //
 // hint: wat er bij een hint in beeld komt ("Tip: ...").
 // anchor: [breedte, lengte] voor het label/knipperpunt; zonder anchor wordt
@@ -383,7 +384,17 @@ export const items = [
   { name: 'Indus', pkg: 'wateren4', kind: 'river', hint: 'Azië', rivers: ['Indus'] },
   { name: 'Yukon', pkg: 'wateren4', kind: 'river', hint: 'Noord-Amerika', rivers: ['Yukon'] },
   { name: 'Kongorivier', pkg: 'wateren4', kind: 'river', hint: 'Afrika', rivers: ['Congo'] },
-  // Marianentrog: nog uitwerken in pakket 4 (lijn langs de trog).
+  {
+    // Uit de dieptekaart van Natural Earth: de stukken zeebodem dieper dan 6000 m langs
+    // de Marianen, alleen als er ook een plek dieper dan 7000 m in ligt (dat is alleen
+    // de trog zelf). Ankerpunt: Challengerdiepte, het diepste punt op aarde.
+    name: 'Marianentrog',
+    pkg: 'wateren4',
+    kind: 'trench',
+    hint: 'Grote Oceaan',
+    anchor: [11.37, 142.4],
+    trench: { box: [140.5, 10, 149, 25.5] },
+  },
   { name: 'Gobiwoestijn', pkg: 'wateren4', kind: 'desert', hint: 'Azië', regions: ['GOBI DESERT'] },
   { name: 'Ararat', pkg: 'wateren4', kind: 'peak', hint: 'Azië', peak: [39.7017, 44.2983] },
   { name: 'Mulhacén', pkg: 'wateren4', kind: 'peak', hint: 'Europa', peak: [37.0533, -3.3114] },

@@ -29,7 +29,7 @@ import { items, neutralMarine } from './items.mjs';
 const SEA_SIMPLIFY = 1e-3;
 
 /** Pakketten die nu in de site staan. */
-const ENABLED = new Set(['wateren1', 'wateren2', 'wateren3']);
+const ENABLED = new Set(['wateren1', 'wateren2', 'wateren3', 'wateren4']);
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../..');
@@ -231,6 +231,37 @@ function pickByName(collection, names, what) {
   return found;
 }
 
+/** Punt-in-ring (even-oneven regel), voor het uitzoeken van troggen. */
+function inRing([x, y], ring) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+/**
+ * Een trog uit de dieptekaart: de vlakken dieper dan 6000 m binnen 'box' die ook een
+ * plek dieper dan 7000 m bevatten. Zo vallen gewone diepe oceaanbodem en andere
+ * troggen in de buurt af.
+ */
+function trenchShape([west, south, east, north]) {
+  const within = (poly) =>
+    poly[0].every(([x, y]) => x >= west && x <= east && y >= south && y <= north);
+  const parts = (collection) =>
+    collection.features.flatMap((f) => polygonsOf(f.geometry)).filter(within);
+  const deepest = parts(depth7000);
+  const selected = parts(depth6000).filter((poly) =>
+    deepest.some((deep) => inRing(deep[0][0], poly[0])),
+  );
+  if (selected.length === 0) throw new Error('Geen trog gevonden in de dieptekaart');
+  // Alleen de buitenrand: gaatjes (onderzeese bergen, minder dan 6000 m diep) zouden
+  // als losse stipjes in de trog staan en zijn niet aan te klikken.
+  return { type: 'MultiPolygon', coordinates: selected.map((poly) => [poly[0]]) };
+}
+
 function mergeLines(features) {
   return {
     type: 'MultiLineString',
@@ -248,11 +279,13 @@ function mergePolygons(features, smooth) {
 
 // ---------- alles samen ----------
 
-const [marine, lakes, rivers, regions] = await Promise.all([
+const [marine, lakes, rivers, regions, depth6000, depth7000] = await Promise.all([
   loadNE('ne_10m_geography_marine_polys'),
   loadNE('ne_10m_lakes'),
   loadNE('ne_10m_rivers_lake_centerlines'),
   loadNE('ne_10m_geography_regions_polys'),
+  loadNE('ne_10m_bathymetry_E_6000'),
+  loadNE('ne_10m_bathymetry_D_7000'),
 ]);
 
 const seas = buildSeas(marine);
@@ -271,6 +304,7 @@ for (const item of items.filter((i) => ENABLED.has(i.pkg))) {
     // Rivieren lopen soms door een stuwmeer: die stukken (Lake Centerline) horen erbij.
     geometry = round(mergeLines(pickByName(rivers, item.rivers, 'Rivier')), 4);
   }
+  if (item.trench) geometry = round(trenchShape(item.trench.box), 4);
 
   const anchor =
     item.anchor ??
