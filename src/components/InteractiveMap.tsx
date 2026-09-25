@@ -1,9 +1,11 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { MapContainer as LeafletMap, Marker, Popup, GeoJSON as GeoJSONLayer } from 'react-leaflet';
+import { MapContainer as LeafletMap, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { City } from '../data/cities';
 import ResetViewButton from './map/ResetViewButton';
+import ShapeLayers from './map/ShapeLayers';
+import type { ShapeData } from './map/shapes';
 import WorldLayer from './map/WorldLayer';
 import {
   MAX_ZOOM,
@@ -15,14 +17,15 @@ import {
   WORLD_ZOOM,
 } from './map/mapSettings';
 
-import type { FeatureCollection } from 'geojson';
 import 'leaflet/dist/leaflet.css';
 
 interface InteractiveMapProps {
   cities: City[];
   onBack: () => void;
-  selectedPackage: string;
-  shapes?: FeatureCollection;
+  title: string;
+  /** Vormen (zeeën, rivieren, ...) voor onderwerpen die dat hebben. */
+  loadShapes?: () => Promise<ShapeData>;
+  maxZoom?: number;
 }
 
 const Container = styled.div`
@@ -147,16 +150,19 @@ const CountryName = styled.p`
 const InteractiveMap: React.FC<InteractiveMapProps> = ({
   cities,
   onBack,
-  selectedPackage,
-  shapes,
+  title,
+  loadShapes,
+  maxZoom = MAX_ZOOM,
 }) => {
   const dotIcon = createDotIcon();
+  const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
+  const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
 
   return (
     <Container>
       <Header>
         <BackButton onClick={onBack}>Terug</BackButton>
-        <Title>Interactieve Kaart {selectedPackage.replace('interactive', '')}</Title>
+        <Title>{title}</Title>
       </Header>
       <MapWrapper>
         <MapContainerWrapper>
@@ -166,44 +172,15 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
             center={WORLD_CENTER}
             zoom={WORLD_ZOOM}
             minZoom={MIN_ZOOM}
-            maxZoom={MAX_ZOOM}
+            maxZoom={maxZoom}
             maxBounds={WORLD_BOUNDS}
             maxBoundsViscosity={1}
             wheelPxPerZoomLevel={WHEEL_PX_PER_ZOOM_LEVEL}
           >
             <WorldLayer />
             <ResetViewButton />
-            {shapes && (
-              <GeoJSONLayer
-                data={shapes}
-                style={(feature) => ({
-                  color:
-                    feature?.geometry.type === 'LineString' ||
-                    feature?.geometry.type === 'MultiLineString'
-                      ? 'blue'
-                      : '#333',
-                  weight: 2,
-                  fillOpacity: 0.1,
-                })}
-                eventHandlers={{
-                  mouseover: (e) => {
-                    const layer = e.target;
-                    layer.setStyle({ weight: 3, color: '#ff6600' });
-                  },
-                  mouseout: (e) => {
-                    const layer = e.target;
-                    const isLine =
-                      layer.feature.geometry.type === 'LineString' ||
-                      layer.feature.geometry.type === 'MultiLineString';
-                    layer.setStyle({
-                      weight: 2,
-                      color: isLine ? 'blue' : '#333',
-                    });
-                  },
-                }}
-              />
-            )}
-            {cities.map((city) => (
+            {loadShapes && others.length > 0 && <ShapeLayers places={others} load={loadShapes} />}
+            {dots.map((city) => (
               <Marker key={city.name} position={[city.lat, city.lng]} icon={dotIcon}>
                 <Popup>
                   <CityPopup>

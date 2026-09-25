@@ -95,3 +95,33 @@ button:focus-visible {
     opacity: 0;
   }
 }
+
+/* Knipperende vorm (zee, rivier, gebied) bij meerkeuze. */
+.pulse-shape {
+  animation: pulse-shape 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse-shape {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Berg: driehoekje op de kaart (zie ShapeLayers); groter als je hem aanwijst. */
+.peak-icon {
+  background: none;
+  border: none;
+}
+
+.peak-icon svg {
+  transition: transform 0.15s;
+  transform-origin: 50% 70%;
+}
+
+.peak-icon:hover svg {
+  transform: scale(1.35);
+}

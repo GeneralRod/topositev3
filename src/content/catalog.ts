@@ -2,6 +2,8 @@
 // toevoegen is alleen een kwestie van data hieronder aanvullen.
 
 import { cities, type City } from '../data/cities';
+import { loadWaterShapes, waterPlaces } from '../data/wateren';
+import type { ShapeData } from '../components/map/shapes';
 
 export interface GamePackage {
   /** Deel van de url en sleutel voor opgeslagen voortgang; niet meer wijzigen. */
@@ -27,6 +29,12 @@ export interface Category {
   heading: string;
   locations: City[];
   sections: PackageSection[];
+  /** Hoe je één en meer plekken noemt in teksten ("stad" / "steden"). */
+  words: { one: string; many: string };
+  /** Laadt de vormen (zeeën, rivieren, ...) als dit onderwerp die heeft. */
+  loadShapes?: () => Promise<ShapeData>;
+  /** Hoe ver je mag inzoomen (standaard: zie mapSettings). */
+  maxZoom?: number;
 }
 
 export const categories: Category[] = [
@@ -37,6 +45,7 @@ export const categories: Category[] = [
     color: '#1a73e8',
     heading: 'Topografie Wereld: hoofd- en wereldsteden',
     locations: cities,
+    words: { one: 'stad', many: 'steden' },
     sections: [
       {
         title: 'Oefenpakketten',
@@ -116,6 +125,75 @@ export const categories: Category[] = [
             description: 'Bekijk alle steden uit pakket 3',
             color: '#fbbc05',
             groups: ['pakket3'],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'wateren',
+    title: 'Wateren en landschappen over de wereld',
+    description: 'Oceanen, zeeën, rivieren, meren, woestijnen, gebergtes en bergen',
+    color: '#0f8b8d',
+    heading: 'Topografie Wereld: wateren en landschappen',
+    locations: waterPlaces,
+    words: { one: 'plek', many: 'plekken' },
+    loadShapes: loadWaterShapes,
+    // De vormen zijn gemaakt voor wereld- en werelddeelniveau; dieper inzoomen
+    // laat alleen zien hoe grof de kustlijn van de wereldkaart is.
+    maxZoom: 7,
+    sections: [
+      {
+        title: 'Oefenpakketten',
+        kind: 'game',
+        packages: [
+          {
+            // Id's zijn uniek over alle onderwerpen: sterren en spellen worden per id bewaard.
+            id: 'wateren1',
+            title: 'Pakket 1',
+            description: 'Oceanen, zeeën, rivieren, meren, woestijnen, gebergtes en bergen',
+            color: '#0f8b8d',
+            groups: ['wateren1'],
+          },
+          {
+            id: 'wateren2',
+            title: 'Pakket 2',
+            description: 'Oostzee, Tasmanzee, Lena, Zambezi, Tigris, Atlas, Oeral en drie bergen',
+            color: '#2e7d32',
+            groups: ['wateren2'],
+          },
+        ],
+      },
+      {
+        title: 'Gecombineerde Pakketten',
+        kind: 'game',
+        packages: [
+          {
+            id: 'wateren1-2',
+            title: 'Pakket 1 + 2',
+            description: 'Alles uit pakket 1 en 2',
+            color: '#6d4c41',
+            groups: ['wateren1', 'wateren2'],
+          },
+        ],
+      },
+      {
+        title: 'Interactieve Kaarten',
+        kind: 'map',
+        packages: [
+          {
+            id: 'wateren-kaart1',
+            title: 'Interactieve kaart pakket 1',
+            description: 'Bekijk alle wateren en landschappen uit pakket 1',
+            color: '#0f8b8d',
+            groups: ['wateren1'],
+          },
+          {
+            id: 'wateren-kaart2',
+            title: 'Interactieve kaart pakket 2',
+            description: 'Bekijk alle wateren en landschappen uit pakket 2',
+            color: '#2e7d32',
+            groups: ['wateren2'],
           },
         ],
       },

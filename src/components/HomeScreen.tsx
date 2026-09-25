@@ -96,14 +96,15 @@ const ModeHelp = styled.p`
   margin-bottom: 0.5rem;
 `;
 
-const MODE_HELP: Record<PlayMode, string> = {
-  map: 'Klik op de kaart de stad aan die gevraagd wordt.',
-  choice:
-    'Er knippert een stip: kies de goede naam uit vier. Makkelijker, dus halve munten en geen sterren.',
-};
+function modeHelp(mode: PlayMode, one: string): string {
+  return mode === 'map'
+    ? `Klik op de kaart de ${one} aan die gevraagd wordt.`
+    : 'Er knippert iets op de kaart: kies de goede naam uit vier. Makkelijker, dus halve munten en geen sterren.';
+}
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
   const navigate = useNavigate();
+  const { one, many } = category.words;
   const stars = getStars();
   const [mode, setMode] = useState<PlayMode>(getPlayMode);
   const modeQuery = mode === 'choice' ? '?modus=meerkeuze' : '';
@@ -145,7 +146,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
           </ModeButton>
         </ModeSwitch>
       </ModeBar>
-      <ModeHelp>{MODE_HELP[mode]}</ModeHelp>
+      <ModeHelp>{modeHelp(mode, one)}</ModeHelp>
 
       <SectionTitle>Oefenen</SectionTitle>
       <CardGrid>
@@ -154,18 +155,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
           description={
             dailyDone
               ? `Klaar voor vandaag! Kom morgen terug.${streakText}`
-              : `10 steden, elke dag nieuw. +${dailyBonus(streak + 1)} bonusmunten.${streakText}`
+              : `10 ${many}, elke dag nieuw. +${dailyBonus(streak + 1)} bonusmunten.${streakText}`
           }
           color="#8e44ad"
           disabled={dailyDone}
           onClick={() => navigate(`/game/${category.id}/${DAILY_PACKAGE_ID}${modeQuery}`)}
         />
         <Card
-          title="Mijn lastige steden"
+          title={`Mijn lastige ${many}`}
           description={
             hardCount > 0
-              ? `Oefen de ${hardCount === 1 ? 'stad' : `${hardCount} steden`} die je vaak fout hebt.`
-              : 'Nog geen lastige steden. Speel eerst een pakket!'
+              ? `Oefen de ${hardCount === 1 ? one : `${hardCount} ${many}`} die je vaak fout hebt.`
+              : `Nog geen lastige ${many}. Speel eerst een pakket!`
           }
           color="#e67e22"
           disabled={hardCount === 0}

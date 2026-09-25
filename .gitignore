@@ -26,3 +26,6 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# Ruwe Natural Earth-bestanden voor scripts/wateren (worden vanzelf gedownload)
+scripts/wateren/.cache

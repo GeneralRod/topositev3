@@ -32,14 +32,21 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 - `src/cabinet/`: de prijzenkast (catalogus, regels, tekeningen, scherm); testen met `?ontwikkelaar` in de url
 - `src/ui/`: gedeelde knoppen, kaarten en kleuren
 - `src/components/game/`: onderdelen van het spelscherm
+- `src/components/map/`: wereldkaart (`world.ts`), vormen voor zeeën/rivieren/gebieden
+  (`ShapeLayers.tsx`, `shapes.ts`)
+- `scripts/wateren/`: maakt de kaartgegevens van "Wateren en landschappen" uit Natural Earth
+  (`items.mjs` = de lijst; na aanpassen `node scripts/wateren/build.mjs` draaien)
 
 ## Stand van zaken (overdracht, 24 september 2026)
 
-- Live: fase 1 t/m 3, nieuwe prijzenkast met werkplaats, fase 6 deel 1 (eigen kaart zonder namen,
-  zoomen), deel 2 (lastige steden, sterren), deel 3 (meerkeuze, max. hints), deel 4 (dagelijkse
-  uitdaging).
-- Open: pull request voor deel 5 (plank Wereldwonderen, 4 stickers, twee prestatieborden
-  met 8 medailles naast de kast), wacht op test/oké van de eigenaar.
-- Volgende: nieuwe onderwerpen (Nederland eerst). Zie `PLAN.md` fase 6 voor de details en de aanpak voor precieze kaarten.
+- Live: fase 1 t/m 3, nieuwe prijzenkast met werkplaats, fase 6 deel 1 t/m 5 (kaart, lastige
+  steden en sterren, meerkeuze, dagelijkse uitdaging, extra prijzen en prestatiebord).
+- Open: pull requests met de nieuwe categorie "Wateren en landschappen over de wereld":
+  #78 (pakket 1, 40 onderdelen) en daarop pakket 2 + "Pakket 1 + 2". Wachten op oké eigenaar.
+- Volgende: pakket 3 en 4 van die categorie (in `items.mjs` staan ze al; zet ze in `ENABLED`
+  in `build.mjs`, controleer elk onderdeel op de kaart, en bedenk een lijn voor de Marianentrog),
+  daarna Nederland. Zie `PLAN.md` fase 6.
+- Kaartprecisie nooit lager dan nu (Natural Earth 10m, `SEA_SIMPLIFY = 1e-3`): wens eigenaar.
+- Pakket-id's moeten uniek zijn over alle categorieën (sterren en spellen worden per id bewaard).
 - Testen in de browser: `npm run build && npx vite preview`, prijzenkast met `?ontwikkelaar`.
 - GitHub Pages uitzetten (Settings → Pages) moet de eigenaar zelf nog doen.

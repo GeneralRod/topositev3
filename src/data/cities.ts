@@ -1,11 +1,26 @@
+/**
+ * Soort plek. Een stad is een stip; een berg een driehoekje; de rest heeft een
+ * eigen vorm op de kaart (zie src/components/map/ShapeLayers.tsx).
+ */
+export type PlaceKind = 'city' | 'sea' | 'lake' | 'river' | 'desert' | 'range' | 'peak';
+
 export interface City {
   name: string;
   country: string;
   coordinates: [number, number];
   package: string;
+  /** Voor een vorm: het punt voor het knipperpunt en het label. */
   lat: number;
   lng: number;
+  /** Wat de hint laat zien (bij steden het werelddeel). */
   continent: string;
+  /** Ontbreekt bij steden. */
+  kind?: PlaceKind;
+}
+
+/** Heeft deze plek een eigen vorm (vlak of lijn) in plaats van een stip? */
+export function hasShape(place: City): boolean {
+  return place.kind !== undefined && place.kind !== 'city' && place.kind !== 'peak';
 }
 
 export const cities: City[] = [

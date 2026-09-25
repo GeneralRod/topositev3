@@ -21,12 +21,20 @@ describe('catalogus', () => {
     }
   });
 
-  it("heeft unieke pakket-id's en stadsnamen (die zijn de sleutels van de voortgang)", () => {
+  it("heeft unieke pakket-id's en plaatsnamen (die zijn de sleutels van de voortgang)", () => {
     for (const category of categories) {
-      const ids = category.sections.flatMap((s) => s.packages.map((p) => p.id));
-      expect(new Set(ids).size).toBe(ids.length);
       const names = category.locations.map((l) => l.name);
       expect(new Set(names).size).toBe(names.length);
+    }
+    // Sterren en spellen worden per pakket-id bewaard, dus uniek over álle onderwerpen.
+    const ids = categories.flatMap((c) => c.sections.flatMap((s) => s.packages.map((p) => p.id)));
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('heeft een kaartlader voor elk onderwerp met vormen', () => {
+    for (const category of categories) {
+      const needsShapes = category.locations.some((l) => l.kind && l.kind !== 'city');
+      expect(Boolean(category.loadShapes), category.id).toBe(needsShapes);
     }
   });
 

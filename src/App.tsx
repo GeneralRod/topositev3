@@ -60,6 +60,7 @@ function usePackageRoute(kind: 'game' | 'map') {
   if (!category || !found || found.kind !== kind) return null;
   return {
     pkg: found.pkg,
+    category,
     categoryId: category.id,
     cities: locationsFor(category, found.pkg),
     onBack: () => navigate(`/main/${category.id}`),
@@ -107,7 +108,7 @@ const PackageGameWrapper: React.FC<{ mode: PlayMode }> = ({ mode }) => {
   );
 };
 
-// Oefenrondje: alleen de steden die je vaak fout hebt (zie game/progress.ts).
+// Oefenrondje: alleen de plekken die je vaak fout hebt (zie game/progress.ts).
 const PracticeWrapper: React.FC<{ categoryId: string | undefined; mode: PlayMode }> = ({
   categoryId,
   mode,
@@ -133,14 +134,14 @@ const PracticeWrapper: React.FC<{ categoryId: string | undefined; mode: PlayMode
       mode={mode}
       categoryId={category.id}
       kind="practice"
-      title="Mijn lastige steden"
+      title={`Mijn lastige ${category.words.many}`}
       cities={cities}
       onBack={() => navigate(`/main/${category.id}`)}
     />
   );
 };
 
-// Dagelijkse uitdaging: elke dag 10 vaste steden (zie game/daily.ts).
+// Dagelijkse uitdaging: elke dag 10 vaste plekken (zie game/daily.ts).
 const DailyWrapper: React.FC<{ categoryId: string | undefined; mode: PlayMode }> = ({
   categoryId,
   mode,
@@ -190,7 +191,13 @@ const InteractiveMapWrapper: React.FC = () => {
   const route = usePackageRoute('map');
   if (!route) return <Navigate to="/categories" replace />;
   return (
-    <InteractiveMap cities={route.cities} onBack={route.onBack} selectedPackage={route.pkg.id} />
+    <InteractiveMap
+      cities={route.cities}
+      onBack={route.onBack}
+      title={route.pkg.title}
+      loadShapes={route.category.loadShapes}
+      maxZoom={route.category.maxZoom}
+    />
   );
 };
 

@@ -151,6 +151,8 @@ interface CompletionDialogProps {
   stars: number | null;
   /** Extra regel, bijv. over de dagelijkse uitdaging. */
   extraMessage?: string | null;
+  /** Hoe je de plekken noemt: "stad"/"steden" of "plek"/"plekken". */
+  words: { one: string; many: string };
   /** Prestatieprijzen die je met dit spel net hebt verdiend. */
   achievements: Achievement[];
   onClose: () => void;
@@ -162,12 +164,13 @@ const CompletionDialog: React.FC<CompletionDialogProps> = ({
   hardest,
   stars,
   extraMessage,
+  words,
   achievements,
   onClose,
 }) => (
   <Overlay>
     <Dialog role="dialog" aria-modal="true">
-      <Message>Super! Je hebt alle steden gevonden!</Message>
+      <Message>Super! Je hebt alle {words.many} gevonden!</Message>
       {stars !== null && (
         <StarLine>
           <Stars count={stars} size={40} />
@@ -192,10 +195,10 @@ const CompletionDialog: React.FC<CompletionDialogProps> = ({
       </CoinSummary>
       <Stats>
         {hardest.length === 0 ? (
-          <Perfect>Je hebt alle steden in één keer goed!</Perfect>
+          <Perfect>Je hebt alle {words.many} in één keer goed!</Perfect>
         ) : (
           <>
-            <StatsTitle>Moeilijkste steden deze ronde:</StatsTitle>
+            <StatsTitle>Moeilijkste {words.many} deze ronde:</StatsTitle>
             <StatsList>
               {hardest.map(({ city, mistakes }) => (
                 <StatsItem key={city}>

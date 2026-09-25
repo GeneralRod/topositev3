@@ -4,7 +4,7 @@ import type { City } from '../data/cities';
 import { countsStars, totalMistakes, useGame } from '../game/useGame';
 import { findAchievement, type Achievement } from '../game/achievements';
 import { starsFor } from '../game/progress';
-import { hintRemovals, pickChoices, seededRandom } from '../game/choices';
+import { choicePool, hintRemovals, pickChoices, seededRandom } from '../game/choices';
 import type { PlayMode } from '../storage';
 import ChoicePanel from './game/ChoicePanel';
 import {
@@ -17,6 +17,7 @@ import {
   type GameKind,
 } from '../game/rules';
 import { Button, colors } from '../ui';
+import { findCategory } from '../content/catalog';
 import GameHeader from './game/GameHeader';
 import GameMap from './game/GameMap';
 import CompletionDialog from './game/CompletionDialog';
@@ -121,6 +122,8 @@ const Game: React.FC<GameProps> = ({
   onBack,
 }) => {
   const cityNames = useMemo(() => cities.map((c) => c.name), [cities]);
+  const category = findCategory(categoryId);
+  const words = category?.words ?? { one: 'stad', many: 'steden' };
   const isChoice = mode === 'choice';
   const [extraMessage, setExtraMessage] = useState<string | null>(null);
   const handleComplete = useCallback(() => {
@@ -168,10 +171,10 @@ const Game: React.FC<GameProps> = ({
               : `Goed! Je hebt ${result.city} gevonden!`
             : isChoice
               ? 'Helaas, probeer het nog eens.'
-              : 'Dit is niet de juiste stad.',
+              : `Dit is niet de juiste ${words.one}.`,
       }));
     },
-    [clickCity, isChoice, state.currentCity],
+    [clickCity, isChoice, state.currentCity, words.one],
   );
 
   // Meerkeuze: vier antwoorden per vraag, vast zolang dezelfde vraag openstaat.
@@ -181,11 +184,11 @@ const Game: React.FC<GameProps> = ({
       isChoice && state.currentCity
         ? pickChoices(
             state.currentCity,
-            cityNames,
+            choicePool(state.currentCity, cities),
             seededRandom(`${state.currentCity}#${answeredCount}`),
           )
         : [],
-    [isChoice, state.currentCity, cityNames, answeredCount],
+    [isChoice, state.currentCity, cities, answeredCount],
   );
   const wrong = wrongPicks.city === state.currentCity ? wrongPicks.names : [];
   const removed =
@@ -195,7 +198,7 @@ const Game: React.FC<GameProps> = ({
     return (
       <GameContainer>
         <EmptyMessage>
-          Geen steden gevonden voor dit pakket.
+          Geen {words.many} gevonden voor dit pakket.
           <Button onClick={onBack}>Terug naar hoofdmenu</Button>
         </EmptyMessage>
       </GameContainer>
@@ -207,7 +210,11 @@ const Game: React.FC<GameProps> = ({
       <GameHeader
         title={title}
         question={
-          currentCity ? (isChoice ? 'Welke stad knippert?' : `Vind: ${currentCity.name}`) : null
+          currentCity
+            ? isChoice
+              ? `Welke ${words.one} knippert?`
+              : `Vind: ${currentCity.name}`
+            : null
         }
         hint={
           state.hintUsed && currentCity
@@ -236,6 +243,8 @@ const Game: React.FC<GameProps> = ({
             status={state.status}
             onCityClick={handleCityClick}
             highlight={isChoice ? state.currentCity : undefined}
+            loadShapes={category?.loadShapes}
+            maxZoom={category?.maxZoom}
           />
         </MapWrapper>
         {isChoice && state.currentCity && (
@@ -244,6 +253,7 @@ const Game: React.FC<GameProps> = ({
             wrong={wrong}
             removed={removed}
             onChoose={handleCityClick}
+            question={`Welke ${words.one} is dit?`}
           />
         )}
       </PlayArea>
@@ -253,6 +263,7 @@ const Game: React.FC<GameProps> = ({
           bonus={completionBonus(state.coinsThisGame)}
           hardest={hardestCities(state)}
           extraMessage={extraMessage}
+          words={words}
           stars={countsStars(kind, mode) ? starsFor(totalMistakes(state), cities.length) : null}
           achievements={earned
             .map(findAchievement)
