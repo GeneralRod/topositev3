@@ -55,6 +55,9 @@ export const SHAPE_COLORS = {
   desertEdge: '#b98d3e',
   range: '#9c7a5b',
   rangeEdge: '#6f5238',
+  /** Trog: donker, zoals diep water op een atlaskaart. */
+  trench: '#1b2a6b',
+  trenchEdge: '#0d1540',
   highlight: '#ff9800',
 } as const;
 
@@ -127,6 +130,13 @@ export function shapeStyle(
         color: done ? doneColor : SHAPE_COLORS.river,
         weight: (done ? 4 : 2.5) + (hovered ? 2.5 : 0),
         fill: false,
+      };
+    case 'trench':
+      return {
+        color: done ? doneColor : SHAPE_COLORS.trenchEdge,
+        weight: hovered ? 3 : 1.5,
+        fillColor: done ? doneColor : SHAPE_COLORS.trench,
+        fillOpacity: (done ? 0.65 : 0.6) + (hovered ? 0.25 : 0),
       };
     case 'desert':
       return {

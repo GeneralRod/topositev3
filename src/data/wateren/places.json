@@ -478,5 +478,85 @@
     "hint": "Europa",
     "lat": 43.3531,
     "lng": 42.4369
+  },
+  {
+    "name": "Huronmeer",
+    "package": "wateren4",
+    "kind": "lake",
+    "hint": "Noord-Amerika",
+    "lat": 44.7841,
+    "lng": -82.4402
+  },
+  {
+    "name": "Eriemeer",
+    "package": "wateren4",
+    "kind": "lake",
+    "hint": "Noord-Amerika",
+    "lat": 42.2098,
+    "lng": -81.2853
+  },
+  {
+    "name": "Ontariomeer",
+    "package": "wateren4",
+    "kind": "lake",
+    "hint": "Noord-Amerika",
+    "lat": 43.6111,
+    "lng": -77.526
+  },
+  {
+    "name": "Indus",
+    "package": "wateren4",
+    "kind": "river",
+    "hint": "Azië",
+    "lat": 28.4999,
+    "lng": 69.7525
+  },
+  {
+    "name": "Yukon",
+    "package": "wateren4",
+    "kind": "river",
+    "hint": "Noord-Amerika",
+    "lat": 63.6369,
+    "lng": -159.3912
+  },
+  {
+    "name": "Kongorivier",
+    "package": "wateren4",
+    "kind": "river",
+    "hint": "Afrika",
+    "lat": -0.5332,
+    "lng": 17.7415
+  },
+  {
+    "name": "Marianentrog",
+    "package": "wateren4",
+    "kind": "trench",
+    "hint": "Grote Oceaan",
+    "lat": 11.37,
+    "lng": 142.4
+  },
+  {
+    "name": "Gobiwoestijn",
+    "package": "wateren4",
+    "kind": "desert",
+    "hint": "Azië",
+    "lat": 41.4809,
+    "lng": 102.6395
+  },
+  {
+    "name": "Ararat",
+    "package": "wateren4",
+    "kind": "peak",
+    "hint": "Azië",
+    "lat": 39.7017,
+    "lng": 44.2983
+  },
+  {
+    "name": "Mulhacén",
+    "package": "wateren4",
+    "kind": "peak",
+    "hint": "Europa",
+    "lat": 37.0533,
+    "lng": -3.3114
   }
 ]

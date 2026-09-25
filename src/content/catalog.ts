@@ -170,6 +170,14 @@ export const categories: Category[] = [
             color: '#c77c02',
             groups: ['wateren3'],
           },
+          {
+            id: 'wateren4',
+            title: 'Pakket 4',
+            description:
+              'Huron-, Erie- en Ontariomeer, Indus, Yukon, Kongo, Marianentrog, Gobi en twee bergen',
+            color: '#00838f',
+            groups: ['wateren4'],
+          },
         ],
       },
       {
@@ -197,6 +205,20 @@ export const categories: Category[] = [
             color: '#1565c0',
             groups: ['wateren1', 'wateren2', 'wateren3'],
           },
+          {
+            id: 'wateren3-4',
+            title: 'Pakket 3 + 4',
+            description: 'Alles uit pakket 3 en 4',
+            color: '#ad1457',
+            groups: ['wateren3', 'wateren4'],
+          },
+          {
+            id: 'wateren1-2-3-4',
+            title: 'Alle pakketten',
+            description: 'Alle 70 wateren en landschappen uit pakket 1 t/m 4',
+            color: '#37474f',
+            groups: ['wateren1', 'wateren2', 'wateren3', 'wateren4'],
+          },
         ],
       },
       {
@@ -223,6 +245,13 @@ export const categories: Category[] = [
             description: 'Bekijk alle wateren en landschappen uit pakket 3',
             color: '#c77c02',
             groups: ['wateren3'],
+          },
+          {
+            id: 'wateren-kaart4',
+            title: 'Interactieve kaart pakket 4',
+            description: 'Bekijk alle wateren en landschappen uit pakket 4',
+            color: '#00838f',
+            groups: ['wateren4'],
           },
         ],
       },
