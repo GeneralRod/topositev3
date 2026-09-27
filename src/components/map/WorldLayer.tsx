@@ -41,4 +41,6 @@ const WorldLayer: React.FC = () => {
   );
 };
 
-export default WorldLayer;
+// Optimization: WorldLayer is purely static, takes no props and does not change.
+// React.memo prevents it from re-rendering when the parent GameMap updates.
+export default React.memo(WorldLayer);
