@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
 import { MapContainer as LeafletMap, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
@@ -154,9 +154,21 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   loadShapes,
   maxZoom = MAX_ZOOM,
 }) => {
-  const dotIcon = createDotIcon();
-  const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
-  const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
+  const dotIcon = useMemo(() => createDotIcon(), []);
+
+  const { dots, others } = useMemo(() => {
+    const dotsList: City[] = [];
+    const othersList: City[] = [];
+    for (let i = 0; i < cities.length; i++) {
+      const c = cities[i];
+      if (c.kind === undefined || c.kind === 'city') {
+        dotsList.push(c);
+      } else {
+        othersList.push(c);
+      }
+    }
+    return { dots: dotsList, others: othersList };
+  }, [cities]);
 
   return (
     <Container>
