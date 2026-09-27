@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GeoJSON, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import type { City } from '../../data/cities';
@@ -231,21 +231,26 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
 
   useEffect(() => () => void map.closeTooltip(seaTooltip), [map, seaTooltip]);
 
-  if (!data) return null;
-
   /** Alle meren die niet meedoen als gewoon water: de wereldkaart heeft zelf geen meren. */
-  const plainLakes = (exclude: string[]) =>
-    [...byName.values()]
-      .filter((f) => f.properties.kind === 'lake' && !exclude.includes(f.properties.name))
-      .map((f) => (
-        <GeoJSON
-          key={`water-${f.properties.name}`}
-          data={f}
-          {...withRenderer(canvas)}
-          interactive={false}
-          style={PLAIN_LAKE_STYLE}
-        />
-      ));
+  const plainLakes = useCallback(
+    (exclude: string[]) => {
+      const excludeSet = new Set(exclude);
+      return [...byName.values()]
+        .filter((f) => f.properties.kind === 'lake' && !excludeSet.has(f.properties.name))
+        .map((f) => (
+          <GeoJSON
+            key={`water-${f.properties.name}`}
+            data={f}
+            {...withRenderer(canvas)}
+            interactive={false}
+            style={PLAIN_LAKE_STYLE}
+          />
+        ));
+    },
+    [byName, canvas],
+  );
+
+  if (!data) return null;
 
   if (choosing) {
     const place = places.find((p) => p.name === highlight);
