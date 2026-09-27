@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { loadSaveData, migrateLegacyGame, STORAGE_KEY, type KeyValueStore } from './storage';
+import { loadSaveData, migrateLegacyGame, parseSaveData, STORAGE_KEY, type KeyValueStore } from './storage';
 import * as storage from './index';
 
 function fakeStore(initial: Record<string, string> = {}): KeyValueStore & {
@@ -165,6 +165,17 @@ describe('van versie 1 naar versie 2 (nieuwe prijzenkast)', () => {
     loadSaveData(store);
     expect(JSON.parse(store.map.get(STORAGE_KEY)!).version).toBe(2);
     expect(loadSaveData(store).coins).toBe(700);
+  });
+});
+
+describe('parseSaveData', () => {
+  it('returns null for an invalid JSON string', () => {
+    expect(parseSaveData('{ "broken": json')).toBeNull();
+  });
+
+  it('returns null for invalid objects', () => {
+    expect(parseSaveData({ random: 'data' })).toBeNull();
+    expect(parseSaveData(null)).toBeNull();
   });
 });
 
