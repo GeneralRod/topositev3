@@ -5,7 +5,6 @@ import type { AnswerResult } from './rules';
 import * as storage from '../storage';
 import * as rules from './rules';
 
-
 vi.mock('../storage', () => ({
   addCoins: vi.fn(),
   awardAchievements: vi.fn(() => []),
@@ -92,8 +91,12 @@ describe('useGame', () => {
 
     expect(ansResult?.kind).toBe('correct');
 
-    expect((ansResult as Extract<AnswerResult, { kind: "correct" }>).firstTry).toBe(true);
-    expect(storage.recordCityAnswer).toHaveBeenCalledWith('test-category', currentCity, 'first-try');
+    expect((ansResult as Extract<AnswerResult, { kind: 'correct' }>).firstTry).toBe(true);
+    expect(storage.recordCityAnswer).toHaveBeenCalledWith(
+      'test-category',
+      currentCity,
+      'first-try',
+    );
     expect(storage.addCoins).toHaveBeenCalled();
   });
 
@@ -115,8 +118,12 @@ describe('useGame', () => {
 
     expect(ansResult?.kind).toBe('correct');
 
-    expect((ansResult as Extract<AnswerResult, { kind: "correct" }>).firstTry).toBe(false);
-    expect(storage.recordCityAnswer).toHaveBeenCalledWith('test-category', currentCity, 'after-mistake');
+    expect((ansResult as Extract<AnswerResult, { kind: 'correct' }>).firstTry).toBe(false);
+    expect(storage.recordCityAnswer).toHaveBeenCalledWith(
+      'test-category',
+      currentCity,
+      'after-mistake',
+    );
   });
 
   it('handles completion correctly', () => {
@@ -130,7 +137,7 @@ describe('useGame', () => {
     vi.mocked(storage.awardAchievements).mockReturnValue(['medal1']);
 
     const { result } = renderHook(() =>
-      useGame(packageId, ['C1', 'C2'], { ...defaultOptions, onComplete })
+      useGame(packageId, ['C1', 'C2'], { ...defaultOptions, onComplete }),
     );
 
     act(() => {
@@ -150,7 +157,7 @@ describe('useGame', () => {
     vi.mocked(storage.loadGame).mockReturnValueOnce(almostDone);
 
     const { result } = renderHook(() =>
-      useGame(packageId, ['C1', 'C2'], { ...defaultOptions, mode: 'choice' })
+      useGame(packageId, ['C1', 'C2'], { ...defaultOptions, mode: 'choice' }),
     );
 
     let ansResult: AnswerResult | undefined;
@@ -171,7 +178,7 @@ describe('useGame', () => {
     vi.mocked(storage.loadGame).mockReturnValueOnce(almostDone);
 
     const { result } = renderHook(() =>
-      useGame(packageId, ['C1', 'C2'], { ...defaultOptions, kind: 'practice' })
+      useGame(packageId, ['C1', 'C2'], { ...defaultOptions, kind: 'practice' }),
     );
 
     act(() => {
