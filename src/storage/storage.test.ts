@@ -231,6 +231,10 @@ describe('opslag in de app', () => {
     expect(storage.getPlayMode()).toBe('choice');
   });
 
+  it('geeft een lege dagelijkse status als de categorie nog niet bestaat', () => {
+    expect(storage.getDaily('onbekend')).toEqual({ lastCompleted: null, streak: 0 });
+  });
+
   it('geeft de bonus van de dagelijkse uitdaging één keer per dag', () => {
     expect(storage.completeDailyChallenge('capitals', '2026-09-24')).toEqual({
       bonus: 50,
