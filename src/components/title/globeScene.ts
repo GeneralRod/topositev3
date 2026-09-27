@@ -6,46 +6,60 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import earthTextureUrl from '../../assets/earth.webp';
 
-/** Start de animatie op het canvas. Geeft een functie terug die alles weer opruimt. */
-export function startGlobe(canvas: HTMLCanvasElement): () => void {
-  // Scene setup
-  const scene = new THREE.Scene();
+function setupCamera(): THREE.PerspectiveCamera {
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 0, 12);
+  camera.lookAt(0, 0, 0);
+  return camera;
+}
+
+function setupRenderer(canvas: HTMLCanvasElement): THREE.WebGLRenderer {
   const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
     antialias: true,
     alpha: true,
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  // Hoger dan 2x levert geen zichtbaar verschil op, wel veel meer rekenwerk.
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  return renderer;
+}
 
-  // Add stars
-  const createStars = () => {
-    const starsGeometry = new THREE.BufferGeometry();
-    const starsMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.1,
-      transparent: true,
-    });
+function setupControls(camera: THREE.PerspectiveCamera, domElement: HTMLElement): OrbitControls {
+  const controls = new OrbitControls(camera, domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.rotateSpeed = 0.5;
+  controls.enableZoom = true;
+  controls.minDistance = 8;
+  controls.maxDistance = 20;
+  controls.minPolarAngle = 0;
+  controls.maxPolarAngle = Math.PI;
+  return controls;
+}
 
-    const starsVertices = [];
-    for (let i = 0; i < 10000; i++) {
-      const x = (Math.random() - 0.5) * 2000;
-      const y = (Math.random() - 0.5) * 2000;
-      const z = (Math.random() - 0.5) * 2000;
-      starsVertices.push(x, y, z);
-    }
+function createStars(scene: THREE.Scene): THREE.Points {
+  const starsGeometry = new THREE.BufferGeometry();
+  const starsMaterial = new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 0.1,
+    transparent: true,
+  });
 
-    starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
-    const stars = new THREE.Points(starsGeometry, starsMaterial);
-    scene.add(stars);
-    return stars;
-  };
+  const starsVertices = [];
+  for (let i = 0; i < 10000; i++) {
+    const x = (Math.random() - 0.5) * 2000;
+    const y = (Math.random() - 0.5) * 2000;
+    const z = (Math.random() - 0.5) * 2000;
+    starsVertices.push(x, y, z);
+  }
 
-  const stars = createStars();
+  starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+  const stars = new THREE.Points(starsGeometry, starsMaterial);
+  scene.add(stars);
+  return stars;
+}
 
-  // Earth
+function createEarth(scene: THREE.Scene): { earth: THREE.Mesh; earthTexture: THREE.Texture } {
   const earthGeometry = new THREE.SphereGeometry(5, 64, 64);
   const textureLoader = new THREE.TextureLoader();
   const earthTexture = textureLoader.load(earthTextureUrl);
@@ -56,8 +70,10 @@ export function startGlobe(canvas: HTMLCanvasElement): () => void {
   });
   const earth = new THREE.Mesh(earthGeometry, earthMaterial);
   scene.add(earth);
+  return { earth, earthTexture };
+}
 
-  // Atmosphere
+function createAtmosphere(scene: THREE.Scene): THREE.Mesh {
   const atmosphereGeometry = new THREE.SphereGeometry(5.1, 64, 64);
   const atmosphereMaterial = new THREE.MeshPhongMaterial({
     color: 0x0077ff,
@@ -66,218 +82,246 @@ export function startGlobe(canvas: HTMLCanvasElement): () => void {
   });
   const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
   scene.add(atmosphere);
+  return atmosphere;
+}
 
-  // Lighting
+function setupLighting(scene: THREE.Scene): void {
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
 
   const sunLight = new THREE.DirectionalLight(0xffffff, 1);
   sunLight.position.set(10, 10, 10);
   scene.add(sunLight);
+}
 
-  // Camera position
-  camera.position.set(0, 0, 12);
-  camera.lookAt(0, 0, 0);
+function createSimplePlane(): THREE.Group {
+  const planeGroup = new THREE.Group();
 
-  // Controls
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
-  controls.rotateSpeed = 0.5;
-  controls.enableZoom = true;
-  controls.minDistance = 8;
-  controls.maxDistance = 20;
-  controls.minPolarAngle = 0;
-  controls.maxPolarAngle = Math.PI;
+  // Materials
+  const metalMaterial = new THREE.MeshPhongMaterial({
+    color: 0xe0e0e0,
+    shininess: 100,
+    specular: 0x444444,
+  });
+  const glassMaterial = new THREE.MeshPhongMaterial({
+    color: 0x88ccff,
+    transparent: true,
+    opacity: 0.6,
+    shininess: 100,
+    specular: 0xffffff,
+  });
+  const accentMaterial = new THREE.MeshPhongMaterial({
+    color: 0x4a90e2,
+    shininess: 100,
+    specular: 0x444444,
+  });
+  const secondaryAccentMaterial = new THREE.MeshPhongMaterial({
+    color: 0x64b5f6,
+    shininess: 100,
+    specular: 0x444444,
+  });
+  const tertiaryAccentMaterial = new THREE.MeshPhongMaterial({
+    color: 0x90caf9,
+    shininess: 100,
+    specular: 0x444444,
+  });
 
-  // Create and add the simple plane
-  const createSimplePlane = () => {
-    const planeGroup = new THREE.Group();
+  // Fuselage
+  const fuselageGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.2, 16);
+  const fuselage = new THREE.Mesh(fuselageGeometry, metalMaterial);
+  fuselage.rotation.x = Math.PI / 2;
+  planeGroup.add(fuselage);
 
-    // Materials
-    const metalMaterial = new THREE.MeshPhongMaterial({
-      color: 0xe0e0e0,
-      shininess: 100,
-      specular: 0x444444,
-    });
-    const glassMaterial = new THREE.MeshPhongMaterial({
-      color: 0x88ccff,
-      transparent: true,
-      opacity: 0.6,
-      shininess: 100,
-      specular: 0xffffff,
-    });
-    const accentMaterial = new THREE.MeshPhongMaterial({
-      color: 0x4a90e2,
-      shininess: 100,
-      specular: 0x444444,
-    });
-    const secondaryAccentMaterial = new THREE.MeshPhongMaterial({
-      color: 0x64b5f6,
-      shininess: 100,
-      specular: 0x444444,
-    });
-    const tertiaryAccentMaterial = new THREE.MeshPhongMaterial({
-      color: 0x90caf9,
-      shininess: 100,
-      specular: 0x444444,
-    });
+  // Fuselage accent lines
+  const fuselageLineGeometry = new THREE.CylinderGeometry(0.101, 0.101, 1.2, 16);
+  const fuselageLine = new THREE.Mesh(fuselageLineGeometry, tertiaryAccentMaterial);
+  fuselageLine.rotation.x = Math.PI / 2;
+  planeGroup.add(fuselageLine);
 
-    // Fuselage
-    const fuselageGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.2, 16);
-    const fuselage = new THREE.Mesh(fuselageGeometry, metalMaterial);
-    fuselage.rotation.x = Math.PI / 2;
-    planeGroup.add(fuselage);
+  // Cockpit
+  const cockpitGeometry = new THREE.SphereGeometry(0.08, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+  const cockpit = new THREE.Mesh(cockpitGeometry, glassMaterial);
+  cockpit.rotation.x = Math.PI / 2;
+  cockpit.position.set(0, 0.05, 0.4);
+  planeGroup.add(cockpit);
 
-    // Fuselage accent lines
-    const fuselageLineGeometry = new THREE.CylinderGeometry(0.101, 0.101, 1.2, 16);
-    const fuselageLine = new THREE.Mesh(fuselageLineGeometry, tertiaryAccentMaterial);
-    fuselageLine.rotation.x = Math.PI / 2;
-    planeGroup.add(fuselageLine);
+  // Wings (swept back and tapered)
+  const wingShape = new THREE.Shape();
+  wingShape.moveTo(0, 0);
+  wingShape.lineTo(0.6, 0.15); // Swept back
+  wingShape.lineTo(0.6, 0.25); // Tapered trailing edge
+  wingShape.lineTo(0, 0.1);
+  wingShape.lineTo(-0.6, 0.25); // Tapered trailing edge
+  wingShape.lineTo(-0.6, 0.15); // Swept back
+  wingShape.lineTo(0, 0);
 
-    // Cockpit
-    const cockpitGeometry = new THREE.SphereGeometry(0.08, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-    const cockpit = new THREE.Mesh(cockpitGeometry, glassMaterial);
-    cockpit.rotation.x = Math.PI / 2;
-    cockpit.position.set(0, 0.05, 0.4);
-    planeGroup.add(cockpit);
-
-    // Wings (swept back and tapered)
-    const wingShape = new THREE.Shape();
-    wingShape.moveTo(0, 0);
-    wingShape.lineTo(0.6, 0.15); // Swept back
-    wingShape.lineTo(0.6, 0.25); // Tapered trailing edge
-    wingShape.lineTo(0, 0.1);
-    wingShape.lineTo(-0.6, 0.25); // Tapered trailing edge
-    wingShape.lineTo(-0.6, 0.15); // Swept back
-    wingShape.lineTo(0, 0);
-
-    const wingExtrudeSettings = {
-      steps: 1,
-      depth: 0.05,
-      bevelEnabled: true,
-      bevelThickness: 0.02,
-      bevelSize: 0.02,
-      bevelSegments: 3,
-    };
-
-    const wingGeometry = new THREE.ExtrudeGeometry(wingShape, wingExtrudeSettings);
-    const wings = new THREE.Mesh(wingGeometry, metalMaterial);
-    wings.rotation.x = -Math.PI / 2;
-    wings.position.set(0, 0.05, 0);
-    planeGroup.add(wings);
-
-    // Wing details (thin lines)
-    const wingDetailShape = new THREE.Shape();
-    wingDetailShape.moveTo(0, 0);
-    wingDetailShape.lineTo(0.55, 0.14);
-    wingDetailShape.lineTo(0.55, 0.16);
-    wingDetailShape.lineTo(0, 0.08);
-    wingDetailShape.lineTo(-0.55, 0.16);
-    wingDetailShape.lineTo(-0.55, 0.14);
-    wingDetailShape.lineTo(0, 0);
-
-    const wingDetailExtrudeSettings = {
-      steps: 1,
-      depth: 0.01,
-      bevelEnabled: true,
-      bevelThickness: 0.005,
-      bevelSize: 0.005,
-      bevelSegments: 2,
-    };
-
-    // Front wing line
-    const wingDetailGeometry = new THREE.ExtrudeGeometry(
-      wingDetailShape,
-      wingDetailExtrudeSettings,
-    );
-    const wingDetail = new THREE.Mesh(wingDetailGeometry, accentMaterial);
-    wingDetail.rotation.x = -Math.PI / 2;
-    wingDetail.position.set(0, 0.08, 0.02); // Moved closer to main wing
-    planeGroup.add(wingDetail);
-
-    // Back wing line
-    const wingDetail2 = new THREE.Mesh(wingDetailGeometry, accentMaterial);
-    wingDetail2.rotation.x = -Math.PI / 2;
-    wingDetail2.position.set(0, 0.08, -0.02); // Moved closer to main wing
-    planeGroup.add(wingDetail2);
-
-    // Nose cone (smoother transition)
-    const noseGeometry = new THREE.SphereGeometry(0.1, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2);
-    const nose = new THREE.Mesh(noseGeometry, metalMaterial);
-    nose.rotation.x = Math.PI / 2;
-    nose.position.set(0, 0, 0.6);
-    planeGroup.add(nose);
-
-    // Nose accent (thin line)
-    const noseAccentGeometry = new THREE.SphereGeometry(
-      0.095,
-      32,
-      32,
-      0,
-      Math.PI * 2,
-      0,
-      Math.PI / 2,
-    );
-    const noseAccent = new THREE.Mesh(noseAccentGeometry, secondaryAccentMaterial);
-    noseAccent.rotation.x = Math.PI / 2;
-    noseAccent.position.set(0, 0.03, 0.6);
-    planeGroup.add(noseAccent);
-
-    // Nose side lines
-    const noseSideLineGeometry = new THREE.SphereGeometry(
-      0.101,
-      32,
-      32,
-      0,
-      Math.PI * 2,
-      0,
-      Math.PI / 2,
-    );
-    const noseSideLine = new THREE.Mesh(noseSideLineGeometry, tertiaryAccentMaterial);
-    noseSideLine.rotation.x = Math.PI / 2;
-    noseSideLine.position.set(0, 0, 0.6);
-    planeGroup.add(noseSideLine);
-
-    // Tail
-    const tailGeometry = new THREE.BoxGeometry(0.25, 0.15, 0.05);
-    const tail = new THREE.Mesh(tailGeometry, metalMaterial);
-    tail.position.set(0, 0.1, -0.5);
-    planeGroup.add(tail);
-
-    // Tail accent (thin line)
-    const tailAccentGeometry = new THREE.BoxGeometry(0.2, 0.005, 0.06);
-    const tailAccent = new THREE.Mesh(tailAccentGeometry, secondaryAccentMaterial);
-    tailAccent.position.set(0, 0.15, -0.5);
-    planeGroup.add(tailAccent);
-
-    // Vertical stabilizer
-    const stabilizerGeometry = new THREE.BoxGeometry(0.05, 0.15, 0.15);
-    const stabilizer = new THREE.Mesh(stabilizerGeometry, metalMaterial);
-    stabilizer.position.set(0, 0.2, -0.5);
-    planeGroup.add(stabilizer);
-
-    // Stabilizer accent (thin line)
-    const stabilizerAccentGeometry = new THREE.BoxGeometry(0.06, 0.005, 0.1);
-    const stabilizerAccent = new THREE.Mesh(stabilizerAccentGeometry, accentMaterial);
-    stabilizerAccent.position.set(0, 0.25, -0.5);
-    planeGroup.add(stabilizerAccent);
-
-    // Create a group for the tail and stabilizer to keep them fixed
-    const tailGroup = new THREE.Group();
-    tailGroup.add(tail);
-    tailGroup.add(tailAccent);
-    tailGroup.add(stabilizer);
-    tailGroup.add(stabilizerAccent);
-    planeGroup.add(tailGroup);
-
-    // Rotate the entire plane group to face the right direction
-    planeGroup.rotation.x = Math.PI;
-
-    return planeGroup;
+  const wingExtrudeSettings = {
+    steps: 1,
+    depth: 0.05,
+    bevelEnabled: true,
+    bevelThickness: 0.02,
+    bevelSize: 0.02,
+    bevelSegments: 3,
   };
 
-  // Create and add the plane
+  const wingGeometry = new THREE.ExtrudeGeometry(wingShape, wingExtrudeSettings);
+  const wings = new THREE.Mesh(wingGeometry, metalMaterial);
+  wings.rotation.x = -Math.PI / 2;
+  wings.position.set(0, 0.05, 0);
+  planeGroup.add(wings);
+
+  // Wing details (thin lines)
+  const wingDetailShape = new THREE.Shape();
+  wingDetailShape.moveTo(0, 0);
+  wingDetailShape.lineTo(0.55, 0.14);
+  wingDetailShape.lineTo(0.55, 0.16);
+  wingDetailShape.lineTo(0, 0.08);
+  wingDetailShape.lineTo(-0.55, 0.16);
+  wingDetailShape.lineTo(-0.55, 0.14);
+  wingDetailShape.lineTo(0, 0);
+
+  const wingDetailExtrudeSettings = {
+    steps: 1,
+    depth: 0.01,
+    bevelEnabled: true,
+    bevelThickness: 0.005,
+    bevelSize: 0.005,
+    bevelSegments: 2,
+  };
+
+  // Front wing line
+  const wingDetailGeometry = new THREE.ExtrudeGeometry(wingDetailShape, wingDetailExtrudeSettings);
+  const wingDetail = new THREE.Mesh(wingDetailGeometry, accentMaterial);
+  wingDetail.rotation.x = -Math.PI / 2;
+  wingDetail.position.set(0, 0.08, 0.02); // Moved closer to main wing
+  planeGroup.add(wingDetail);
+
+  // Back wing line
+  const wingDetail2 = new THREE.Mesh(wingDetailGeometry, accentMaterial);
+  wingDetail2.rotation.x = -Math.PI / 2;
+  wingDetail2.position.set(0, 0.08, -0.02); // Moved closer to main wing
+  planeGroup.add(wingDetail2);
+
+  // Nose cone (smoother transition)
+  const noseGeometry = new THREE.SphereGeometry(0.1, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2);
+  const nose = new THREE.Mesh(noseGeometry, metalMaterial);
+  nose.rotation.x = Math.PI / 2;
+  nose.position.set(0, 0, 0.6);
+  planeGroup.add(nose);
+
+  // Nose accent (thin line)
+  const noseAccentGeometry = new THREE.SphereGeometry(
+    0.095,
+    32,
+    32,
+    0,
+    Math.PI * 2,
+    0,
+    Math.PI / 2,
+  );
+  const noseAccent = new THREE.Mesh(noseAccentGeometry, secondaryAccentMaterial);
+  noseAccent.rotation.x = Math.PI / 2;
+  noseAccent.position.set(0, 0.03, 0.6);
+  planeGroup.add(noseAccent);
+
+  // Nose side lines
+  const noseSideLineGeometry = new THREE.SphereGeometry(
+    0.101,
+    32,
+    32,
+    0,
+    Math.PI * 2,
+    0,
+    Math.PI / 2,
+  );
+  const noseSideLine = new THREE.Mesh(noseSideLineGeometry, tertiaryAccentMaterial);
+  noseSideLine.rotation.x = Math.PI / 2;
+  noseSideLine.position.set(0, 0, 0.6);
+  planeGroup.add(noseSideLine);
+
+  // Tail
+  const tailGeometry = new THREE.BoxGeometry(0.25, 0.15, 0.05);
+  const tail = new THREE.Mesh(tailGeometry, metalMaterial);
+  tail.position.set(0, 0.1, -0.5);
+  planeGroup.add(tail);
+
+  // Tail accent (thin line)
+  const tailAccentGeometry = new THREE.BoxGeometry(0.2, 0.005, 0.06);
+  const tailAccent = new THREE.Mesh(tailAccentGeometry, secondaryAccentMaterial);
+  tailAccent.position.set(0, 0.15, -0.5);
+  planeGroup.add(tailAccent);
+
+  // Vertical stabilizer
+  const stabilizerGeometry = new THREE.BoxGeometry(0.05, 0.15, 0.15);
+  const stabilizer = new THREE.Mesh(stabilizerGeometry, metalMaterial);
+  stabilizer.position.set(0, 0.2, -0.5);
+  planeGroup.add(stabilizer);
+
+  // Stabilizer accent (thin line)
+  const stabilizerAccentGeometry = new THREE.BoxGeometry(0.06, 0.005, 0.1);
+  const stabilizerAccent = new THREE.Mesh(stabilizerAccentGeometry, accentMaterial);
+  stabilizerAccent.position.set(0, 0.25, -0.5);
+  planeGroup.add(stabilizerAccent);
+
+  // Create a group for the tail and stabilizer to keep them fixed
+  const tailGroup = new THREE.Group();
+  tailGroup.add(tail);
+  tailGroup.add(tailAccent);
+  tailGroup.add(stabilizer);
+  tailGroup.add(stabilizerAccent);
+  planeGroup.add(tailGroup);
+
+  // Rotate the entire plane group to face the right direction
+  planeGroup.rotation.x = Math.PI;
+
+  return planeGroup;
+}
+
+function createTrail(scene: THREE.Scene): {
+  trail: THREE.Points;
+  trailPoints: THREE.Vector3[];
+  opacities: Float32Array;
+} {
+  const trailGeometry = new THREE.BufferGeometry();
+  const trailMaterial = new THREE.PointsMaterial({
+    color: 0xffffff, // White color
+    size: 0.08, // Larger points for cloudier effect
+    transparent: true,
+    opacity: 0.6,
+    blending: THREE.AdditiveBlending,
+    sizeAttenuation: true,
+  });
+
+  // Create initial trail points
+  const trailPoints: THREE.Vector3[] = [];
+  const numPoints = 35; // Reduced from 50 to 35 for shorter trails
+  for (let i = 0; i < numPoints; i++) {
+    trailPoints.push(new THREE.Vector3(0, 0, 0));
+  }
+
+  // Set up geometry
+  const positions = new Float32Array(trailPoints.length * 3);
+  const opacities = new Float32Array(trailPoints.length);
+  trailGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  trailGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+
+  const trail = new THREE.Points(trailGeometry, trailMaterial);
+  scene.add(trail);
+  return { trail, trailPoints, opacities };
+}
+
+/** Start de animatie op het canvas. Geeft een functie terug die alles weer opruimt. */
+export function startGlobe(canvas: HTMLCanvasElement): () => void {
+  const scene = new THREE.Scene();
+  const camera = setupCamera();
+  const renderer = setupRenderer(canvas);
+  const controls = setupControls(camera, renderer.domElement);
+
+  const stars = createStars(scene);
+  const { earth, earthTexture } = createEarth(scene);
+  const atmosphere = createAtmosphere(scene);
+  setupLighting(scene);
+
   const plane = createSimplePlane();
   plane.position.set(0, 5.5, 0);
   scene.add(plane);
@@ -296,47 +340,17 @@ export function startGlobe(canvas: HTMLCanvasElement): () => void {
   const positionHistory: THREE.Vector3[] = [];
   const historyLength = 10;
 
-  // Create trail effect
-  const createTrail = () => {
-    const trailGeometry = new THREE.BufferGeometry();
-    const trailMaterial = new THREE.PointsMaterial({
-      color: 0xffffff, // White color
-      size: 0.08, // Larger points for cloudier effect
-      transparent: true,
-      opacity: 0.6,
-      blending: THREE.AdditiveBlending,
-      sizeAttenuation: true,
-    });
-
-    // Create initial trail points
-    const trailPoints: THREE.Vector3[] = [];
-    const numPoints = 35; // Reduced from 50 to 35 for shorter trails
-    for (let i = 0; i < numPoints; i++) {
-      trailPoints.push(new THREE.Vector3(0, 0, 0));
-    }
-
-    // Set up geometry
-    const positions = new Float32Array(trailPoints.length * 3);
-    const opacities = new Float32Array(trailPoints.length);
-    trailGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    trailGeometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
-
-    const trail = new THREE.Points(trailGeometry, trailMaterial);
-    scene.add(trail);
-    return { trail, trailPoints, opacities };
-  };
-
   // Create two trails for the wingtips
   const {
     trail: leftTrail,
     trailPoints: leftTrailPoints,
     opacities: leftOpacities,
-  } = createTrail();
+  } = createTrail(scene);
   const {
     trail: rightTrail,
     trailPoints: rightTrailPoints,
     opacities: rightOpacities,
-  } = createTrail();
+  } = createTrail(scene);
 
   let frame = 0;
   const animate = () => {
