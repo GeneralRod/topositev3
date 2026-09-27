@@ -298,7 +298,7 @@ describe('browserStore fallback', () => {
     const errorThrowingLocalStorage = {
       getItem: vi.fn().mockImplementation(() => {
         throw new Error('Blocked');
-      })
+      }),
     } as unknown as Storage;
     vi.stubGlobal('localStorage', errorThrowingLocalStorage);
 
