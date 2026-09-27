@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
 import { loadSaveData, migrateLegacyGame, STORAGE_KEY, type KeyValueStore } from './storage';
 import * as storage from './index';
 
@@ -283,5 +283,27 @@ describe('opslag in de app', () => {
     };
     storage.addCoins(1);
     expect(storage.getCoins()).toBe(21);
+  });
+});
+
+describe('browserStore fallback', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('valt terug op memoryStore als localStorage ontoegankelijk is', () => {
+    storage.setStoreForTesting(null as unknown as KeyValueStore);
+
+    // Mock window.localStorage to throw when accessed (e.g., when browser blocks it)
+    const errorThrowingLocalStorage = {
+      getItem: vi.fn().mockImplementation(() => {
+        throw new Error('Blocked');
+      })
+    } as unknown as Storage;
+    vi.stubGlobal('localStorage', errorThrowingLocalStorage);
+
+    expect(storage.getCoins()).toBe(0);
+    storage.addCoins(50);
+    expect(storage.getCoins()).toBe(50);
   });
 });
