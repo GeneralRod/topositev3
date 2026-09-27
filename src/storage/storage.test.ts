@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { loadSaveData, migrateLegacyGame, STORAGE_KEY, writeSaveData, emptySaveData, type KeyValueStore } from './storage';
+import {
+  loadSaveData,
+  migrateLegacyGame,
+  STORAGE_KEY,
+  writeSaveData,
+  emptySaveData,
+  type KeyValueStore,
+} from './storage';
 import * as storage from './index';
 
 function fakeStore(initial: Record<string, string> = {}): KeyValueStore & {
