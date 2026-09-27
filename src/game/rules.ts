@@ -104,11 +104,22 @@ export function restoreGame(
 }
 
 export function isComplete(state: GameState): boolean {
-  return eligibleCities(state).length === 0;
+  for (const key in state.status) {
+    if (state.status[key] !== 'green') {
+      return false;
+    }
+  }
+  return true;
 }
 
 export function foundCount(state: GameState): number {
-  return Object.values(state.status).filter((s) => s === 'green').length;
+  let count = 0;
+  for (const key in state.status) {
+    if (state.status[key] === 'green') {
+      count++;
+    }
+  }
+  return count;
 }
 
 export type AnswerResult =
