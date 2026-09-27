@@ -178,7 +178,12 @@ const Game: React.FC<GameProps> = ({
   );
 
   // Meerkeuze: vier antwoorden per vraag, vast zolang dezelfde vraag openstaat.
-  const answeredCount = Object.values(state.status).filter((s) => s !== 'unanswered').length;
+  let answeredCount = 0;
+  for (const key in state.status) {
+    if (state.status[key] !== 'unanswered') {
+      answeredCount++;
+    }
+  }
   const choices = useMemo(
     () =>
       isChoice && state.currentCity
