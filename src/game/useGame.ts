@@ -54,6 +54,40 @@ export function countsStars(kind: GameKind, mode: PlayMode): boolean {
   return kind === 'package' && mode === 'map';
 }
 
+function processWrongAnswer(categoryId: string, currentCity: string | null) {
+  if (currentCity) {
+    recordCityAnswer(categoryId, currentCity, 'wrong');
+  }
+}
+
+function processCorrectAnswer(
+  categoryId: string,
+  result: Extract<AnswerResult, { kind: 'correct' }>,
+) {
+  recordCityAnswer(categoryId, result.city, result.firstTry ? 'first-try' : 'after-mistake');
+  addCoins(result.coins);
+}
+
+function handleGameCompletion(
+  state: GameState,
+  packageId: string,
+  kind: GameKind,
+  mode: PlayMode,
+  countStars: boolean,
+  onComplete?: () => void,
+): { state: GameState; earned: string[] } {
+  const claimed = claimCompletionBonus(state);
+  addCoins(claimed.bonus);
+  const next = claimed.state;
+  if (countStars) {
+    recordStars(packageId, starsFor(totalMistakes(next), Object.keys(next.status).length));
+  }
+  onComplete?.();
+  // Pas na de sterren en de dagelijkse reeks, want daar kijken prestaties naar.
+  const earned = awardAchievements({ kind, mode, mistakes: totalMistakes(next) });
+  return { state: next, earned };
+}
+
 export function useGame(packageId: string, cityNames: string[], options: GameOptions) {
   const { categoryId, kind, mode, onComplete } = options;
   const countStars = countsStars(kind, mode);
@@ -79,24 +113,25 @@ export function useGame(packageId: string, cityNames: string[], options: GameOpt
       const seconds = (Date.now() - questionStartedAt.current) / 1000;
       const { state: answered, result } = answer(state, cityName, seconds, Math.random, coinFactor);
       let next = answered;
-      if (result.kind === 'wrong' && state.currentCity) {
-        recordCityAnswer(categoryId, state.currentCity, 'wrong');
-      }
-      if (result.kind === 'correct') {
-        recordCityAnswer(categoryId, result.city, result.firstTry ? 'first-try' : 'after-mistake');
-        addCoins(result.coins);
+
+      if (result.kind === 'wrong') {
+        processWrongAnswer(categoryId, state.currentCity);
+      } else if (result.kind === 'correct') {
+        processCorrectAnswer(categoryId, result);
         if (isComplete(next)) {
-          const claimed = claimCompletionBonus(next);
-          addCoins(claimed.bonus);
-          next = claimed.state;
-          if (countStars) {
-            recordStars(packageId, starsFor(totalMistakes(next), Object.keys(next.status).length));
-          }
-          onComplete?.();
-          // Pas na de sterren en de dagelijkse reeks, want daar kijken prestaties naar.
-          setEarned(awardAchievements({ kind, mode, mistakes: totalMistakes(next) }));
+          const completion = handleGameCompletion(
+            next,
+            packageId,
+            kind,
+            mode,
+            countStars,
+            onComplete,
+          );
+          next = completion.state;
+          setEarned(completion.earned);
         }
       }
+
       setState(next);
       return result;
     },
