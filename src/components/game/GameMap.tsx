@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { MapContainer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -65,8 +65,20 @@ const GameMap: React.FC<GameMapProps> = ({
   loadShapes,
   maxZoom = MAX_ZOOM,
 }) => {
-  const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
-  const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
+  const { dots, others } = useMemo(() => {
+    const d: typeof cities = [];
+    const o: typeof cities = [];
+    for (let i = 0; i < cities.length; i++) {
+      const c = cities[i];
+      if (c.kind === undefined || c.kind === 'city') {
+        d.push(c);
+      } else {
+        o.push(c);
+      }
+    }
+    return { dots: d, others: o };
+  }, [cities]);
+
   return (
     <MapContainer
       center={WORLD_CENTER}
