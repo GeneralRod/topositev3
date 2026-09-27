@@ -231,6 +231,12 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
 
   useEffect(() => () => void map.closeTooltip(seaTooltip), [map, seaTooltip]);
 
+  const onLand = useMemo(() => {
+    return places
+      .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
+      .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
+  }, [places, byName]);
+
   if (!data) return null;
 
   /** Alle meren die niet meedoen als gewoon water: de wereldkaart heeft zelf geen meren. */
@@ -246,6 +252,10 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
           style={PLAIN_LAKE_STYLE}
         />
       ));
+
+  const statusOf = (name: string): CityStatus => status?.[name] ?? 'unanswered';
+  // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
+  const isArea = (p: City) => p.kind === 'range' || p.kind === 'desert';
 
   if (choosing) {
     const place = places.find((p) => p.name === highlight);
@@ -267,13 +277,6 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
       </>
     );
   }
-
-  const statusOf = (name: string): CityStatus => status?.[name] ?? 'unanswered';
-  const onLand = places
-    .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
-    .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
-  // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
-  const isArea = (p: City) => p.kind === 'range' || p.kind === 'desert';
 
   const renderShape = (place: City) => (
     <GeoJSON
