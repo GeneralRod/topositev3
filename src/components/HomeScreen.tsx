@@ -192,26 +192,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
         />
       </CardGrid>
 
-      <SectionTitle>Oefentoets</SectionTitle>
-      <CardGrid>
-        {toetsen.map((pkg, i) => (
-          <Card
-            key={pkg.id}
-            title={toetsTitle(i + 1)}
-            description={
-              (i === 0
-                ? `Schrijf de namen op, net als op de toets.`
-                : `In ${i + 1} delen: eerst pakket 1, dan ${toetsen
-                    .slice(1, i + 1)
-                    .map((p) => p.title.toLowerCase())
-                    .join(', dan ')}.`) + bestGrade(i + 1)
-            }
-            color="#c0392b"
-            onClick={() => navigate(`/toets/${category.id}/${i + 1}`)}
-          />
-        ))}
-      </CardGrid>
-
       {category.sections.map((section) => (
         <React.Fragment key={section.title}>
           <SectionTitle>{section.title}</SectionTitle>
@@ -235,6 +215,27 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
           </CardGrid>
         </React.Fragment>
       ))}
+
+      {/* Oefentoets onderaan (wens eigenaar): eerst oefenen, dan de toets. */}
+      <SectionTitle>Oefentoets</SectionTitle>
+      <CardGrid>
+        {toetsen.map((pkg, i) => (
+          <Card
+            key={pkg.id}
+            title={toetsTitle(i + 1)}
+            description={
+              (i === 0
+                ? `Schrijf de namen op, net als op de toets.`
+                : `In ${i + 1} delen: eerst pakket 1, dan ${toetsen
+                    .slice(1, i + 1)
+                    .map((p) => p.title.toLowerCase())
+                    .join(', dan ')}.`) + bestGrade(i + 1)
+            }
+            color="#c0392b"
+            onClick={() => navigate(`/toets/${category.id}/${i + 1}`)}
+          />
+        ))}
+      </CardGrid>
 
       <TrophyButton onClick={() => navigate('/trophy-cabinet')}>
         <TrophyIcon>🏆</TrophyIcon>
