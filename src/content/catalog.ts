@@ -456,6 +456,14 @@ export function locationsFor(category: Category, pkg: GamePackage): City[] {
   return category.locations.filter((location) => pkg.groups.includes(location.package));
 }
 
+/**
+ * De gewone pakketten (pakket 1, 2, 3, ...) in volgorde: de delen van de oefentoets.
+ * Dat is het eerste rijtje met spellen op de pagina van een onderwerp.
+ */
+export function toetsPackages(category: Category): GamePackage[] {
+  return category.sections.find((s) => s.kind === 'game')?.packages ?? [];
+}
+
 /** Pakket-id van het oefenrondje met je lastige steden (in de url). */
 export const PRACTICE_PACKAGE_ID = 'lastig';
 

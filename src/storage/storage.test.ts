@@ -112,6 +112,7 @@ describe('overzetten van oude gegevens', () => {
       prefs: { playMode: 'map' },
       daily: {},
       achievements: [],
+      toetsen: {},
     });
   });
 });
@@ -139,6 +140,21 @@ describe('versie 2 zonder upgrades (van voor de werkplaats)', () => {
       }),
     });
     expect(loadSaveData(store).achievements).toEqual(['flawless', 'streak-3']);
+  });
+
+  it('houdt cijfers van oefentoetsen (van voor de toets: leeg) en laat rommel weg', () => {
+    const old = fakeStore({ [STORAGE_KEY]: JSON.stringify({ version: 2, coins: 5 }) });
+    expect(loadSaveData(old).toetsen).toEqual({});
+    const store = fakeStore({
+      [STORAGE_KEY]: JSON.stringify({
+        version: 2,
+        coins: 5,
+        toetsen: { 'landen:1:normaal': 8.5, 'landen:2:kort': 11, x: 'tien' },
+      }),
+    });
+    const data = loadSaveData(store);
+    expect(data.toetsen).toEqual({ 'landen:1:normaal': 8.5 });
+    expect(data.coins).toBe(5);
   });
 });
 

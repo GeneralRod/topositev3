@@ -191,6 +191,20 @@ Zo is het gebouwd (september 2026, akkoord eigenaar):
   site. Geen externe kaartdienst of sleutel.
 - Bronvermelding (Natural Earth; later OpenStreetMap, PDOK) op de kaart.
 
+**Oefentoets (september 2026, wens eigenaar)**
+
+- [x] Net als de echte topotoets: er knippert een plek, het kind schrijft de naam op. Toets
+      pakket 1, 1 + 2 of 1 + 2 + 3 (enz.), in delen: eerst alle vragen van pakket 1, dan pakket
+      2, dan pakket 3. Lengte kiezen: kort (25% van elk pakket, minstens 3), normaal (50%,
+      minstens 5) of alles. Elke keer andere plekken.
+- [x] Nakijken coulant (topotoets, geen spellingtoets): goed zodra duidelijk is welke plek het
+      kind bedoelt, ook als die heel anders geschreven is; fout als het meer op een andere plek
+      lijkt (Irak/Iran, Niger/Nigeria). Andere namen en lijkende landen in
+      `src/content/aliases.ts`, regels in `src/game/toets.ts`.
+- [x] Pas aan het eind: cijfer = goed / totaal × 10 (één decimaal), per deel en in totaal, met
+      per vraag wat je schreef (en hoe je het schrijft). Beste cijfer per toets en lengte bewaard;
+      5 munten per goed antwoord; fouten gaan naar "mijn lastige ...".
+
 **Later**
 
 - [ ] Geluidjes bij goed en fout (met aan/uit-knop)

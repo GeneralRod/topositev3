@@ -52,6 +52,8 @@ export interface SaveData {
   daily: Record<string, DailyRecord>;
   /** Id's van verdiende prestatieprijzen (niet te koop). */
   achievements: string[];
+  /** Beste cijfer (0-10) per oefentoets, bijv. 'landen:2:normaal'. */
+  toetsen: Record<string, number>;
 }
 
 export type PlayMode = 'map' | 'choice';
@@ -107,6 +109,7 @@ export function emptySaveData(): SaveData {
     prefs: { playMode: 'map' },
     daily: {},
     achievements: [],
+    toetsen: {},
   };
 }
 
@@ -134,6 +137,15 @@ function parseStars(value: unknown): Record<string, number> {
   for (const [packageId, stars] of Object.entries(value)) {
     const n = toCount(stars);
     if (n >= 1) out[packageId] = Math.min(3, n);
+  }
+  return out;
+}
+
+function parseGrades(value: unknown): Record<string, number> {
+  const out: Record<string, number> = {};
+  if (!isRecord(value)) return out;
+  for (const [key, grade] of Object.entries(value)) {
+    if (typeof grade === 'number' && grade >= 0 && grade <= 10) out[key] = grade;
   }
   return out;
 }
@@ -171,6 +183,7 @@ export function upgradeV1(old: SaveDataV1): SaveData {
     prefs: { playMode: 'map' },
     daily: {},
     achievements: [],
+    toetsen: {},
   };
 }
 
@@ -300,6 +313,7 @@ export function parseSaveData(value: unknown): SaveData | null {
     prefs: parsePrefs(value.prefs),
     daily: parseDaily(value.daily),
     achievements: toIdList(value.achievements),
+    toetsen: parseGrades(value.toetsen),
   };
 }
 

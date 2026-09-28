@@ -49,9 +49,11 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 - Ook in het plan: fase 7 (optionele accounts).
 - Open: pull request #108 "Nederland" (branch `nederland`, 79 plekken, eigen precieze kaart). De
   eigenaar heeft nog wat feedback (80-90% goed) en wil die later afmaken.
-- Open: pull request "Landen van de wereld" (branch `landen`), wacht op test/oké eigenaar.
-- Let op bij het mergen van de tweede van die twee: beide voegen soorten plekken en tinten toe
-  (`cities.ts`, `shapes.ts`, `ShapeLayers.tsx`, `choices.ts`, `catalog.ts`); samenvoegen.
+- Ook live: "Landen van de wereld" (75 landen, pakket 1 ook per werelddeel).
+- Open: pull request "Oefentoets" (branch `oefentoets`), wacht op test/oké eigenaar.
+- Let op bij het mergen van Nederland: main heeft intussen landen (soort 'country', tinten
+  `AREA_TINTS`) en de oefentoets; Nederland voegt 'province' e.d. toe (`cities.ts`, `shapes.ts`,
+  `ShapeLayers.tsx`, `choices.ts`, `catalog.ts`, `GameMap.tsx`); samenvoegen.
 - Netlify heet nu `topografiewereld` (live: https://topografiewereld.netlify.app); voorbeeldlinks
   zijn `deploy-preview-<nummer>--topografiewereld.netlify.app`.
 - Volgende: feedback Nederland verwerken. Zie `PLAN.md` fase 6. Voor later: optionele accounts voor kinderen en
