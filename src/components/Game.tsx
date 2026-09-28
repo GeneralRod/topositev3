@@ -89,6 +89,9 @@ const EmptyMessage = styled.div`
   align-items: center;
 `;
 
+/** Steeds dezelfde lege lijst, zodat de kaart en de knoppen niet voor niets opnieuw tekenen. */
+const NONE: string[] = [];
+
 interface GameProps {
   packageId: string;
   categoryId: string;
@@ -190,12 +193,14 @@ const Game: React.FC<GameProps> = ({
             choicePool(state.currentCity, cities, category?.locations),
             seededRandom(`${state.currentCity}#${answeredCount}`),
           )
-        : [],
+        : NONE,
     [isChoice, state.currentCity, cities, category, answeredCount],
   );
-  const wrong = wrongPicks.city === state.currentCity ? wrongPicks.names : [];
+  const wrong = wrongPicks.city === state.currentCity ? wrongPicks.names : NONE;
   const removed =
-    isChoice && state.hintUsed && state.currentCity ? hintRemovals(choices, state.currentCity) : [];
+    isChoice && state.hintUsed && state.currentCity
+      ? hintRemovals(choices, state.currentCity)
+      : NONE;
 
   if (cities.length === 0) {
     return (

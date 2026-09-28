@@ -38,8 +38,16 @@ describe('catalogus', () => {
     }
   });
 
-  it('geeft undefined voor onbekende pakketten', () => {
+  it('vindt categorieën op id', () => {
+    expect(findCategory('capitals')?.id).toBe('capitals');
+    expect(findCategory('wateren')?.id).toBe('wateren');
+  });
+
+  it('geeft undefined voor onbekende of ongedefinieerde pakketten en categorieën', () => {
     expect(findCategory('bestaatniet')).toBeUndefined();
+    expect(findCategory(undefined)).toBeUndefined();
     expect(findPackage(capitals, 'pakket9')).toBeUndefined();
+    expect(findPackage(undefined, 'pakket1')).toBeUndefined();
+    expect(findPackage(capitals, undefined)).toBeUndefined();
   });
 });
