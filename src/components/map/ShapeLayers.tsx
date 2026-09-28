@@ -85,7 +85,10 @@ function wrapLng(lng: number): number {
 }
 
 /** Tekenvolgorde boven het land: grote vlakken eerst, rivieren bovenop. */
-const DRAW_ORDER = ['range', 'desert', 'lake', 'trench', 'river'];
+const DRAW_ORDER = ['country', 'range', 'desert', 'lake', 'trench', 'river'];
+
+/** Vlakken die onder de meren komen (een meer kan in een gebergte of land liggen). */
+const AREAS: Array<City['kind']> = ['range', 'desert', 'country'];
 
 function usePanes(): void {
   const map = useMap();
@@ -273,7 +276,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
     .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
     .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
   // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
-  const isArea = (p: City) => p.kind === 'range' || p.kind === 'desert';
+  const isArea = (p: City) => AREAS.includes(p.kind);
 
   const renderShape = (place: City) => (
     <GeoJSON
@@ -283,6 +286,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
       bubblingMouseEvents={false}
       style={shapeStyle(place.kind!, statusOf(place.name), {
         hovered: hoverShape === place.name,
+        tint: byName.get(place.name)!.properties.tint,
       })}
       eventHandlers={{
         click: (event) => pick(place.name, event.latlng),
