@@ -18,6 +18,7 @@ import {
   findPackage,
   locationsFor,
   PRACTICE_PACKAGE_ID,
+  toetsPackages,
 } from './content/catalog';
 import { completeDailyChallenge, getCityStats, getDaily, type PlayMode } from './storage';
 import { dailyCities, dateKey, doneToday } from './game/daily';
@@ -27,6 +28,7 @@ import { hardCities } from './game/progress';
 // geopend worden; dat maakt de eerste keer laden van de site sneller.
 const Game = lazy(() => import('./components/Game'));
 const InteractiveMap = lazy(() => import('./components/InteractiveMap'));
+const Toets = lazy(() => import('./components/Toets'));
 const PrizeCabinet = lazy(() => import('./cabinet/PrizeCabinet'));
 
 const AppContainer = styled.div`
@@ -201,6 +203,25 @@ const InteractiveMapWrapper: React.FC = () => {
   );
 };
 
+const ToetsWrapper: React.FC = () => {
+  const navigate = useNavigate();
+  const { category: categoryId, upto } = useParams<{ category: string; upto: string }>();
+  const category = findCategory(categoryId);
+  const count = Number(upto);
+  if (!category || !Number.isInteger(count) || count < 1) {
+    return <Navigate to="/categories" replace />;
+  }
+  if (count > toetsPackages(category).length) return <Navigate to="/categories" replace />;
+  return (
+    <Toets
+      key={`${category.id}-${count}`}
+      category={category}
+      upto={count}
+      onBack={() => navigate(`/main/${category.id}`)}
+    />
+  );
+};
+
 const App: React.FC = () => {
   return (
     <Router>
@@ -212,6 +233,7 @@ const App: React.FC = () => {
             <Route path="/main/:category" element={<HomeScreenWrapper />} />
             <Route path="/game/:category/:package" element={<GameWrapper />} />
             <Route path="/interactive/:category/:package" element={<InteractiveMapWrapper />} />
+            <Route path="/toets/:category/:upto" element={<ToetsWrapper />} />
             <Route path="/trophy-cabinet" element={<PrizeCabinet />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

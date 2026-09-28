@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { DAILY_PACKAGE_ID, PRACTICE_PACKAGE_ID, type Category } from '../content/catalog';
+import {
+  DAILY_PACKAGE_ID,
+  PRACTICE_PACKAGE_ID,
+  toetsPackages,
+  type Category,
+} from '../content/catalog';
 import {
   getCityStats,
   getDaily,
   getPlayMode,
   getStars,
+  getToetsGrades,
   setPlayMode,
   type PlayMode,
 } from '../storage';
 import { currentStreak, dailyBonus, dateKey, doneToday } from '../game/daily';
 import { hardCities } from '../game/progress';
+import { formatGrade, TOETS_LENGTHS, toetsKey, toetsTitle, type ToetsLength } from '../game/toets';
 import { BackLink, Card, CardGrid, Page, PageTitle, SectionTitle, Stars } from '../ui';
 
 interface HomeScreenProps {
@@ -117,6 +124,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
     setPlayMode(next);
     setMode(next);
   };
+  const toetsen = toetsPackages(category);
+  const grades = getToetsGrades();
+  /** Beste cijfer van een toets, over alle lengtes: "Beste cijfer: 8,5 (Normaal)". */
+  const bestGrade = (upto: number): string => {
+    const results = (Object.keys(TOETS_LENGTHS) as ToetsLength[])
+      .map((length) => ({ length, grade: grades[toetsKey(category.id, upto, length)] }))
+      .filter((r) => r.grade !== undefined);
+    if (results.length === 0) return '';
+    const best = results.reduce((a, b) => (b.grade > a.grade ? b : a));
+    return ` Beste cijfer: ${formatGrade(best.grade)} (${TOETS_LENGTHS[best.length].label}).`;
+  };
   const hardCount = hardCities(
     getCityStats(category.id),
     category.locations.map((l) => l.name),
@@ -172,6 +190,26 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
           disabled={hardCount === 0}
           onClick={() => navigate(`/game/${category.id}/${PRACTICE_PACKAGE_ID}${modeQuery}`)}
         />
+      </CardGrid>
+
+      <SectionTitle>Oefentoets</SectionTitle>
+      <CardGrid>
+        {toetsen.map((pkg, i) => (
+          <Card
+            key={pkg.id}
+            title={toetsTitle(i + 1)}
+            description={
+              (i === 0
+                ? `Schrijf de namen op, net als op de toets.`
+                : `In ${i + 1} delen: eerst pakket 1, dan ${toetsen
+                    .slice(1, i + 1)
+                    .map((p) => p.title.toLowerCase())
+                    .join(', dan ')}.`) + bestGrade(i + 1)
+            }
+            color="#c0392b"
+            onClick={() => navigate(`/toets/${category.id}/${i + 1}`)}
+          />
+        ))}
       </CardGrid>
 
       {category.sections.map((section) => (
