@@ -57,58 +57,54 @@ interface GameMapProps {
   maxZoom?: number;
 }
 
-const GameMap: React.FC<GameMapProps> = ({
-  cities,
-  status,
-  onCityClick,
-  highlight,
-  loadShapes,
-  maxZoom = MAX_ZOOM,
-}) => {
-  const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
-  const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
-  return (
-    <MapContainer
-      center={WORLD_CENTER}
-      zoom={WORLD_ZOOM}
-      minZoom={MIN_ZOOM}
-      maxZoom={maxZoom}
-      maxBounds={WORLD_BOUNDS}
-      maxBoundsViscosity={1}
-      wheelPxPerZoomLevel={WHEEL_PX_PER_ZOOM_LEVEL}
-      style={{ height: '100%', width: '100%', background: WATER_COLOR }}
-      // Landen tekenen op canvas: veel sneller dan losse SVG-vormen.
-      preferCanvas
-      // Dubbelklikken zoomt niet: een snelle tweede klik zou als fout antwoord tellen.
-      doubleClickZoom={false}
-    >
-      <WorldLayer />
-      <ResetViewButton />
-      {loadShapes && others.length > 0 && (
-        <ShapeLayers
-          places={others}
-          load={loadShapes}
-          status={status}
-          onPick={onCityClick}
-          highlight={highlight}
-        />
-      )}
-      {highlight !== undefined
-        ? dots
-            .filter((city) => city.name === highlight)
-            .map((city) => (
-              <Marker key={city.name} position={[city.lat, city.lng]} icon={PULSE_ICON} />
-            ))
-        : dots.map((city) => (
-            <Marker
-              key={city.name}
-              position={[city.lat, city.lng]}
-              icon={ICONS[status[city.name] ?? 'unanswered']}
-              eventHandlers={{ click: () => onCityClick(city.name) }}
-            />
-          ))}
-    </MapContainer>
-  );
-};
+// ⚡ Bolt: Wrapped in React.memo to skip heavy re-renders triggered by ephemeral game states (like timeouts in parent).
+const GameMap: React.FC<GameMapProps> = React.memo(
+  ({ cities, status, onCityClick, highlight, loadShapes, maxZoom = MAX_ZOOM }) => {
+    const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
+    const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
+    return (
+      <MapContainer
+        center={WORLD_CENTER}
+        zoom={WORLD_ZOOM}
+        minZoom={MIN_ZOOM}
+        maxZoom={maxZoom}
+        maxBounds={WORLD_BOUNDS}
+        maxBoundsViscosity={1}
+        wheelPxPerZoomLevel={WHEEL_PX_PER_ZOOM_LEVEL}
+        style={{ height: '100%', width: '100%', background: WATER_COLOR }}
+        // Landen tekenen op canvas: veel sneller dan losse SVG-vormen.
+        preferCanvas
+        // Dubbelklikken zoomt niet: een snelle tweede klik zou als fout antwoord tellen.
+        doubleClickZoom={false}
+      >
+        <WorldLayer />
+        <ResetViewButton />
+        {loadShapes && others.length > 0 && (
+          <ShapeLayers
+            places={others}
+            load={loadShapes}
+            status={status}
+            onPick={onCityClick}
+            highlight={highlight}
+          />
+        )}
+        {highlight !== undefined
+          ? dots
+              .filter((city) => city.name === highlight)
+              .map((city) => (
+                <Marker key={city.name} position={[city.lat, city.lng]} icon={PULSE_ICON} />
+              ))
+          : dots.map((city) => (
+              <Marker
+                key={city.name}
+                position={[city.lat, city.lng]}
+                icon={ICONS[status[city.name] ?? 'unanswered']}
+                eventHandlers={{ click: () => onCityClick(city.name) }}
+              />
+            ))}
+      </MapContainer>
+    );
+  },
+);
 
 export default GameMap;

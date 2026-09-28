@@ -74,42 +74,43 @@ interface ChoicePanelProps {
 }
 
 /** Vier antwoordknoppen naast de kaart; ook te kiezen met toets 1 t/m 4. */
-const ChoicePanel: React.FC<ChoicePanelProps> = ({
-  choices,
-  wrong,
-  removed,
-  onChoose,
-  question,
-}) => {
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      const index = Number(event.key) - 1;
-      const name = choices[index];
-      if (name && !wrong.includes(name) && !removed.includes(name)) onChoose(name);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [choices, wrong, removed, onChoose]);
+// ⚡ Bolt: Wrapped in React.memo to skip heavy re-renders triggered by ephemeral game states (like timeouts in parent).
+const ChoicePanel: React.FC<ChoicePanelProps> = React.memo(
+  ({ choices, wrong, removed, onChoose, question }) => {
+    useEffect(() => {
+      const onKey = (event: KeyboardEvent) => {
+        const index = Number(event.key) - 1;
+        const name = choices[index];
+        if (name && !wrong.includes(name) && !removed.includes(name)) onChoose(name);
+      };
+      window.addEventListener('keydown', onKey);
+      return () => window.removeEventListener('keydown', onKey);
+    }, [choices, wrong, removed, onChoose]);
 
-  return (
-    <Panel aria-label="Antwoorden">
-      <Question>{question}</Question>
-      {choices.map((name, i) => {
-        const state = removed.includes(name) ? 'removed' : wrong.includes(name) ? 'wrong' : 'open';
-        return (
-          <Choice
-            key={name}
-            state={state}
-            disabled={state !== 'open'}
-            onClick={() => onChoose(name)}
-          >
-            <Key>{i + 1}</Key>
-            {name}
-          </Choice>
-        );
-      })}
-    </Panel>
-  );
-};
+    return (
+      <Panel aria-label="Antwoorden">
+        <Question>{question}</Question>
+        {choices.map((name, i) => {
+          const state = removed.includes(name)
+            ? 'removed'
+            : wrong.includes(name)
+              ? 'wrong'
+              : 'open';
+          return (
+            <Choice
+              key={name}
+              state={state}
+              disabled={state !== 'open'}
+              onClick={() => onChoose(name)}
+            >
+              <Key>{i + 1}</Key>
+              {name}
+            </Choice>
+          );
+        })}
+      </Panel>
+    );
+  },
+);
 
 export default ChoicePanel;

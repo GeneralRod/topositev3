@@ -112,56 +112,48 @@ interface GameHeaderProps {
   onBack: () => void;
 }
 
-const GameHeader: React.FC<GameHeaderProps> = ({
-  title,
-  question,
-  hint,
-  coins,
-  found,
-  total,
-  onHint,
-  hintsLeft,
-  onRestart,
-  onBack,
-}) => (
-  <Header>
-    <HeaderLeft>
-      <Title>{title}</Title>
-      {question && (
-        <Question>
-          {question}
-          <Coins>
-            <FaCoins />
-            {coins}
-          </Coins>
-        </Question>
-      )}
-    </HeaderLeft>
-    <Controls>
-      {hint && <Hint>{hint}</Hint>}
-      <Button
-        onClick={onHint}
-        disabled={hint !== null || !question || hintsLeft === 0}
-        title={hintsLeft === 0 ? 'Je hints zijn op voor dit spel' : undefined}
-      >
-        Hint ({hintsLeft})
-      </Button>
-      <Stat>
-        <StatLabel>Score</StatLabel>
-        <StatValue>
-          {found}/{total}
-        </StatValue>
-      </Stat>
-      <Stat>
-        <StatLabel>Nog te vinden</StatLabel>
-        <StatValue>{total - found}</StatValue>
-      </Stat>
-      <Button variant="danger" onClick={onRestart}>
-        Herstart
-      </Button>
-      <Button onClick={onBack}>Terug</Button>
-    </Controls>
-  </Header>
+// ⚡ Bolt: Wrapped in React.memo to skip heavy re-renders triggered by ephemeral game states (like timeouts in parent).
+const GameHeader: React.FC<GameHeaderProps> = React.memo(
+  ({ title, question, hint, coins, found, total, onHint, hintsLeft, onRestart, onBack }) => (
+    <Header>
+      <HeaderLeft>
+        <Title>{title}</Title>
+        {question && (
+          <Question>
+            {question}
+            <Coins>
+              <FaCoins />
+              {coins}
+            </Coins>
+          </Question>
+        )}
+      </HeaderLeft>
+      <Controls>
+        {hint && <Hint>{hint}</Hint>}
+        <Button
+          onClick={onHint}
+          disabled={hint !== null || !question || hintsLeft === 0}
+          title={hintsLeft === 0 ? 'Je hints zijn op voor dit spel' : undefined}
+        >
+          Hint ({hintsLeft})
+        </Button>
+        <Stat>
+          <StatLabel>Score</StatLabel>
+          <StatValue>
+            {found}/{total}
+          </StatValue>
+        </Stat>
+        <Stat>
+          <StatLabel>Nog te vinden</StatLabel>
+          <StatValue>{total - found}</StatValue>
+        </Stat>
+        <Button variant="danger" onClick={onRestart}>
+          Herstart
+        </Button>
+        <Button onClick={onBack}>Terug</Button>
+      </Controls>
+    </Header>
+  ),
 );
 
 export default GameHeader;

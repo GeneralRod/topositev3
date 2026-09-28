@@ -89,6 +89,9 @@ const EmptyMessage = styled.div`
   align-items: center;
 `;
 
+// ⚡ Bolt: A stable, empty array reference to prevent unnecessary re-renders in memoized child components when arrays are conditionally empty.
+const EMPTY_ARRAY: string[] = [];
+
 interface GameProps {
   packageId: string;
   categoryId: string;
@@ -187,12 +190,14 @@ const Game: React.FC<GameProps> = ({
             choicePool(state.currentCity, cities),
             seededRandom(`${state.currentCity}#${answeredCount}`),
           )
-        : [],
+        : EMPTY_ARRAY,
     [isChoice, state.currentCity, cities, answeredCount],
   );
-  const wrong = wrongPicks.city === state.currentCity ? wrongPicks.names : [];
+  const wrong = wrongPicks.city === state.currentCity ? wrongPicks.names : EMPTY_ARRAY;
   const removed =
-    isChoice && state.hintUsed && state.currentCity ? hintRemovals(choices, state.currentCity) : [];
+    isChoice && state.hintUsed && state.currentCity
+      ? hintRemovals(choices, state.currentCity)
+      : EMPTY_ARRAY;
 
   if (cities.length === 0) {
     return (

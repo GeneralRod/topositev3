@@ -1,0 +1,4 @@
+## 2026-09-28 - Prevent map re-renders on ephemeral UI states
+
+**Learning:** In a heavily componentized application like this, ephemeral UI states (such as a temporary feedback message controlled by a timeout in `Game.tsx`) can trigger cascading re-renders across the entire component tree when the state clears. For complex components like `react-leaflet` maps (`GameMap`) with many markers, this causes noticeable performance hiccups because React creates new references for array props on each render, bypassing normal bailouts.
+**Action:** Always wrap heavy child components (`GameMap`, `GameHeader`, `ChoicePanel`) in `React.memo` and ensure that all array or object props passed down (like `wrong` and `removed` arrays) use stable references (e.g., a module-level `EMPTY_ARRAY` instead of inline `[]`) so that memoization correctly skips the re-render.
