@@ -126,4 +126,5 @@ const GameMap: React.FC<GameMapProps> = ({
   );
 };
 
-export default GameMap;
+// Niet opnieuw tekenen als alleen de melding "Goed!" verschijnt of verdwijnt (idee van Jules).
+export default React.memo(GameMap);

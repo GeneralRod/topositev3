@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { loadSaveData, migrateLegacyGame, STORAGE_KEY, type KeyValueStore } from './storage';
+import {
+  loadSaveData,
+  migrateLegacyGame,
+  STORAGE_KEY,
+  writeSaveData,
+  emptySaveData,
+  type KeyValueStore,
+} from './storage';
 import * as storage from './index';
 
 function fakeStore(initial: Record<string, string> = {}): KeyValueStore & {
@@ -247,6 +254,10 @@ describe('opslag in de app', () => {
     expect(storage.getPlayMode()).toBe('choice');
   });
 
+  it('geeft een lege dagelijkse status als de categorie nog niet bestaat', () => {
+    expect(storage.getDaily('onbekend')).toEqual({ lastCompleted: null, streak: 0 });
+  });
+
   it('geeft de bonus van de dagelijkse uitdaging één keer per dag', () => {
     expect(storage.completeDailyChallenge('capitals', '2026-09-24')).toEqual({
       bonus: 50,
@@ -299,5 +310,34 @@ describe('opslag in de app', () => {
     };
     storage.addCoins(1);
     expect(storage.getCoins()).toBe(21);
+  });
+});
+
+describe('writeSaveData', () => {
+  it('slaat gegevens op en geeft true terug', () => {
+    const store = fakeStore();
+    const data = emptySaveData();
+    data.coins = 100;
+
+    const result = writeSaveData(store, data);
+
+    expect(result).toBe(true);
+    const savedRaw = store.map.get(STORAGE_KEY);
+    expect(savedRaw).toBeDefined();
+    const saved = JSON.parse(savedRaw!);
+    expect(saved.coins).toBe(100);
+    expect(saved.version).toBe(2);
+  });
+
+  it('geeft false terug als setItem een fout gooit', () => {
+    const store = fakeStore();
+    store.setItem = () => {
+      throw new Error('QuotaExceededError');
+    };
+    const data = emptySaveData();
+
+    const result = writeSaveData(store, data);
+
+    expect(result).toBe(false);
   });
 });
