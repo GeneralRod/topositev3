@@ -141,7 +141,15 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
 - [ ] Nederland: provinciehoofdsteden en grote steden
 - [ ] Nederland: provincies, rivieren en wateren
 - [ ] Europa: landen en hoofdsteden
-- [ ] De wereld: landen
+- [x] Landen van de wereld (lijst van de eigenaar, 75 landen in 3 pakketten; staat in
+      `scripts/landen/items.mjs`): pakket 1 (50, ook los te oefenen per werelddeel: Europa,
+      Afrika, Noord-Amerika, Azië, Zuid-Amerika, Oceanië), pakket 2 (10), pakket 3 (15),
+      gecombineerd 1+2, 2+3, 1+2+3, en een interactieve kaart per pakket. De landen komen uit de
+      wereldkaart zelf (world-atlas), dus ze passen er precies op en er laadt niets extra's;
+      Engeland komt uit de 'map units' van Natural Earth (`node scripts/landen/build.mjs`).
+      Buurlanden krijgen een andere tint. Een heel klein pakket (Oceanië: 2 landen) krijgt bij
+      meerkeuze foute antwoorden uit de rest van de landen. Bij meerkeuze schuift de kaart
+      naar wat er knippert als dat buiten beeld ligt.
 - Wateren en landschappen over de wereld (lijst van de eigenaar, 70 onderdelen in 4 pakketten;
   staat helemaal in `scripts/wateren/items.mjs`):
   - [x] Pakket 1 (40): oceanen, zeeën, rivieren, meren, woestijnen, gebergtes en bergen.

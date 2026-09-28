@@ -29,3 +29,6 @@ coverage
 
 # Ruwe Natural Earth-bestanden voor scripts/wateren (worden vanzelf gedownload)
 scripts/wateren/.cache
+scripts/landen/.cache
+# Ruwe bronbestanden voor scripts/nederland (die staan op de branch nederland)
+scripts/nederland/.cache

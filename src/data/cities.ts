@@ -2,7 +2,8 @@
  * Soort plek. Een stad is een stip; een berg een driehoekje; de rest heeft een
  * eigen vorm op de kaart (zie src/components/map/ShapeLayers.tsx).
  */
-export type PlaceKind = 'city' | 'sea' | 'lake' | 'river' | 'desert' | 'range' | 'peak' | 'trench';
+export type PlaceKind =
+  'city' | 'sea' | 'lake' | 'river' | 'desert' | 'range' | 'peak' | 'trench' | 'country';
 
 export interface City {
   name: string;

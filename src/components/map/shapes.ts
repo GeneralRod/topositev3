@@ -8,7 +8,14 @@ import type { PlaceKind } from '../../data/cities';
 import type { CityStatus } from '../../game/rules';
 import { COAST_COLOR, WATER_COLOR } from './mapSettings';
 
-export interface ShapeData extends FeatureCollection<Geometry, { name: string; kind: PlaceKind }> {
+export interface ShapeProperties {
+  name: string;
+  kind: PlaceKind;
+  /** Vaste tint (landen: buren verschillen, zoals op een atlaskaart). */
+  tint?: number;
+}
+
+export interface ShapeData extends FeatureCollection<Geometry, ShapeProperties> {
   /**
    * Grenzen tussen zeeën (in open water), om te zien waar de ene zee ophoudt. Per
    * paar zeeën; '-' is zee die bij geen onderdeel hoort.
@@ -16,7 +23,7 @@ export interface ShapeData extends FeatureCollection<Geometry, { name: string; k
   seaBorders: Array<MultiLineString & { between: [string, string] }>;
 }
 
-export type ShapeFeature = Feature<Geometry, { name: string; kind: PlaceKind }>;
+export type ShapeFeature = Feature<Geometry, ShapeProperties>;
 
 // ---------- punt in vlak ----------
 
@@ -59,8 +66,16 @@ export const SHAPE_COLORS = {
   /** Trog: donker, zoals diep water op een atlaskaart. */
   trench: '#1b2a6b',
   trenchEdge: '#0d1540',
+  /** Rand van een land als de muis erop staat. */
+  countryEdge: '#8a7650',
   highlight: '#ff9800',
 } as const;
+
+/**
+ * Tinten voor landen (zacht, zoals op een atlaskaart). Buurlanden krijgen een
+ * andere tint. Geen groen of paars: die betekenen 'gevonden'.
+ */
+export const AREA_TINTS = ['#f6d38b', '#f4b49a', '#e9c7a0', '#f2a7b8', '#d8c48c'] as const;
 
 /**
  * Meer dat niet in het pakket zit: gewoon water, net als de zee op de wereldkaart
@@ -157,6 +172,13 @@ export function shapeStyle(
         dashArray: done ? undefined : '5 4',
         fillColor: done ? doneColor : SHAPE_COLORS.desert,
         fillOpacity: (done ? 0.55 : 0.45) + (hovered ? 0.25 : 0),
+      };
+    case 'country':
+      return {
+        color: hovered ? SHAPE_COLORS.countryEdge : '#ffffff',
+        weight: hovered ? 3 : 1,
+        fillColor: done ? doneColor : AREA_TINTS[tint % AREA_TINTS.length],
+        fillOpacity: (done ? 0.65 : 0.8) + (hovered ? 0.15 : 0),
       };
     default:
       return {

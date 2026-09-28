@@ -36,18 +36,25 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   (`ShapeLayers.tsx`, `shapes.ts`)
 - `scripts/wateren/`: maakt de kaartgegevens van "Wateren en landschappen" uit Natural Earth
   (`items.mjs` = de lijst; na aanpassen `node scripts/wateren/build.mjs` draaien)
+- `scripts/landen/`: lijst van "Landen van de wereld" (`items.mjs`); `node scripts/landen/build.mjs`
+  maakt `src/data/landen/places.json` en `england.json`; de vormen zelf komen van de wereldkaart
 
-## Stand van zaken (overdracht, 25 september 2026)
+## Stand van zaken (overdracht, 28 september 2026)
 
 - Live: fase 1 t/m 3, nieuwe prijzenkast met werkplaats, fase 6 deel 1 t/m 5 (kaart, lastige
   steden en sterren, meerkeuze, dagelijkse uitdaging, extra prijzen en prestatiebord), en de
   categorie "Wateren en landschappen over de wereld" compleet: alle 70 onderdelen in pakket
   1 t/m 4 (met tinten per zee, oplichten bij aanwijzen, namen op de interactieve kaart).
 - Ook live: meren buiten het pakket altijd als gewoon water.
-- Open: pull request met fase 7 in het plan (alleen tekst), wacht op oké eigenaar.
+- Ook in het plan: fase 7 (optionele accounts).
+- Open: pull request #108 "Nederland" (branch `nederland`, 79 plekken, eigen precieze kaart). De
+  eigenaar heeft nog wat feedback (80-90% goed) en wil die later afmaken.
+- Open: pull request "Landen van de wereld" (branch `landen`), wacht op test/oké eigenaar.
+- Let op bij het mergen van de tweede van die twee: beide voegen soorten plekken en tinten toe
+  (`cities.ts`, `shapes.ts`, `ShapeLayers.tsx`, `choices.ts`, `catalog.ts`); samenvoegen.
 - Netlify heet nu `topografiewereld` (live: https://topografiewereld.netlify.app); voorbeeldlinks
   zijn `deploy-preview-<nummer>--topografiewereld.netlify.app`.
-- Volgende: Nederland. Zie `PLAN.md` fase 6. Voor later: optionele accounts voor kinderen en
+- Volgende: feedback Nederland verwerken. Zie `PLAN.md` fase 6. Voor later: optionele accounts voor kinderen en
   leerkrachten (`PLAN.md` fase 7); oefenen zonder account moet altijd blijven werken.
 - Kaartprecisie nooit lager dan nu (Natural Earth 10m, `SEA_SIMPLIFY = 1e-3`): wens eigenaar.
 - Pakket-id's moeten uniek zijn over alle categorieën (sterren en spellen worden per id bewaard).

@@ -124,6 +124,9 @@ const Game: React.FC<GameProps> = ({
   const cityNames = useMemo(() => cities.map((c) => c.name), [cities]);
   const category = findCategory(categoryId);
   const words = category?.words ?? { one: 'stad', many: 'steden' };
+  // 'De stad' en 'de plek', maar 'het land': "welk land", "het juiste land".
+  const which = words.neuter ? 'Welk' : 'Welke';
+  const the = words.neuter ? 'het' : 'de';
   const isChoice = mode === 'choice';
   const [extraMessage, setExtraMessage] = useState<string | null>(null);
   const handleComplete = useCallback(() => {
@@ -171,10 +174,10 @@ const Game: React.FC<GameProps> = ({
               : `Goed! Je hebt ${result.city} gevonden!`
             : isChoice
               ? 'Helaas, probeer het nog eens.'
-              : `Dit is niet de juiste ${words.one}.`,
+              : `Dit is niet ${the} juiste ${words.one}.`,
       }));
     },
-    [clickCity, isChoice, state.currentCity, words.one],
+    [clickCity, isChoice, state.currentCity, the, words.one],
   );
 
   // Meerkeuze: vier antwoorden per vraag, vast zolang dezelfde vraag openstaat.
@@ -184,11 +187,11 @@ const Game: React.FC<GameProps> = ({
       isChoice && state.currentCity
         ? pickChoices(
             state.currentCity,
-            choicePool(state.currentCity, cities),
+            choicePool(state.currentCity, cities, category?.locations),
             seededRandom(`${state.currentCity}#${answeredCount}`),
           )
         : [],
-    [isChoice, state.currentCity, cities, answeredCount],
+    [isChoice, state.currentCity, cities, category, answeredCount],
   );
   const wrong = wrongPicks.city === state.currentCity ? wrongPicks.names : [];
   const removed =
@@ -212,7 +215,7 @@ const Game: React.FC<GameProps> = ({
         question={
           currentCity
             ? isChoice
-              ? `Welke ${words.one} knippert?`
+              ? `${which} ${words.one} knippert?`
               : `Vind: ${currentCity.name}`
             : null
         }
@@ -253,7 +256,7 @@ const Game: React.FC<GameProps> = ({
             wrong={wrong}
             removed={removed}
             onChoose={handleCityClick}
-            question={`Welke ${words.one} is dit?`}
+            question={`${which} ${words.one} is dit?`}
           />
         )}
       </PlayArea>

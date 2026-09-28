@@ -59,6 +59,24 @@ describe('foute antwoorden van dezelfde soort', () => {
     const cities = POOL.map((name) => ({ name }));
     expect(choicePool('Rome', cities)).toEqual(POOL);
   });
+
+  it('vult een heel klein pakket aan met landen uit de rest van het onderwerp', () => {
+    const oceanie = ['Australië', 'Nieuw-Zeeland'].map((name) => ({ name, kind: 'country' }));
+    const alle = [
+      ...oceanie,
+      ...['Japan', 'Peru', 'Kenia'].map((name) => ({ name, kind: 'country' })),
+      { name: 'Nijl', kind: 'river' },
+    ];
+    expect(choicePool('Australië', oceanie, alle).sort()).toEqual([
+      'Australië',
+      'Japan',
+      'Kenia',
+      'Nieuw-Zeeland',
+      'Peru',
+    ]);
+    // Zonder aanvulling: alleen wat er is.
+    expect(choicePool('Australië', oceanie)).toHaveLength(2);
+  });
 });
 
 describe('vaste antwoorden per vraag', () => {

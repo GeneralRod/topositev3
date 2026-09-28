@@ -40,21 +40,30 @@ const KIND_GROUP: Record<string, string> = {
   desert: 'land',
   range: 'land',
   peak: 'land',
+  country: 'country',
 };
 
 /**
  * De namen waaruit de foute antwoorden komen: liefst plekken van dezelfde
  * soort (anders is een rivier tussen drie zeeën te makkelijk). Zijn dat er te
- * weinig, dan alle plekken.
+ * weinig, dan alle plekken. Heeft het spel zelf minder dan vier plekken (bijv.
+ * Oceanië: twee landen), dan komen er plekken van dezelfde soort uit `more` bij
+ * (de rest van het onderwerp).
  */
 export function choicePool(
   answer: string,
   places: Array<{ name: string; kind?: string }>,
+  more: Array<{ name: string; kind?: string }> = [],
 ): string[] {
   const groupOf = (kind?: string) => KIND_GROUP[kind ?? 'city'] ?? 'city';
   const group = groupOf(places.find((p) => p.name === answer)?.kind);
   const similar = places.filter((p) => groupOf(p.kind) === group).map((p) => p.name);
-  return similar.length >= CHOICE_COUNT ? similar : places.map((p) => p.name);
+  if (similar.length >= CHOICE_COUNT) return similar;
+  if (places.length >= CHOICE_COUNT) return places.map((p) => p.name);
+  const extra = more
+    .filter((p) => groupOf(p.kind) === group && !places.some((q) => q.name === p.name))
+    .map((p) => p.name);
+  return [...places.map((p) => p.name), ...extra];
 }
 
 /** Hint bij meerkeuze: twee foute antwoorden vallen weg (of minder als er minder zijn). */
