@@ -1,0 +1,19 @@
+--- src/storage/storage.test.ts
++++ src/storage/storage.test.ts
+@@ -250,3 +250,15 @@
+     expect(storage.getCoins()).toBe(21);
+   });
+ });
++
++describe('browserStore fallback', () => {
++  it('valt terug op memoryStore als localStorage ontoegankelijk is', () => {
++    // Door `null` door te geven simuleren we dat de interne opslag niet is geïnitialiseerd.
++    // Omdat jsdom niet geladen is in de testomgeving, gooit `window.localStorage` een ReferenceError,
++    // waardoor `browserStore()` netjes `memoryStore()` teruggeeft.
++    storage.setStoreForTesting(null as unknown as KeyValueStore);
++
++    expect(storage.getCoins()).toBe(0);
++    storage.addCoins(50);
++    expect(storage.getCoins()).toBe(50);
++  });
++});
