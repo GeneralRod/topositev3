@@ -35,7 +35,7 @@
     "@types/three": "^0.180.0",
     "@types/topojson-client": "^3.1.5",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
-    "@typescript-eslint/parser": "^8.45.0",
+    "@typescript-eslint/parser": "^8.70.1",
     "@vitejs/plugin-react": "^6.1.1",
     "eslint": "^9.38.0",
     "eslint-plugin-react-hooks": "^7.0.1",
