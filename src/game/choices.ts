@@ -40,6 +40,10 @@ const KIND_GROUP: Record<string, string> = {
   desert: 'land',
   range: 'land',
   peak: 'land',
+  province: 'province',
+  island: 'island',
+  region: 'region',
+  dike: 'region',
 };
 
 /**

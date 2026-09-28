@@ -3,7 +3,9 @@
 
 import { cities, type City } from '../data/cities';
 import { loadWaterShapes, waterPlaces } from '../data/wateren';
+import { loadNederlandShapes, nederlandMap, nederlandPlaces } from '../data/nederland';
 import type { ShapeData } from '../components/map/shapes';
+import type { CategoryMap } from '../components/map/baseMap';
 
 export interface GamePackage {
   /** Deel van de url en sleutel voor opgeslagen voortgang; niet meer wijzigen. */
@@ -35,6 +37,8 @@ export interface Category {
   loadShapes?: () => Promise<ShapeData>;
   /** Hoe ver je mag inzoomen (standaard: zie mapSettings). */
   maxZoom?: number;
+  /** Eigen kaart (bijv. Nederland) in plaats van de wereldkaart. */
+  map?: CategoryMap;
 }
 
 export const categories: Category[] = [
@@ -252,6 +256,172 @@ export const categories: Category[] = [
             description: 'Bekijk alle wateren en landschappen uit pakket 4',
             color: '#00838f',
             groups: ['wateren4'],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'nederland',
+    title: 'Nederland',
+    description: 'Provincies, steden, wateren, rivieren, eilanden en gebieden',
+    color: '#e8710a',
+    heading: 'Topografie Nederland',
+    locations: nederlandPlaces,
+    words: { one: 'plek', many: 'plekken' },
+    loadShapes: loadNederlandShapes,
+    // Diep genoeg om elk eiland en elke stad precies te zien.
+    maxZoom: 11,
+    map: nederlandMap,
+    sections: [
+      {
+        title: 'Oefenpakketten',
+        kind: 'game',
+        packages: [
+          {
+            id: 'nederland1',
+            title: 'Pakket 1',
+            description: 'De 12 provincies',
+            color: '#e8710a',
+            groups: ['nederland1'],
+          },
+          {
+            id: 'nederland2',
+            title: 'Pakket 2',
+            description: 'Hoofdstad en de provinciehoofdsteden',
+            color: '#1a73e8',
+            groups: ['nederland2'],
+          },
+          {
+            id: 'nederland3',
+            title: 'Pakket 3',
+            description: 'Grote steden',
+            color: '#34a853',
+            groups: ['nederland3'],
+          },
+          {
+            id: 'nederland4',
+            title: 'Pakket 4',
+            description: 'Zeeën, meren en zeearmen',
+            color: '#0f8b8d',
+            groups: ['nederland4'],
+          },
+          {
+            id: 'nederland5',
+            title: 'Pakket 5',
+            description: 'Rivieren en kanalen',
+            color: '#1565c0',
+            groups: ['nederland5'],
+          },
+          {
+            id: 'nederland6',
+            title: 'Pakket 6',
+            description: 'Eilanden, gebieden, de Afsluitdijk en de Vaalserberg',
+            color: '#8d6e63',
+            groups: ['nederland6'],
+          },
+        ],
+      },
+      {
+        title: 'Gecombineerde Pakketten',
+        kind: 'game',
+        packages: [
+          {
+            id: 'nederland1-2',
+            title: 'Pakket 1 + 2',
+            description: 'Provincies en hun hoofdsteden',
+            color: '#c2185b',
+            groups: ['nederland1', 'nederland2'],
+          },
+          {
+            id: 'nederland2-3',
+            title: 'Pakket 2 + 3',
+            description: 'Alle steden',
+            color: '#6a1b9a',
+            groups: ['nederland2', 'nederland3'],
+          },
+          {
+            id: 'nederland1-2-3',
+            title: 'Pakket 1 + 2 + 3',
+            description: 'Provincies en alle steden',
+            color: '#283593',
+            groups: ['nederland1', 'nederland2', 'nederland3'],
+          },
+          {
+            id: 'nederland4-5',
+            title: 'Pakket 4 + 5',
+            description: 'Al het water: zeeën, meren, rivieren en kanalen',
+            color: '#00695c',
+            groups: ['nederland4', 'nederland5'],
+          },
+          {
+            id: 'nederland4-5-6',
+            title: 'Pakket 4 + 5 + 6',
+            description: 'Water, eilanden en gebieden',
+            color: '#5d4037',
+            groups: ['nederland4', 'nederland5', 'nederland6'],
+          },
+          {
+            id: 'nederland-alles',
+            title: 'Alle pakketten',
+            description: 'Alle 79 plekken van Nederland uit pakket 1 t/m 6',
+            color: '#37474f',
+            groups: [
+              'nederland1',
+              'nederland2',
+              'nederland3',
+              'nederland4',
+              'nederland5',
+              'nederland6',
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Interactieve Kaarten',
+        kind: 'map',
+        packages: [
+          {
+            id: 'nederland-kaart1',
+            title: 'Interactieve kaart pakket 1',
+            description: 'Bekijk de 12 provincies',
+            color: '#e8710a',
+            groups: ['nederland1'],
+          },
+          {
+            id: 'nederland-kaart2',
+            title: 'Interactieve kaart pakket 2',
+            description: 'Bekijk hoofdstad en de provinciehoofdsteden',
+            color: '#1a73e8',
+            groups: ['nederland2'],
+          },
+          {
+            id: 'nederland-kaart3',
+            title: 'Interactieve kaart pakket 3',
+            description: 'Bekijk grote steden',
+            color: '#34a853',
+            groups: ['nederland3'],
+          },
+          {
+            id: 'nederland-kaart4',
+            title: 'Interactieve kaart pakket 4',
+            description: 'Bekijk zeeën, meren en zeearmen',
+            color: '#0f8b8d',
+            groups: ['nederland4'],
+          },
+          {
+            id: 'nederland-kaart5',
+            title: 'Interactieve kaart pakket 5',
+            description: 'Bekijk rivieren en kanalen',
+            color: '#1565c0',
+            groups: ['nederland5'],
+          },
+          {
+            id: 'nederland-kaart6',
+            title: 'Interactieve kaart pakket 6',
+            description: 'Bekijk eilanden, gebieden, de Afsluitdijk en de Vaalserberg',
+            color: '#8d6e63',
+            groups: ['nederland6'],
           },
         ],
       },

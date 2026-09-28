@@ -1,0 +1,634 @@
+[
+  {
+    "name": "Groningen (provincie)",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het noordoosten, aan de Waddenzee",
+    "lat": 53.29219,
+    "lng": 6.73652
+  },
+  {
+    "name": "Friesland",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het noorden, met vier Waddeneilanden",
+    "lat": 53.09247,
+    "lng": 5.84623
+  },
+  {
+    "name": "Drenthe",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het noordoosten, zonder zee of grote rivier",
+    "lat": 52.8875,
+    "lng": 6.68458
+  },
+  {
+    "name": "Overijssel",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het oosten, aan de Duitse grens",
+    "lat": 52.41569,
+    "lng": 6.51263
+  },
+  {
+    "name": "Flevoland",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het midden, drooggelegd land",
+    "lat": 52.37707,
+    "lng": 5.42395
+  },
+  {
+    "name": "Gelderland",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het oosten: de grootste provincie",
+    "lat": 52.10721,
+    "lng": 5.8765
+  },
+  {
+    "name": "Utrecht (provincie)",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het midden: de kleinste provincie op het vasteland",
+    "lat": 52.10427,
+    "lng": 5.31445
+  },
+  {
+    "name": "Noord-Holland",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het westen, tussen Noordzee en IJsselmeer",
+    "lat": 52.5349,
+    "lng": 4.81641
+  },
+  {
+    "name": "Zuid-Holland",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het westen, aan de Noordzee",
+    "lat": 51.96503,
+    "lng": 4.52798
+  },
+  {
+    "name": "Zeeland",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het zuidwesten: eilanden en zeearmen",
+    "lat": 51.46549,
+    "lng": 3.82998
+  },
+  {
+    "name": "Noord-Brabant",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het zuiden, aan de Belgische grens",
+    "lat": 51.55411,
+    "lng": 5.55836
+  },
+  {
+    "name": "Limburg",
+    "package": "nederland1",
+    "kind": "province",
+    "hint": "In het zuidoosten: de smalle strook langs de Maas",
+    "lat": 51.4198,
+    "lng": 6.0632
+  },
+  {
+    "name": "Amsterdam",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Hoofdstad van Nederland (Noord-Holland)",
+    "lat": 52.3728,
+    "lng": 4.8936
+  },
+  {
+    "name": "Groningen",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Groningen",
+    "lat": 53.2192,
+    "lng": 6.5667
+  },
+  {
+    "name": "Leeuwarden",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Friesland",
+    "lat": 53.2012,
+    "lng": 5.7999
+  },
+  {
+    "name": "Assen",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Drenthe",
+    "lat": 52.9925,
+    "lng": 6.5649
+  },
+  {
+    "name": "Zwolle",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Overijssel",
+    "lat": 52.5125,
+    "lng": 6.0944
+  },
+  {
+    "name": "Lelystad",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Flevoland",
+    "lat": 52.5185,
+    "lng": 5.4714
+  },
+  {
+    "name": "Arnhem",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Gelderland",
+    "lat": 51.9851,
+    "lng": 5.8987
+  },
+  {
+    "name": "Utrecht",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Utrecht",
+    "lat": 52.0907,
+    "lng": 5.1214
+  },
+  {
+    "name": "Haarlem",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Noord-Holland",
+    "lat": 52.3809,
+    "lng": 4.6368
+  },
+  {
+    "name": "Den Haag",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Zuid-Holland (regering)",
+    "lat": 52.0799,
+    "lng": 4.3113
+  },
+  {
+    "name": "Middelburg",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Zeeland",
+    "lat": 51.4988,
+    "lng": 3.6109
+  },
+  {
+    "name": "'s-Hertogenbosch",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Noord-Brabant",
+    "lat": 51.6887,
+    "lng": 5.3033
+  },
+  {
+    "name": "Maastricht",
+    "package": "nederland2",
+    "kind": "city",
+    "hint": "Provincie Limburg",
+    "lat": 50.8487,
+    "lng": 5.6889
+  },
+  {
+    "name": "Rotterdam",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Zuid-Holland",
+    "lat": 51.9225,
+    "lng": 4.4792
+  },
+  {
+    "name": "Eindhoven",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Noord-Brabant",
+    "lat": 51.4416,
+    "lng": 5.4697
+  },
+  {
+    "name": "Tilburg",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Noord-Brabant",
+    "lat": 51.5555,
+    "lng": 5.0913
+  },
+  {
+    "name": "Almere",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Flevoland",
+    "lat": 52.3702,
+    "lng": 5.2141
+  },
+  {
+    "name": "Breda",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Noord-Brabant",
+    "lat": 51.589,
+    "lng": 4.7759
+  },
+  {
+    "name": "Nijmegen",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Gelderland",
+    "lat": 51.8475,
+    "lng": 5.8625
+  },
+  {
+    "name": "Apeldoorn",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Gelderland",
+    "lat": 52.2112,
+    "lng": 5.9699
+  },
+  {
+    "name": "Enschede",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Overijssel",
+    "lat": 52.2215,
+    "lng": 6.8937
+  },
+  {
+    "name": "Amersfoort",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Utrecht",
+    "lat": 52.1561,
+    "lng": 5.3878
+  },
+  {
+    "name": "Leiden",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Zuid-Holland",
+    "lat": 52.1601,
+    "lng": 4.497
+  },
+  {
+    "name": "Dordrecht",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Zuid-Holland",
+    "lat": 51.8133,
+    "lng": 4.6901
+  },
+  {
+    "name": "Deventer",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Overijssel",
+    "lat": 52.255,
+    "lng": 6.1639
+  },
+  {
+    "name": "Venlo",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Limburg",
+    "lat": 51.3704,
+    "lng": 6.1724
+  },
+  {
+    "name": "Den Helder",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Noord-Holland",
+    "lat": 52.9563,
+    "lng": 4.7601
+  },
+  {
+    "name": "Emmen",
+    "package": "nederland3",
+    "kind": "city",
+    "hint": "Provincie Drenthe",
+    "lat": 52.7792,
+    "lng": 6.9069
+  },
+  {
+    "name": "Noordzee",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Zee ten westen en noorden van Nederland",
+    "lat": 56.788,
+    "lng": 2.75178
+  },
+  {
+    "name": "Waddenzee",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Tussen de Waddeneilanden en het vasteland",
+    "lat": 53.13092,
+    "lng": 5.08084
+  },
+  {
+    "name": "IJsselmeer",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Meer achter de Afsluitdijk",
+    "lat": 52.73196,
+    "lng": 5.47975
+  },
+  {
+    "name": "Markermeer",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Meer tussen Noord-Holland en Flevoland",
+    "lat": 52.53247,
+    "lng": 5.21658
+  },
+  {
+    "name": "Veluwemeer",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Randmeer tussen Flevoland en de Veluwe",
+    "lat": 52.38116,
+    "lng": 5.6563
+  },
+  {
+    "name": "Lauwersmeer",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Meer tussen Friesland en Groningen",
+    "lat": 53.3945,
+    "lng": 6.1672
+  },
+  {
+    "name": "Dollard",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Baai in het uiterste noordoosten, bij Duitsland",
+    "lat": 53.28295,
+    "lng": 7.18199
+  },
+  {
+    "name": "Oosterschelde",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Zeearm in Zeeland met de stormvloedkering",
+    "lat": 51.47935,
+    "lng": 4.13198
+  },
+  {
+    "name": "Westerschelde",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Zeearm in Zeeland, de vaarweg naar Antwerpen",
+    "lat": 51.41154,
+    "lng": 3.65938
+  },
+  {
+    "name": "Grevelingenmeer",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Meer tussen Schouwen-Duiveland en Goeree-Overflakkee",
+    "lat": 51.77975,
+    "lng": 3.98612
+  },
+  {
+    "name": "Haringvliet",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Water ten zuiden van Voorne-Putten en de Hoeksche Waard",
+    "lat": 51.78058,
+    "lng": 4.21158
+  },
+  {
+    "name": "Hollands Diep",
+    "package": "nederland4",
+    "kind": "sea",
+    "hint": "Breed water tussen Zuid-Holland en Noord-Brabant",
+    "lat": 51.69831,
+    "lng": 4.48311
+  },
+  {
+    "name": "Rijn",
+    "package": "nederland5",
+    "kind": "river",
+    "hint": "Komt bij Lobith Nederland binnen",
+    "lat": 51.84802,
+    "lng": 6.11032
+  },
+  {
+    "name": "Waal",
+    "package": "nederland5",
+    "kind": "river",
+    "hint": "Grootste rivier, langs Nijmegen",
+    "lat": 51.86598,
+    "lng": 5.94459
+  },
+  {
+    "name": "Nederrijn",
+    "package": "nederland5",
+    "kind": "river",
+    "hint": "Langs Arnhem en Wageningen",
+    "lat": 51.96806,
+    "lng": 5.53812
+  },
+  {
+    "name": "Lek",
+    "package": "nederland5",
+    "kind": "river",
+    "hint": "Vervolg van de Nederrijn, naar Rotterdam",
+    "lat": 51.96878,
+    "lng": 5.02997
+  },
+  {
+    "name": "IJssel",
+    "package": "nederland5",
+    "kind": "river",
+    "hint": "Van Arnhem naar het Ketelmeer, langs Deventer en Zwolle",
+    "lat": 52.37701,
+    "lng": 6.11201
+  },
+  {
+    "name": "Maas",
+    "package": "nederland5",
+    "kind": "river",
+    "hint": "Door Limburg en Brabant, langs Maastricht en Venlo",
+    "lat": 51.02979,
+    "lng": 5.76237
+  },
+  {
+    "name": "Merwede",
+    "package": "nederland5",
+    "kind": "river",
+    "hint": "Vervolg van de Waal, bij Dordrecht",
+    "lat": 51.79713,
+    "lng": 4.8303
+  },
+  {
+    "name": "Vecht",
+    "package": "nederland5",
+    "kind": "river",
+    "hint": "Van Utrecht naar Muiden",
+    "lat": 52.11846,
+    "lng": 5.08906
+  },
+  {
+    "name": "Nieuwe Waterweg",
+    "package": "nederland5",
+    "kind": "river",
+    "hint": "Van Rotterdam naar zee bij Hoek van Holland",
+    "lat": 51.9682,
+    "lng": 4.13684
+  },
+  {
+    "name": "Noordzeekanaal",
+    "package": "nederland5",
+    "kind": "river",
+    "hint": "Van Amsterdam naar IJmuiden",
+    "lat": 52.44123,
+    "lng": 4.70085
+  },
+  {
+    "name": "Amsterdam-Rijnkanaal",
+    "package": "nederland5",
+    "kind": "river",
+    "hint": "Van Amsterdam naar de Waal bij Tiel",
+    "lat": 51.99454,
+    "lng": 5.22558
+  },
+  {
+    "name": "Texel",
+    "package": "nederland6",
+    "kind": "island",
+    "hint": "Grootste Waddeneiland (Noord-Holland)",
+    "lat": 53.08096,
+    "lng": 4.81051
+  },
+  {
+    "name": "Vlieland",
+    "package": "nederland6",
+    "kind": "island",
+    "hint": "Waddeneiland (Friesland)",
+    "lat": 53.23239,
+    "lng": 4.91823
+  },
+  {
+    "name": "Terschelling",
+    "package": "nederland6",
+    "kind": "island",
+    "hint": "Waddeneiland (Friesland)",
+    "lat": 53.37083,
+    "lng": 5.19576
+  },
+  {
+    "name": "Ameland",
+    "package": "nederland6",
+    "kind": "island",
+    "hint": "Waddeneiland (Friesland)",
+    "lat": 53.44834,
+    "lng": 5.6598
+  },
+  {
+    "name": "Schiermonnikoog",
+    "package": "nederland6",
+    "kind": "island",
+    "hint": "Kleinste bewoonde Waddeneiland (Friesland)",
+    "lat": 53.48679,
+    "lng": 6.19296
+  },
+  {
+    "name": "Walcheren",
+    "package": "nederland6",
+    "kind": "island",
+    "hint": "Zeeland, met Middelburg en Vlissingen",
+    "lat": 51.52024,
+    "lng": 3.57529
+  },
+  {
+    "name": "Schouwen-Duiveland",
+    "package": "nederland6",
+    "kind": "island",
+    "hint": "Zeeland, tussen Grevelingen en Oosterschelde",
+    "lat": 51.66192,
+    "lng": 3.97682
+  },
+  {
+    "name": "Goeree-Overflakkee",
+    "package": "nederland6",
+    "kind": "island",
+    "hint": "Zuid-Holland, tussen Grevelingen en Haringvliet",
+    "lat": 51.75662,
+    "lng": 4.08496
+  },
+  {
+    "name": "Veluwe",
+    "package": "nederland6",
+    "kind": "region",
+    "hint": "Bosrijk gebied in Gelderland",
+    "lat": 52.26031,
+    "lng": 5.85137
+  },
+  {
+    "name": "Achterhoek",
+    "package": "nederland6",
+    "kind": "region",
+    "hint": "Oosten van Gelderland, aan de Duitse grens",
+    "lat": 52.0441,
+    "lng": 6.37951
+  },
+  {
+    "name": "Twente",
+    "package": "nederland6",
+    "kind": "region",
+    "hint": "Oosten van Overijssel, met Enschede",
+    "lat": 52.29162,
+    "lng": 6.78203
+  },
+  {
+    "name": "Betuwe",
+    "package": "nederland6",
+    "kind": "region",
+    "hint": "Tussen Nederrijn/Lek en Waal",
+    "lat": 51.89353,
+    "lng": 5.24742
+  },
+  {
+    "name": "Zeeuws-Vlaanderen",
+    "package": "nederland6",
+    "kind": "region",
+    "hint": "Zeeland, ten zuiden van de Westerschelde",
+    "lat": 51.29169,
+    "lng": 3.93911
+  },
+  {
+    "name": "Noordoostpolder",
+    "package": "nederland6",
+    "kind": "region",
+    "hint": "Flevoland, drooggelegd in 1942",
+    "lat": 52.72375,
+    "lng": 5.71267
+  },
+  {
+    "name": "Afsluitdijk",
+    "package": "nederland6",
+    "kind": "dike",
+    "hint": "Dijk tussen Noord-Holland en Friesland",
+    "lat": 53.06772,
+    "lng": 5.29785
+  },
+  {
+    "name": "Vaalserberg",
+    "package": "nederland6",
+    "kind": "peak",
+    "hint": "Hoogste punt van Nederland (Limburg)",
+    "lat": 50.75562,
+    "lng": 6.0168
+  }
+]

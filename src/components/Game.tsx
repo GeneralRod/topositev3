@@ -245,6 +245,7 @@ const Game: React.FC<GameProps> = ({
             highlight={isChoice ? state.currentCity : undefined}
             loadShapes={category?.loadShapes}
             maxZoom={category?.maxZoom}
+            map={category?.map}
           />
         </MapWrapper>
         {isChoice && state.currentCity && (

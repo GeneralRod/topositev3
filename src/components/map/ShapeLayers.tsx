@@ -14,13 +14,13 @@ import {
   type ShapeData,
   type ShapeFeature,
 } from './shapes';
-import { isOnLand } from './world';
+import { isOnLand as isOnWorldLand } from './world';
 import { splitAtDateLine } from './dateLine';
 
 // Vormen op de kaart, in lagen:
 //   zeeën (onder het land, zodat het land de precieze kust tekent)
-//   land (WorldLayer, overlayPane)
-//   gebergtes, woestijnen, meren en rivieren (boven het land)
+//   land (WorldLayer of BaseLayer, overlayPane)
+//   provincies, gebieden, eilanden, meren, rivieren en dijken (boven het land)
 //   bergtoppen (driehoekjes)
 // Zeeën liggen onder het land en krijgen dus geen klikken: een klik op de kaart
 // die niets anders raakt, wordt hier zelf getest ('in welke zee ligt dit?').
@@ -84,8 +84,21 @@ function wrapLng(lng: number): number {
   return ((((lng + 180) % 360) + 360) % 360) - 180;
 }
 
-/** Tekenvolgorde boven het land: grote vlakken eerst, rivieren bovenop. */
-const DRAW_ORDER = ['range', 'desert', 'lake', 'trench', 'river'];
+/** Tekenvolgorde boven het land: grote vlakken eerst, rivieren en dijken bovenop. */
+const DRAW_ORDER = [
+  'province',
+  'range',
+  'desert',
+  'region',
+  'island',
+  'lake',
+  'trench',
+  'river',
+  'dike',
+];
+
+/** Vlakken die onder de meren komen (een meer kan in een gebergte of provincie liggen). */
+const AREAS: Array<City['kind']> = ['range', 'desert', 'province', 'region', 'island'];
 
 function usePanes(): void {
   const map = useMap();
@@ -108,9 +121,18 @@ interface ShapeLayersProps {
   onPick?: (name: string) => void;
   /** Meerkeuze: toon alleen deze plek, knipperend. */
   highlight?: string | null;
+  /** Ligt dit punt op land? Standaard volgens de wereldkaart. */
+  isOnLand?: (lng: number, lat: number) => boolean;
 }
 
-const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick, highlight }) => {
+const ShapeLayers: React.FC<ShapeLayersProps> = ({
+  places,
+  load,
+  status,
+  onPick,
+  highlight,
+  isOnLand = isOnWorldLand,
+}) => {
   usePanes();
   const [data, setData] = useState<ShapeData | null>(null);
   const [popup, setPopup] = useState<{ name: string; latlng: L.LatLng } | null>(null);
@@ -273,7 +295,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
     .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
     .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
   // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
-  const isArea = (p: City) => p.kind === 'range' || p.kind === 'desert';
+  const isArea = (p: City) => AREAS.includes(p.kind);
 
   const renderShape = (place: City) => (
     <GeoJSON
@@ -283,6 +305,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({ places, load, status, onPick,
       bubblingMouseEvents={false}
       style={shapeStyle(place.kind!, statusOf(place.name), {
         hovered: hoverShape === place.name,
+        tint: byName.get(place.name)!.properties.tint,
       })}
       eventHandlers={{
         click: (event) => pick(place.name, event.latlng),
