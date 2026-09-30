@@ -299,8 +299,11 @@ nooit met dit account ingelogd was). Zo telt alleen wat er sindsdien nieuw is bi
 - [x] Plan en besluiten vastleggen (dit stuk)
 - [x] Fundering, nog niets zichtbaar: samenvoegregels als pure functies met tests, en in
       `src/storage` een manier om wijzigingen te volgen en gegevens in één keer te vervangen
-- [ ] Supabase inrichten: project in de EU, tabel met voortgang per account, beveiligd zodat je
-      alleen je eigen voortgang kunt lezen en schrijven
+- [x] Supabase inrichten: project in de EU, tabel met voortgang per account, beveiligd zodat je
+      alleen je eigen voortgang kunt lezen en schrijven. Project `topografiewereld`
+      (`xjzapefnqfmwudchwvhl`, Frankfurt, gratis plan); tabel in
+      `supabase/migrations/20260930190000_progress.sql`, beveiliging getest met twee
+      proefaccounts.
 - [ ] Inloggen: knop bovenaan; account maken, inloggen, wachtwoord vergeten, uitloggen
 - [ ] Synchroniseren: voortgang online bewaren en ophalen, samenvoegen bij inloggen; uitloggen
       op een gedeelde computer laat de voortgang van dat account niet achter
