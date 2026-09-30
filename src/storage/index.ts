@@ -13,7 +13,8 @@ import {
   type SaveData,
 } from './storage';
 
-export type { PlayMode } from './storage';
+export type { PlayMode, SaveData } from './storage';
+export { mergeSaveData } from './merge';
 
 function memoryStore(): KeyValueStore {
   const map = new Map<string, string>();
@@ -49,15 +50,49 @@ function state(): SaveData {
   return data;
 }
 
+/** 'change' = gewone wijziging tijdens het spelen, 'replace' = alles in één keer vervangen. */
+export type ChangeReason = 'change' | 'replace';
+export type SaveListener = (data: SaveData, reason: ChangeReason) => void;
+
+const listeners = new Set<SaveListener>();
+
+function notify(reason: ChangeReason): void {
+  for (const listener of listeners) listener(state(), reason);
+}
+
 function update(change: (current: SaveData) => SaveData): void {
   data = change(state());
   writeSaveData(store!, data);
+  notify('change');
+}
+
+/**
+ * Word op de hoogte gehouden van elke wijziging (bijv. om die naar het account
+ * door te sturen). Geeft een functie terug om weer te stoppen.
+ */
+export function subscribe(listener: SaveListener): () => void {
+  listeners.add(listener);
+  return () => void listeners.delete(listener);
+}
+
+/** Alle gegevens zoals ze nu zijn. */
+export function getSaveData(): SaveData {
+  return state();
+}
+
+/** Vervang alle gegevens in één keer (bijv. na samenvoegen met het account). */
+export function replaceSaveData(next: SaveData): void {
+  data = next;
+  store ??= browserStore();
+  writeSaveData(store, data);
+  notify('replace');
 }
 
 /** Alleen voor tests: gebruik een andere opslag en vergeet de kopie in het geheugen. */
 export function setStoreForTesting(testStore: KeyValueStore): void {
   store = testStore;
   data = null;
+  listeners.clear();
 }
 
 export function getCoins(): number {
