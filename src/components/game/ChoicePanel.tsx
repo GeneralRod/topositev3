@@ -112,4 +112,5 @@ const ChoicePanel: React.FC<ChoicePanelProps> = ({
   );
 };
 
-export default ChoicePanel;
+// Niet opnieuw tekenen als alleen de melding "Goed!" verschijnt of verdwijnt (idee van Jules).
+export default React.memo(ChoicePanel);

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { Polygon, MultiPolygon } from 'geojson';
 import {
+  AREA_TINTS,
   containsPoint,
   highlightStyle,
-  PROVINCE_TINTS,
   SEA_TINTS,
   seaTints,
   shapeStyle,
@@ -100,10 +100,18 @@ describe('kleuren van vormen', () => {
   });
 
   it('geeft provincies hun eigen tint en tekent een dijk als lijn', () => {
-    expect(shapeStyle('province', 'unanswered', { tint: 2 }).fillColor).toBe(PROVINCE_TINTS[2]);
+    expect(shapeStyle('province', 'unanswered', { tint: 2 }).fillColor).toBe(AREA_TINTS[2]);
     expect(shapeStyle('province', 'green', { tint: 2 }).fillColor).toBe('#34a853');
     expect(shapeStyle('dike', 'unanswered').fill).toBe(false);
     expect(highlightStyle('dike').fill).toBe(false);
+  });
+
+  it('kleurt een land met zijn eigen tint, gevonden gaat voor', () => {
+    expect(shapeStyle('country', 'unanswered', { tint: 3 }).fillColor).toBe(AREA_TINTS[3]);
+    expect(shapeStyle('country', 'green', { tint: 3 }).fillColor).toBe('#34a853');
+    expect(shapeStyle('country', 'unanswered', { hovered: true }).weight).toBeGreaterThan(
+      shapeStyle('country', 'unanswered').weight!,
+    );
   });
 
   it('kleurt een zee met zijn eigen tint', () => {

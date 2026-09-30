@@ -3,6 +3,7 @@
 
 import { cities, type City } from '../data/cities';
 import { loadWaterShapes, waterPlaces } from '../data/wateren';
+import { countryPlaces, loadCountryShapes } from '../data/landen';
 import { loadNederlandShapes, nederlandMap, nederlandPlaces } from '../data/nederland';
 import type { ShapeData } from '../components/map/shapes';
 import type { CategoryMap } from '../components/map/baseMap';
@@ -32,7 +33,7 @@ export interface Category {
   locations: City[];
   sections: PackageSection[];
   /** Hoe je één en meer plekken noemt in teksten ("stad" / "steden"). */
-  words: { one: string; many: string };
+  words: { one: string; many: string; neuter?: boolean };
   /** Laadt de vormen (zeeën, rivieren, ...) als dit onderwerp die heeft. */
   loadShapes?: () => Promise<ShapeData>;
   /** Hoe ver je mag inzoomen (standaard: zie mapSettings). */
@@ -262,6 +263,183 @@ export const categories: Category[] = [
     ],
   },
   {
+    id: 'landen',
+    title: 'Landen van de wereld',
+    description: 'Landen op alle werelddelen: van Nederland tot Nieuw-Zeeland',
+    color: '#5e35b1',
+    heading: 'Topografie Wereld: landen',
+    locations: countryPlaces,
+    // 'Het land': dus "welk land" en "het juiste land".
+    words: { one: 'land', many: 'landen', neuter: true },
+    loadShapes: loadCountryShapes,
+    // De landen komen van de wereldkaart zelf; dieper inzoomen laat alleen zien hoe
+    // grof die kaart is.
+    maxZoom: 7,
+    sections: [
+      {
+        title: 'Oefenpakketten',
+        kind: 'game',
+        packages: [
+          {
+            id: 'landen1',
+            title: 'Pakket 1',
+            description: '50 landen op alle werelddelen',
+            color: '#5e35b1',
+            groups: [
+              'landen1-europa',
+              'landen1-afrika',
+              'landen1-noord-amerika',
+              'landen1-azie',
+              'landen1-zuid-amerika',
+              'landen1-oceanie',
+            ],
+          },
+          {
+            id: 'landen2',
+            title: 'Pakket 2',
+            description: 'Noorwegen, Griekenland, Jamaica, Peru en nog 6 landen',
+            color: '#1e8e3e',
+            groups: ['landen2'],
+          },
+          {
+            id: 'landen3',
+            title: 'Pakket 3',
+            description: 'Oostenrijk, Oekraïne, Kenia, Qatar en nog 11 landen',
+            color: '#f9ab00',
+            groups: ['landen3'],
+          },
+        ],
+      },
+      {
+        // Extra oefenen (wens eigenaar): alleen de landen van pakket 1, per werelddeel.
+        title: 'Pakket 1 per werelddeel',
+        kind: 'game',
+        packages: [
+          {
+            id: 'landen1-europa',
+            title: 'Europa',
+            description: 'Nederland, Duitsland, Frankrijk en nog 5 landen',
+            color: '#1a73e8',
+            groups: ['landen1-europa'],
+          },
+          {
+            id: 'landen1-afrika',
+            title: 'Afrika',
+            description: 'Egypte, Marokko, Zuid-Afrika en nog 9 landen',
+            color: '#e37400',
+            groups: ['landen1-afrika'],
+          },
+          {
+            id: 'landen1-noord-amerika',
+            title: 'Noord-Amerika',
+            description: 'Verenigde Staten, Canada, Mexico en Cuba',
+            color: '#c5221f',
+            groups: ['landen1-noord-amerika'],
+          },
+          {
+            id: 'landen1-azie',
+            title: 'Azië',
+            description: 'Rusland, China, India en nog 15 landen',
+            color: '#b06000',
+            groups: ['landen1-azie'],
+          },
+          {
+            id: 'landen1-zuid-amerika',
+            title: 'Zuid-Amerika',
+            description: 'Brazilië, Argentinië en nog 4 landen',
+            color: '#188038',
+            groups: ['landen1-zuid-amerika'],
+          },
+          {
+            id: 'landen1-oceanie',
+            title: 'Oceanië',
+            description: 'Australië en Nieuw-Zeeland',
+            color: '#8430ce',
+            groups: ['landen1-oceanie'],
+          },
+        ],
+      },
+      {
+        title: 'Gecombineerde Pakketten',
+        kind: 'game',
+        packages: [
+          {
+            id: 'landen1-2',
+            title: 'Pakket 1 + 2',
+            description: 'Alle landen uit pakket 1 en 2',
+            color: '#ea4335',
+            groups: [
+              'landen1-europa',
+              'landen1-afrika',
+              'landen1-noord-amerika',
+              'landen1-azie',
+              'landen1-zuid-amerika',
+              'landen1-oceanie',
+              'landen2',
+            ],
+          },
+          {
+            id: 'landen2-3',
+            title: 'Pakket 2 + 3',
+            description: 'Alle landen uit pakket 2 en 3',
+            color: '#9334e6',
+            groups: ['landen2', 'landen3'],
+          },
+          {
+            id: 'landen1-2-3',
+            title: 'Pakket 1 + 2 + 3',
+            description: 'Alle 75 landen uit alle pakketten',
+            color: '#37474f',
+            groups: [
+              'landen1-europa',
+              'landen1-afrika',
+              'landen1-noord-amerika',
+              'landen1-azie',
+              'landen1-zuid-amerika',
+              'landen1-oceanie',
+              'landen2',
+              'landen3',
+            ],
+          },
+        ],
+      },
+      {
+        title: 'Interactieve Kaarten',
+        kind: 'map',
+        packages: [
+          {
+            id: 'landen-kaart1',
+            title: 'Interactieve kaart pakket 1',
+            description: 'Bekijk alle landen uit pakket 1',
+            color: '#5e35b1',
+            groups: [
+              'landen1-europa',
+              'landen1-afrika',
+              'landen1-noord-amerika',
+              'landen1-azie',
+              'landen1-zuid-amerika',
+              'landen1-oceanie',
+            ],
+          },
+          {
+            id: 'landen-kaart2',
+            title: 'Interactieve kaart pakket 2',
+            description: 'Bekijk alle landen uit pakket 2',
+            color: '#1e8e3e',
+            groups: ['landen2'],
+          },
+          {
+            id: 'landen-kaart3',
+            title: 'Interactieve kaart pakket 3',
+            description: 'Bekijk alle landen uit pakket 3',
+            color: '#f9ab00',
+            groups: ['landen3'],
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: 'nederland',
     title: 'Nederland',
     description: 'Provincies, steden, wateren, rivieren, eilanden en gebieden',
@@ -446,6 +624,14 @@ export function findPackage(
 
 export function locationsFor(category: Category, pkg: GamePackage): City[] {
   return category.locations.filter((location) => pkg.groups.includes(location.package));
+}
+
+/**
+ * De gewone pakketten (pakket 1, 2, 3, ...) in volgorde: de delen van de oefentoets.
+ * Dat is het eerste rijtje met spellen op de pagina van een onderwerp.
+ */
+export function toetsPackages(category: Category): GamePackage[] {
+  return category.sections.find((s) => s.kind === 'game')?.packages ?? [];
 }
 
 /** Pakket-id van het oefenrondje met je lastige steden (in de url). */

@@ -86,6 +86,7 @@ function wrapLng(lng: number): number {
 
 /** Tekenvolgorde boven het land: grote vlakken eerst, rivieren en dijken bovenop. */
 const DRAW_ORDER = [
+  'country',
   'province',
   'range',
   'desert',
@@ -97,8 +98,8 @@ const DRAW_ORDER = [
   'dike',
 ];
 
-/** Vlakken die onder de meren komen (een meer kan in een gebergte of provincie liggen). */
-const AREAS: Array<City['kind']> = ['range', 'desert', 'province', 'region', 'island'];
+/** Vlakken die onder de meren komen (een meer kan in een gebergte, land of provincie liggen). */
+const AREAS: Array<City['kind']> = ['range', 'desert', 'country', 'province', 'region', 'island'];
 
 function usePanes(): void {
   const map = useMap();

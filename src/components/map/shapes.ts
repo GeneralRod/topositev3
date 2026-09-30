@@ -11,7 +11,7 @@ import { COAST_COLOR, WATER_COLOR } from './mapSettings';
 export interface ShapeProperties {
   name: string;
   kind: PlaceKind;
-  /** Vaste tint (provincies: buren verschillen, zoals op een atlaskaart). */
+  /** Vaste tint (landen, provincies, rivieren: buren verschillen, zoals op een atlaskaart). */
   tint?: number;
 }
 
@@ -66,22 +66,23 @@ export const SHAPE_COLORS = {
   /** Trog: donker, zoals diep water op een atlaskaart. */
   trench: '#1b2a6b',
   trenchEdge: '#0d1540',
+  /** Rand van een land of provincie als de muis erop staat. */
+  countryEdge: '#8a7650',
   /** Streek of polder: oranjebruin met een gestippelde rand. */
   region: '#e08a2e',
   regionEdge: '#a3591a',
   /** Eiland: zandkleur met een donkere rand. */
   island: '#d9a441',
   islandEdge: '#8a6420',
-  provinceEdge: '#8a7650',
   dike: '#5d4037',
   highlight: '#ff9800',
 } as const;
 
 /**
- * Tinten voor provincies (zacht, zoals op een atlaskaart). Buurprovincies krijgen
+ * Tinten voor landen en provincies (zacht, zoals op een atlaskaart). Buren krijgen
  * een andere tint. Geen groen of paars: die betekenen 'gevonden'.
  */
-export const PROVINCE_TINTS = ['#f6d38b', '#f4b49a', '#e9c7a0', '#f2a7b8', '#d8c48c'] as const;
+export const AREA_TINTS = ['#f6d38b', '#f4b49a', '#e9c7a0', '#f2a7b8', '#d8c48c'] as const;
 
 /**
  * Meer dat niet in het pakket zit: gewoon water, net als de zee op de wereldkaart
@@ -179,12 +180,13 @@ export function shapeStyle(
         fillColor: done ? doneColor : SHAPE_COLORS.desert,
         fillOpacity: (done ? 0.55 : 0.45) + (hovered ? 0.25 : 0),
       };
+    case 'country':
     case 'province':
       return {
-        color: hovered ? SHAPE_COLORS.provinceEdge : '#ffffff',
+        color: hovered ? SHAPE_COLORS.countryEdge : '#ffffff',
         weight: hovered ? 3 : 1,
-        fillColor: done ? doneColor : PROVINCE_TINTS[tint % PROVINCE_TINTS.length],
-        fillOpacity: (done ? 0.6 : 0.7) + (hovered ? 0.2 : 0),
+        fillColor: done ? doneColor : AREA_TINTS[tint % AREA_TINTS.length],
+        fillOpacity: (done ? 0.65 : 0.8) + (hovered ? 0.15 : 0),
       };
     case 'region':
       return {

@@ -11,6 +11,7 @@ export type PlaceKind =
   | 'range'
   | 'peak'
   | 'trench'
+  | 'country'
   | 'province'
   | 'island'
   | 'region'

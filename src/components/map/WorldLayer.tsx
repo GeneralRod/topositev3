@@ -41,4 +41,5 @@ const WorldLayer: React.FC = () => {
   );
 };
 
-export default WorldLayer;
+// Niet opnieuw tekenen als het spel eromheen verandert: de wereldkaart zelf verandert nooit (idee van Jules).
+export default React.memo(WorldLayer);

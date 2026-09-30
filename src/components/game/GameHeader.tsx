@@ -164,4 +164,5 @@ const GameHeader: React.FC<GameHeaderProps> = ({
   </Header>
 );
 
-export default GameHeader;
+// Niet opnieuw tekenen als alleen de melding "Goed!" verschijnt of verdwijnt (idee van Jules).
+export default React.memo(GameHeader);

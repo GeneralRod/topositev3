@@ -1,0 +1,754 @@
+[
+  {
+    "name": "Nederland",
+    "package": "landen1-europa",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 52.2277,
+    "lng": 5.3058,
+    "tint": 1,
+    "atlas": ["Netherlands"],
+    "within": [3, 50, 8, 54]
+  },
+  {
+    "name": "Duitsland",
+    "package": "landen1-europa",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 51.013,
+    "lng": 9.6527,
+    "tint": 0,
+    "atlas": ["Germany"]
+  },
+  {
+    "name": "Frankrijk",
+    "package": "landen1-europa",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 46.7268,
+    "lng": 2.5331,
+    "tint": 1,
+    "atlas": ["France"],
+    "within": [-6, 41, 10, 52]
+  },
+  {
+    "name": "Engeland",
+    "package": "landen1-europa",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 52.4796,
+    "lng": -1.2654,
+    "tint": 0,
+    "england": true
+  },
+  {
+    "name": "Spanje",
+    "package": "landen1-europa",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 39.9751,
+    "lng": -3.458,
+    "tint": 0,
+    "atlas": ["Spain"]
+  },
+  {
+    "name": "Italië",
+    "package": "landen1-europa",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 45.1139,
+    "lng": 10.8753,
+    "tint": 0,
+    "atlas": ["Italy"]
+  },
+  {
+    "name": "Zweden",
+    "package": "landen1-europa",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 65.6158,
+    "lng": 18.3051,
+    "tint": 2,
+    "atlas": ["Sweden"]
+  },
+  {
+    "name": "IJsland",
+    "package": "landen1-europa",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 64.6798,
+    "lng": -18.8389,
+    "tint": 0,
+    "atlas": ["Iceland"]
+  },
+  {
+    "name": "Zuid-Afrika",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": -30.2306,
+    "lng": 23.3221,
+    "tint": 0,
+    "atlas": ["South Africa"]
+  },
+  {
+    "name": "Egypte",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 26.282,
+    "lng": 29.2632,
+    "tint": 0,
+    "atlas": ["Egypt"]
+  },
+  {
+    "name": "Madagaskar",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": -18.3807,
+    "lng": 46.6925,
+    "tint": 0,
+    "atlas": ["Madagascar"]
+  },
+  {
+    "name": "Marokko",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 31.8818,
+    "lng": -6.4592,
+    "tint": 1,
+    "atlas": ["Morocco"]
+  },
+  {
+    "name": "Ghana",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 7.0086,
+    "lng": -1.2157,
+    "tint": 0,
+    "atlas": ["Ghana"]
+  },
+  {
+    "name": "Somalië",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 2.5451,
+    "lng": 43.0146,
+    "tint": 2,
+    "atlas": ["Somalia", "Somaliland"]
+  },
+  {
+    "name": "Sudan",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 16.6301,
+    "lng": 29.354,
+    "tint": 2,
+    "atlas": ["Sudan"]
+  },
+  {
+    "name": "Democratische Republiek Kongo",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": -1.8574,
+    "lng": 23.241,
+    "tint": 1,
+    "atlas": ["Dem. Rep. Congo"]
+  },
+  {
+    "name": "Algerije",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 27.4341,
+    "lng": 3.1476,
+    "tint": 0,
+    "atlas": ["Algeria"]
+  },
+  {
+    "name": "Tunesië",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 35.33,
+    "lng": 9.5601,
+    "tint": 2,
+    "atlas": ["Tunisia"]
+  },
+  {
+    "name": "Libië",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 26.0853,
+    "lng": 20.5789,
+    "tint": 1,
+    "atlas": ["Libya"]
+  },
+  {
+    "name": "Angola",
+    "package": "landen1-afrika",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": -13.1784,
+    "lng": 17.7701,
+    "tint": 0,
+    "atlas": ["Angola"]
+  },
+  {
+    "name": "Verenigde Staten",
+    "package": "landen1-noord-amerika",
+    "kind": "country",
+    "hint": "Noord-Amerika",
+    "lat": 39.103,
+    "lng": -98.1252,
+    "tint": 1,
+    "atlas": ["United States of America"]
+  },
+  {
+    "name": "Canada",
+    "package": "landen1-noord-amerika",
+    "kind": "country",
+    "hint": "Noord-Amerika",
+    "lat": 58.7998,
+    "lng": -119.0806,
+    "tint": 0,
+    "atlas": ["Canada"]
+  },
+  {
+    "name": "Mexico",
+    "package": "landen1-noord-amerika",
+    "kind": "country",
+    "hint": "Noord-Amerika",
+    "lat": 23.4661,
+    "lng": -101.7486,
+    "tint": 0,
+    "atlas": ["Mexico"]
+  },
+  {
+    "name": "Cuba",
+    "package": "landen1-noord-amerika",
+    "kind": "country",
+    "hint": "Noord-Amerika",
+    "lat": 20.6109,
+    "lng": -76.4717,
+    "tint": 0,
+    "atlas": ["Cuba"]
+  },
+  {
+    "name": "Rusland",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 63.5941,
+    "lng": 94.4818,
+    "tint": 2,
+    "atlas": ["Russia"]
+  },
+  {
+    "name": "Turkije",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 39.0574,
+    "lng": 33.094,
+    "tint": 3,
+    "atlas": ["Turkey"]
+  },
+  {
+    "name": "Israël",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 30.9039,
+    "lng": 34.8509,
+    "tint": 1,
+    "atlas": ["Israel"]
+  },
+  {
+    "name": "Syrië",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 35.036,
+    "lng": 38.1616,
+    "tint": 2,
+    "atlas": ["Syria"]
+  },
+  {
+    "name": "Iran",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 32.1344,
+    "lng": 55.6682,
+    "tint": 1,
+    "atlas": ["Iran"]
+  },
+  {
+    "name": "Irak",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 33.2619,
+    "lng": 43.0948,
+    "tint": 0,
+    "atlas": ["Iraq"]
+  },
+  {
+    "name": "Saudi-Arabië",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 23.4905,
+    "lng": 44.9972,
+    "tint": 1,
+    "atlas": ["Saudi Arabia"]
+  },
+  {
+    "name": "Kazachstan",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 48.4432,
+    "lng": 68.9552,
+    "tint": 0,
+    "atlas": ["Kazakhstan"]
+  },
+  {
+    "name": "Afghanistan",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 34.3311,
+    "lng": 66.6654,
+    "tint": 0,
+    "atlas": ["Afghanistan"]
+  },
+  {
+    "name": "China",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 32.4555,
+    "lng": 109.4697,
+    "tint": 1,
+    "atlas": ["China"]
+  },
+  {
+    "name": "Mongolië",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 46.0393,
+    "lng": 104.804,
+    "tint": 0,
+    "atlas": ["Mongolia"]
+  },
+  {
+    "name": "Japan",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 36.7596,
+    "lng": 139.5177,
+    "tint": 0,
+    "atlas": ["Japan"]
+  },
+  {
+    "name": "Noord-Korea",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 39.8789,
+    "lng": 126.4247,
+    "tint": 0,
+    "atlas": ["North Korea"]
+  },
+  {
+    "name": "Zuid-Korea",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 36.3208,
+    "lng": 128.1012,
+    "tint": 1,
+    "atlas": ["South Korea"]
+  },
+  {
+    "name": "Thailand",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 15.457,
+    "lng": 101.3591,
+    "tint": 0,
+    "atlas": ["Thailand"]
+  },
+  {
+    "name": "India",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 22.3565,
+    "lng": 79.2032,
+    "tint": 0,
+    "atlas": ["India"]
+  },
+  {
+    "name": "Filipijnen",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 16.9659,
+    "lng": 121.3864,
+    "tint": 0,
+    "atlas": ["Philippines"]
+  },
+  {
+    "name": "Indonesië",
+    "package": "landen1-azie",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": -0.9628,
+    "lng": 114.1644,
+    "tint": 0,
+    "atlas": ["Indonesia"]
+  },
+  {
+    "name": "Brazilië",
+    "package": "landen1-zuid-amerika",
+    "kind": "country",
+    "hint": "Zuid-Amerika",
+    "lat": -12.6381,
+    "lng": -49.0404,
+    "tint": 2,
+    "atlas": ["Brazil"]
+  },
+  {
+    "name": "Argentinië",
+    "package": "landen1-zuid-amerika",
+    "kind": "country",
+    "hint": "Zuid-Amerika",
+    "lat": -31.3749,
+    "lng": -64.0639,
+    "tint": 0,
+    "atlas": ["Argentina"]
+  },
+  {
+    "name": "Chili",
+    "package": "landen1-zuid-amerika",
+    "kind": "country",
+    "hint": "Zuid-Amerika",
+    "lat": -23.3691,
+    "lng": -69.086,
+    "tint": 2,
+    "atlas": ["Chile"]
+  },
+  {
+    "name": "Colombia",
+    "package": "landen1-zuid-amerika",
+    "kind": "country",
+    "hint": "Zuid-Amerika",
+    "lat": 3.4061,
+    "lng": -73.2834,
+    "tint": 0,
+    "atlas": ["Colombia"]
+  },
+  {
+    "name": "Venezuela",
+    "package": "landen1-zuid-amerika",
+    "kind": "country",
+    "hint": "Zuid-Amerika",
+    "lat": 7.202,
+    "lng": -64.2384,
+    "tint": 1,
+    "atlas": ["Venezuela"]
+  },
+  {
+    "name": "Suriname",
+    "package": "landen1-zuid-amerika",
+    "kind": "country",
+    "hint": "Zuid-Amerika",
+    "lat": 4.1486,
+    "lng": -55.9642,
+    "tint": 0,
+    "atlas": ["Suriname"]
+  },
+  {
+    "name": "Australië",
+    "package": "landen1-oceanie",
+    "kind": "country",
+    "hint": "Oceanië",
+    "lat": -23.1353,
+    "lng": 132.4159,
+    "tint": 0,
+    "atlas": ["Australia"]
+  },
+  {
+    "name": "Nieuw-Zeeland",
+    "package": "landen1-oceanie",
+    "kind": "country",
+    "hint": "Oceanië",
+    "lat": -45.281,
+    "lng": 169.1107,
+    "tint": 0,
+    "atlas": ["New Zealand"]
+  },
+  {
+    "name": "Noorwegen",
+    "package": "landen2",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 61.5123,
+    "lng": 9.9313,
+    "tint": 1,
+    "atlas": ["Norway"]
+  },
+  {
+    "name": "Griekenland",
+    "package": "landen2",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 39.8353,
+    "lng": 21.6505,
+    "tint": 0,
+    "atlas": ["Greece"]
+  },
+  {
+    "name": "Jamaica",
+    "package": "landen2",
+    "kind": "country",
+    "hint": "Noord-Amerika",
+    "lat": 18.15,
+    "lng": -77.3358,
+    "tint": 0,
+    "atlas": ["Jamaica"]
+  },
+  {
+    "name": "Peru",
+    "package": "landen2",
+    "kind": "country",
+    "hint": "Zuid-Amerika",
+    "lat": -12.99,
+    "lng": -73.0417,
+    "tint": 3,
+    "atlas": ["Peru"]
+  },
+  {
+    "name": "Bolivia",
+    "package": "landen2",
+    "kind": "country",
+    "hint": "Zuid-Amerika",
+    "lat": -16.6924,
+    "lng": -64.6907,
+    "tint": 1,
+    "atlas": ["Bolivia"]
+  },
+  {
+    "name": "Nigeria",
+    "package": "landen2",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 9.3707,
+    "lng": 7.2553,
+    "tint": 0,
+    "atlas": ["Nigeria"]
+  },
+  {
+    "name": "Ethiopië",
+    "package": "landen2",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 8.5304,
+    "lng": 38.431,
+    "tint": 0,
+    "atlas": ["Ethiopia"]
+  },
+  {
+    "name": "Papoea-Nieuw-Guinea",
+    "package": "landen2",
+    "kind": "country",
+    "hint": "Oceanië",
+    "lat": -5.5406,
+    "lng": 143.0087,
+    "tint": 1,
+    "atlas": ["Papua New Guinea"]
+  },
+  {
+    "name": "Pakistan",
+    "package": "landen2",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 27.7676,
+    "lng": 67.2833,
+    "tint": 2,
+    "atlas": ["Pakistan"]
+  },
+  {
+    "name": "Vietnam",
+    "package": "landen2",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 21.6988,
+    "lng": 105.3654,
+    "tint": 0,
+    "atlas": ["Vietnam"]
+  },
+  {
+    "name": "Oostenrijk",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 47.7363,
+    "lng": 15.3395,
+    "tint": 1,
+    "atlas": ["Austria"]
+  },
+  {
+    "name": "Oekraïne",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 49.5931,
+    "lng": 32.3861,
+    "tint": 0,
+    "atlas": ["Ukraine"]
+  },
+  {
+    "name": "Finland",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Europa",
+    "lat": 63.319,
+    "lng": 27.4079,
+    "tint": 0,
+    "atlas": ["Finland"]
+  },
+  {
+    "name": "Haïti",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Noord-Amerika",
+    "lat": 19.231,
+    "lng": -72.2475,
+    "tint": 0,
+    "atlas": ["Haiti"]
+  },
+  {
+    "name": "Panama",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Noord-Amerika",
+    "lat": 8.3579,
+    "lng": -80.9138,
+    "tint": 1,
+    "atlas": ["Panama"]
+  },
+  {
+    "name": "Ecuador",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Zuid-Amerika",
+    "lat": -1.202,
+    "lng": -78.2459,
+    "tint": 1,
+    "atlas": ["Ecuador"]
+  },
+  {
+    "name": "Paraguay",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Zuid-Amerika",
+    "lat": -21.6276,
+    "lng": -60.147,
+    "tint": 3,
+    "atlas": ["Paraguay"]
+  },
+  {
+    "name": "Uruguay",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Zuid-Amerika",
+    "lat": -32.9467,
+    "lng": -56.0644,
+    "tint": 1,
+    "atlas": ["Uruguay"]
+  },
+  {
+    "name": "Kenia",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 0.4196,
+    "lng": 37.8493,
+    "tint": 1,
+    "atlas": ["Kenya"]
+  },
+  {
+    "name": "Senegal",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": 15.2084,
+    "lng": -14.9254,
+    "tint": 0,
+    "atlas": ["Senegal"]
+  },
+  {
+    "name": "Tanzania",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Afrika",
+    "lat": -5.5434,
+    "lng": 34.02,
+    "tint": 0,
+    "atlas": ["Tanzania"]
+  },
+  {
+    "name": "Qatar",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 25.105,
+    "lng": 51.2017,
+    "tint": 0,
+    "atlas": ["Qatar"]
+  },
+  {
+    "name": "Jemen",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 15.2964,
+    "lng": 44.9732,
+    "tint": 0,
+    "atlas": ["Yemen"]
+  },
+  {
+    "name": "Myanmar",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 21.6297,
+    "lng": 95.9289,
+    "tint": 2,
+    "atlas": ["Myanmar"]
+  },
+  {
+    "name": "Maleisië",
+    "package": "landen3",
+    "kind": "country",
+    "hint": "Azië",
+    "lat": 2.4595,
+    "lng": 113.7591,
+    "tint": 1,
+    "atlas": ["Malaysia"]
+  }
+]

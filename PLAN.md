@@ -144,7 +144,15 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
       6 eilanden, gebieden, Afsluitdijk en Vaalserberg (16). Gecombineerd: 1+2, 2+3, 1+2+3, 4+5,
       4+5+6 en alles; interactieve kaart per pakket. Zie "Kaart van Nederland" hieronder.
 - [ ] Europa: landen en hoofdsteden
-- [ ] De wereld: landen
+- [x] Landen van de wereld (lijst van de eigenaar, 75 landen in 3 pakketten; staat in
+      `scripts/landen/items.mjs`): pakket 1 (50, ook los te oefenen per werelddeel: Europa,
+      Afrika, Noord-Amerika, Azië, Zuid-Amerika, Oceanië), pakket 2 (10), pakket 3 (15),
+      gecombineerd 1+2, 2+3, 1+2+3, en een interactieve kaart per pakket. De landen komen uit de
+      wereldkaart zelf (world-atlas), dus ze passen er precies op en er laadt niets extra's;
+      Engeland komt uit de 'map units' van Natural Earth (`node scripts/landen/build.mjs`).
+      Buurlanden krijgen een andere tint. Een heel klein pakket (Oceanië: 2 landen) krijgt bij
+      meerkeuze foute antwoorden uit de rest van de landen. Bij meerkeuze schuift de kaart
+      naar wat er knippert als dat buiten beeld ligt.
 - Wateren en landschappen over de wereld (lijst van de eigenaar, 70 onderdelen in 4 pakketten;
   staat helemaal in `scripts/wateren/items.mjs`):
   - [x] Pakket 1 (40): oceanen, zeeën, rivieren, meren, woestijnen, gebergtes en bergen.
@@ -208,6 +216,20 @@ en `map.json` (TopoJSON, ~260 KB ingepakt, pas geladen bij het spelen).
 - Beginbeeld: heel Nederland, knop "Heel Nederland"; inzoomen tot niveau 11.
 - "Vecht" is de Utrechtse Vecht (van Utrecht naar Muiden): die staat als vaarweg in de bron. De
   Overijsselse Vecht kan ook, maar moet dan uit een andere bron komen.
+
+**Oefentoets (september 2026, wens eigenaar)**
+
+- [x] Net als de echte topotoets: er knippert een plek, het kind schrijft de naam op. Toets
+      pakket 1, 1 + 2 of 1 + 2 + 3 (enz.), in delen: eerst alle vragen van pakket 1, dan pakket
+      2, dan pakket 3. Lengte kiezen: kort (25% van elk pakket, minstens 3), normaal (50%,
+      minstens 5) of alles. Elke keer andere plekken.
+- [x] Nakijken coulant (topotoets, geen spellingtoets): goed zodra duidelijk is welke plek het
+      kind bedoelt, ook als die heel anders geschreven is; fout als het meer op een andere plek
+      lijkt (Irak/Iran, Niger/Nigeria). Andere namen en lijkende landen in
+      `src/content/aliases.ts`, regels in `src/game/toets.ts`.
+- [x] Pas aan het eind: cijfer = goed / totaal × 10 (één decimaal), per deel en in totaal, met
+      per vraag wat je schreef (en hoe je het schrijft). Beste cijfer per toets en lengte bewaard;
+      5 munten per goed antwoord; fouten gaan naar "mijn lastige ...".
 
 **Later**
 

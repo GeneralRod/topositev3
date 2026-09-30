@@ -1,5 +1,5 @@
-import React from 'react';
-import { MapContainer, Marker } from 'react-leaflet';
+import React, { useEffect } from 'react';
+import { MapContainer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { City } from '../../data/cities';
@@ -48,6 +48,19 @@ const ICONS = Object.fromEntries(
   Object.entries(STATUS_COLORS).map(([status, color]) => [status, dotIcon(color)]),
 ) as Record<CityStatus, L.DivIcon>;
 
+/**
+ * Meerkeuze: ligt wat er knippert buiten beeld (bijv. Australië terwijl de kaart op
+ * Europa staat, op een smal scherm), schuif de kaart er dan naartoe.
+ */
+const FollowHighlight: React.FC<{ lat?: number; lng?: number }> = ({ lat, lng }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (lat === undefined || lng === undefined) return;
+    if (!map.getBounds().contains([lat, lng])) map.panTo([lat, lng]);
+  }, [map, lat, lng]);
+  return null;
+};
+
 interface GameMapProps {
   cities: City[];
   status: Record<string, CityStatus>;
@@ -72,6 +85,7 @@ const GameMap: React.FC<GameMapProps> = ({
 }) => {
   const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
   const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
+  const highlighted = highlight ? cities.find((c) => c.name === highlight) : undefined;
   return (
     <MapContainer
       {...(map
@@ -90,6 +104,7 @@ const GameMap: React.FC<GameMapProps> = ({
     >
       {map ? <BaseLayer load={map.loadBase} attribution={map.attribution} /> : <WorldLayer />}
       <ResetViewButton view={map?.view} />
+      <FollowHighlight lat={highlighted?.lat} lng={highlighted?.lng} />
       {loadShapes && others.length > 0 && (
         <ShapeLayers
           places={others}
@@ -118,4 +133,5 @@ const GameMap: React.FC<GameMapProps> = ({
   );
 };
 
-export default GameMap;
+// Niet opnieuw tekenen als alleen de melding "Goed!" verschijnt of verdwijnt (idee van Jules).
+export default React.memo(GameMap);

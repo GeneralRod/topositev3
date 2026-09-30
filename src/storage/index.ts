@@ -194,6 +194,17 @@ export function completeDailyChallenge(
   return { bonus, streak: after.streak };
 }
 
+/** Beste cijfers van de oefentoetsen. */
+export function getToetsGrades(): Record<string, number> {
+  return state().toetsen;
+}
+
+/** Bewaar het cijfer van een oefentoets; alleen als het beter is dan eerder. */
+export function recordToetsGrade(key: string, grade: number): void {
+  if ((state().toetsen[key] ?? -1) >= grade) return;
+  update((d) => ({ ...d, toetsen: { ...d.toetsen, [key]: grade } }));
+}
+
 export function getAchievements(): string[] {
   return state().achievements;
 }
