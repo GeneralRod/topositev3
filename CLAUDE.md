@@ -50,8 +50,9 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   1 t/m 4 (met tinten per zee, oplichten bij aanwijzen, namen op de interactieve kaart).
 - Ook live: meren buiten het pakket altijd als gewoon water.
 - Ook in het plan: fase 7 (optionele accounts).
-- Open: pull request #108 "Nederland" (branch `nederland`), nu samengevoegd met main (landen en
-  oefentoets) en met de feedback van de eigenaar verwerkt; wacht op test/oké.
+- Ook live: "Nederland" (74 plekken in 6 pakketten, eigen precieze kaart; rivieren tot aan zee
+  met een eigen tint blauw, de Rijn tot Duisburg; ook in de oefentoets).
+- Nog open: 5 updates van Dependabot (#64, #103 t/m #106), nog niet bekeken.
 - Ook live: "Landen van de wereld" (75 landen, pakket 1 ook per werelddeel).
 - Ook live: de oefentoets (namen opschrijven, in delen per pakket, met cijfer; onderaan de
   pagina van elk onderwerp). Code in `src/game/toets.ts` en `src/components/Toets.tsx`.
@@ -59,7 +60,7 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   in één eigen pull request (zie #111).
 - Netlify heet nu `topografiewereld` (live: https://topografiewereld.netlify.app); voorbeeldlinks
   zijn `deploy-preview-<nummer>--topografiewereld.netlify.app`.
-- Volgende: na oké op Nederland bijv. Europa (`PLAN.md` fase 6). Voor later: optionele accounts voor kinderen en
+- Volgende: bijv. Europa (`PLAN.md` fase 6). Voor later: optionele accounts voor kinderen en
   leerkrachten (`PLAN.md` fase 7); oefenen zonder account moet altijd blijven werken.
 - Kaartprecisie nooit lager dan nu (Natural Earth 10m, `SEA_SIMPLIFY = 1e-3`): wens eigenaar.
 - Pakket-id's moeten uniek zijn over alle categorieën (sterren en spellen worden per id bewaard).
