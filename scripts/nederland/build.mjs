@@ -152,6 +152,39 @@ async function vaarweg(names) {
 }
 
 /** De Afsluitdijk: de rijksweg A7 over de dijk (één rijbaan), uit NWB wegen. */
+/**
+ * De Rijn in Duitsland, van het punt `upstream` tot de grens, uit Natural Earth (dezelfde
+ * bron als de Duitse kaart eronder), aansluitend op het begin van de Nederlandse Rijn.
+ */
+async function rhineInGermany(dutch, upstream) {
+  const file = path.join(cacheDir, 'ne_10m_rivers_lake_centerlines.geojson');
+  if (!fs.existsSync(file)) {
+    const url =
+      'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_lake_centerlines.geojson';
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Natural Earth rivieren: ${response.status}`);
+    fs.writeFileSync(file, await response.text());
+  }
+  const rivers = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const rhine = rivers.features.find((f) => f.properties.name === 'Rhine');
+  if (!rhine) throw new Error('Rijn niet gevonden in Natural Earth');
+  const line = (
+    rhine.geometry.type === 'LineString' ? [rhine.geometry.coordinates] : rhine.geometry.coordinates
+  ).reduce((a, b) => (b.length > a.length ? b : a));
+  // Het begin van de Nederlandse Rijn: het meest oostelijke punt.
+  const start = dutch.coordinates.flat().reduce((a, b) => (b[0] > a[0] ? b : a));
+  // Natural Earth loopt stroomafwaarts: van `upstream` tot het laatste punt vóór de grens.
+  const nearest = (p) => line.reduce((best, q, i) => (km(p, q) < km(p, line[best]) ? i : best), 0);
+  const from = nearest(upstream);
+  let to = from;
+  while (to + 1 < line.length && line[to + 1][0] > start[0]) to++;
+  if (to - from < 5) throw new Error('Rijn in Duitsland: te weinig punten');
+  return {
+    type: 'MultiLineString',
+    coordinates: [...dutch.coordinates, [...line.slice(from, to + 1), start]],
+  };
+}
+
 async function afsluitdijk() {
   const file = path.join(cacheDir, 'nwb_afsluitdijk.json');
   if (!fs.existsSync(file)) {
@@ -203,7 +236,9 @@ for (const item of items) {
     if (!geometry || geometry.coordinates.length === 0) throw new Error(`Geen water: ${item.name}`);
   } else if (item.kind === 'river') {
     geometry = await vaarweg(item.vaarwegen);
+    // Knipperpunt op het Nederlandse deel, ook als de rivier doorloopt in Duitsland.
     anchor = midOfLines(geometry);
+    if (item.duitsland) geometry = await rhineInGermany(geometry, item.duitsland);
   } else if (item.kind === 'island') {
     geometry = asMulti([largestPart(land.mergeMunicipalities(item.gemeenten))]);
   } else if (item.kind === 'region') {

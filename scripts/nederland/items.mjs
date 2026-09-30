@@ -159,6 +159,9 @@ export const items = [
     kind: 'river',
     vaarwegen,
     hint,
+    // Wens eigenaar: de Rijn een stukje Duitsland in (tot Duisburg), zodat je ziet
+    // waar hij vandaan komt.
+    ...(name === 'Rijn' ? { duitsland: [6.709, 51.446] } : {}),
   })),
 
   // ---------- Pakket 6: Waddeneilanden, gebieden en bijzondere plekken ----------
