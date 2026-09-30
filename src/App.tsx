@@ -23,6 +23,9 @@ import {
 import { completeDailyChallenge, getCityStats, getDaily, type PlayMode } from './storage';
 import { dailyCities, dateKey, doneToday } from './game/daily';
 import { hardCities } from './game/progress';
+import AccountButton from './account/AccountButton';
+import { hasStoredSession } from './account/flag';
+import { startAccount } from './account/session';
 
 // Deze schermen (met de kaartbibliotheek Leaflet) worden pas geladen als ze
 // geopend worden; dat maakt de eerste keer laden van de site sneller.
@@ -30,6 +33,7 @@ const Game = lazy(() => import('./components/Game'));
 const InteractiveMap = lazy(() => import('./components/InteractiveMap'));
 const Toets = lazy(() => import('./components/Toets'));
 const PrizeCabinet = lazy(() => import('./cabinet/PrizeCabinet'));
+const AccountScreen = lazy(() => import('./account/AccountScreen'));
 
 const AppContainer = styled.div`
   width: 100vw;
@@ -224,6 +228,11 @@ const ToetsWrapper: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  // Al ingelogd op deze computer: kijk bij Supabase of dat nog klopt.
+  React.useEffect(() => {
+    if (hasStoredSession()) void startAccount();
+  }, []);
+
   return (
     <Router>
       <AppContainer>
@@ -236,9 +245,11 @@ const App: React.FC = () => {
             <Route path="/interactive/:category/:package" element={<InteractiveMapWrapper />} />
             <Route path="/toets/:category/:upto" element={<ToetsWrapper />} />
             <Route path="/trophy-cabinet" element={<PrizeCabinet />} />
+            <Route path="/account" element={<AccountScreen />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
+        <AccountButton />
       </AppContainer>
     </Router>
   );

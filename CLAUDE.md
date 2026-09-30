@@ -39,8 +39,11 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 - `scripts/landen/`: lijst van "Landen van de wereld" (`items.mjs`); `node scripts/landen/build.mjs`
   maakt `src/data/landen/places.json` en `england.json`; de vormen zelf komen van de wereldkaart
 - `src/storage/merge.ts`: voortgang van browser en account samenvoegen (regels in `PLAN.md` fase 7)
-- `supabase/migrations/`: de database van de accounts (Supabase-project `topografiewereld`,
-  id `xjzapefnqfmwudchwvhl`, Frankfurt, gratis plan; moet gratis blijven: wens eigenaar)
+- `src/account/`: accounts (inloggen via Supabase, scherm `/account`); nog verborgen, knop
+  zichtbaar na `?account` in de url
+- `supabase/`: de database van de accounts (Supabase-project `topografiewereld`,
+  id `xjzapefnqfmwudchwvhl`, Frankfurt, gratis plan; moet gratis blijven: wens eigenaar);
+  `supabase/README.md` = instellingen die de eigenaar in het dashboard doet
 - `scripts/nederland/`: maakt de kaart van Nederland uit CBS, Kadaster, Rijkswaterstaat en
   Natural Earth (`items.mjs` = de lijst, `water.mjs` = indeling van het water; daarna
   `node scripts/nederland/build.mjs` draaien, ± 2 minuten)

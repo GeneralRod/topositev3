@@ -304,10 +304,17 @@ nooit met dit account ingelogd was). Zo telt alleen wat er sindsdien nieuw is bi
       (`xjzapefnqfmwudchwvhl`, Frankfurt, gratis plan); tabel in
       `supabase/migrations/20260930190000_progress.sql`, beveiliging getest met twee
       proefaccounts.
-- [ ] Inloggen: knop bovenaan; account maken, inloggen, wachtwoord vergeten, uitloggen
+- [x] Inloggen: knop bovenaan; account maken, inloggen, wachtwoord vergeten, uitloggen
+      (`src/account/`, scherm `/account`). Nog verborgen: de knop verschijnt pas na één keer
+      `?account` in de url (`?account=uit` zet hem weer uit), tot synchroniseren en de
+      privacyverklaring klaar zijn. Supabase wordt alleen geladen voor wie het accountscherm
+      opent of al ingelogd is.
+- [ ] Instellingen in het Supabase-dashboard door de eigenaar (zie `supabase/README.md`):
+      adressen van de site, gratis maildienst (bijv. Brevo), Nederlandse mailteksten
 - [ ] Synchroniseren: voortgang online bewaren en ophalen, samenvoegen bij inloggen; uitloggen
       op een gedeelde computer laat de voortgang van dat account niet achter
 - [ ] Privacyverklaring en account + gegevens verwijderen
+- [ ] Accountknop voor iedereen zichtbaar maken (de `?account`-vlag in `src/account/flag.ts` weg)
 
 **Later 7b: klassen en leerkrachten**
 
