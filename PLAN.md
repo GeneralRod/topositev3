@@ -138,8 +138,14 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
 
 **Deel 6 en verder: nieuwe onderwerpen** (elk onderwerp een eigen deel)
 
-- [ ] Nederland: provinciehoofdsteden en grote steden
-- [ ] Nederland: provincies, rivieren en wateren
+- [x] Nederland (lijst gemaakt en goedgekeurd, na feedback 74 onderdelen in 6 pakketten, staat
+      helemaal in `scripts/nederland/items.mjs`): 1 provincies (12), 2 hoofdstad en
+      provinciehoofdsteden (13), 3 grote steden (15), 4 zeeën, meren en zeearmen (12), 5 rivieren
+      tot aan zee (9: Rijn, Waal, Nederrijn, Lek, IJssel, Maas, Merwede, Nieuwe Maas, Nieuwe
+      Waterweg; elke rivier een eigen tint blauw), 6 Waddeneilanden, gebieden, Afsluitdijk en
+      Vaalserberg (13, met Biesbosch en Loonse en Drunense Duinen). Gecombineerd: 1+2, 2+3,
+      1+2+3, 4+5, 4+5+6 en alles; interactieve kaart per pakket; oefentoets. Zie "Kaart van
+      Nederland" hieronder.
 - [ ] Europa: landen en hoofdsteden
 - [x] Landen van de wereld (lijst van de eigenaar, 75 landen in 3 pakketten; staat in
       `scripts/landen/items.mjs`): pakket 1 (50, ook los te oefenen per werelddeel: Europa,
@@ -190,6 +196,32 @@ Zo is het gebouwd (september 2026, akkoord eigenaar):
 - Wordt het geheel te zwaar, dan overstappen op vector-tegels (PMTiles + MapLibre) op de eigen
   site. Geen externe kaartdienst of sleutel.
 - Bronvermelding (Natural Earth; later OpenStreetMap, PDOK) op de kaart.
+
+**Kaart van Nederland (september 2026)**
+
+Nederland heeft een eigen kaart in plaats van de wereldkaart, veel preciezer (tot op enkele
+meters), gebouwd met `node scripts/nederland/build.mjs` (± 2 minuten; de ruwe bronnen komen
+één keer in `scripts/nederland/.cache`, niet in git). Resultaat: `src/data/nederland/places.json`
+en `map.json` (TopoJSON, ~260 KB ingepakt, pas geladen bij het spelen).
+
+- Bronnen (vrij te gebruiken, vermeld op de kaart): CBS-gemeenten 2025 (provincies, eilanden,
+  Zeeuws-Vlaanderen, Noordoostpolder), Kadaster (grondgebied, TOP10NL-streken en Vaalserberg),
+  Rijkswaterstaat NWB (vaarwegen voor rivieren en kanalen, wegen voor de Afsluitdijk),
+  Natural Earth (buurlanden en de rest van Europa).
+- Land: de CBS-gemeenten, samengevoegd per provincie. CBS tekent langs gemeentegrenzen door het
+  water dunne nep-stroken (bijv. dwars over de Westerschelde); die haalt het script weg, net als
+  strekdammen en pieren. Dammen, sluizen en bruggen tússen twee wateren blijven staan
+  (Houtribdijk, Haringvlietbrug, Oosterscheldekering).
+- Water: alles wat geen land is, opgedeeld met 'zaadpunten' en knippen (bijv. tussen de
+  Waddeneilanden, de Straat van Dover); alles in `scripts/nederland/water.mjs`. Water dat niet in
+  de lijst staat (Veerse Meer, Volkerak, Eems, Duitse Waddenzee, Kanaal) blijft lichtblauw.
+- Buurlanden iets grijzer; kust blauw, landsgrens donkerbruin, provinciegrenzen dun.
+- Beginbeeld: heel Nederland, knop "Heel Nederland"; inzoomen tot niveau 11.
+- Rivieren tot aan zee (wens eigenaar): de Rijn via Nederrijn, Lek, Nieuwe Maas en Nieuwe
+  Waterweg (met het Scheur en de Maasmond); de Waal via de Merwede en de Maas via de Amer naar
+  het Hollands Diep. Aansluitende rivieren hebben altijd een andere tint blauw.
+- Op de interactieve kaart staat de naam van een stad er meteen bij als je de muis erop zet
+  (net als bij zeeën en gebieden), voor alle onderwerpen.
 
 **Oefentoets (september 2026, wens eigenaar)**
 

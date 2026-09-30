@@ -60,6 +60,24 @@ describe('foute antwoorden van dezelfde soort', () => {
     expect(choicePool('Rome', cities)).toEqual(POOL);
   });
 
+  it('houdt eilanden, provincies en streken apart (Nederland)', () => {
+    const nl = [
+      ...['Texel', 'Vlieland', 'Ameland', 'Walcheren'].map((name) => ({ name, kind: 'island' })),
+      ...['Veluwe', 'Twente', 'Betuwe'].map((name) => ({ name, kind: 'region' })),
+      { name: 'Afsluitdijk', kind: 'dike' },
+      ...['Drenthe', 'Zeeland', 'Limburg', 'Flevoland'].map((name) => ({ name, kind: 'province' })),
+    ];
+    expect(choicePool('Texel', nl).sort()).toEqual(['Ameland', 'Texel', 'Vlieland', 'Walcheren']);
+    // Een dijk hoort bij de streken: samen genoeg voor vier antwoorden.
+    expect(choicePool('Afsluitdijk', nl).sort()).toEqual([
+      'Afsluitdijk',
+      'Betuwe',
+      'Twente',
+      'Veluwe',
+    ]);
+    expect(choicePool('Zeeland', nl)).toHaveLength(4);
+  });
+
   it('vult een heel klein pakket aan met landen uit de rest van het onderwerp', () => {
     const oceanie = ['Australië', 'Nieuw-Zeeland'].map((name) => ({ name, kind: 'country' }));
     const alle = [

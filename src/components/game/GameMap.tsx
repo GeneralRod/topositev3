@@ -8,6 +8,8 @@ import type { ShapeData } from '../map/shapes';
 import { PULSE_ICON } from '../map/icons';
 import ResetViewButton from '../map/ResetViewButton';
 import WorldLayer from '../map/WorldLayer';
+import BaseLayer from '../map/BaseLayer';
+import type { CategoryMap } from '../map/baseMap';
 import {
   MAX_ZOOM,
   MIN_ZOOM,
@@ -68,6 +70,8 @@ interface GameMapProps {
   /** Vormen (zeeën, rivieren, ...) voor onderwerpen die dat hebben. */
   loadShapes?: () => Promise<ShapeData>;
   maxZoom?: number;
+  /** Eigen kaart (bijv. Nederland) in plaats van de wereldkaart. */
+  map?: CategoryMap;
 }
 
 const GameMap: React.FC<GameMapProps> = ({
@@ -77,17 +81,19 @@ const GameMap: React.FC<GameMapProps> = ({
   highlight,
   loadShapes,
   maxZoom = MAX_ZOOM,
+  map,
 }) => {
   const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
   const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
   const highlighted = highlight ? cities.find((c) => c.name === highlight) : undefined;
   return (
     <MapContainer
-      center={WORLD_CENTER}
-      zoom={WORLD_ZOOM}
-      minZoom={MIN_ZOOM}
+      {...(map
+        ? { bounds: map.view.fit, zoomSnap: 0.25 }
+        : { center: WORLD_CENTER, zoom: WORLD_ZOOM })}
+      minZoom={map?.view.minZoom ?? MIN_ZOOM}
       maxZoom={maxZoom}
-      maxBounds={WORLD_BOUNDS}
+      maxBounds={map?.view.maxBounds ?? WORLD_BOUNDS}
       maxBoundsViscosity={1}
       wheelPxPerZoomLevel={WHEEL_PX_PER_ZOOM_LEVEL}
       style={{ height: '100%', width: '100%', background: WATER_COLOR }}
@@ -96,8 +102,8 @@ const GameMap: React.FC<GameMapProps> = ({
       // Dubbelklikken zoomt niet: een snelle tweede klik zou als fout antwoord tellen.
       doubleClickZoom={false}
     >
-      <WorldLayer />
-      <ResetViewButton />
+      {map ? <BaseLayer load={map.loadBase} attribution={map.attribution} /> : <WorldLayer />}
+      <ResetViewButton view={map?.view} />
       <FollowHighlight lat={highlighted?.lat} lng={highlighted?.lng} />
       {loadShapes && others.length > 0 && (
         <ShapeLayers
@@ -106,6 +112,7 @@ const GameMap: React.FC<GameMapProps> = ({
           status={status}
           onPick={onCityClick}
           highlight={highlight}
+          isOnLand={map?.isOnLand}
         />
       )}
       {highlight !== undefined

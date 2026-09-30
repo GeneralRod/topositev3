@@ -7,6 +7,9 @@ export const WATER_COLOR = '#a8d5f2';
 export const LAND_COLOR = '#f4efdc';
 export const BORDER_COLOR = '#b9a57e';
 export const COAST_COLOR = '#6f9fc0';
+/** Buurlanden op een eigen kaart (Nederland): iets grijzer, zodat het land zelf opvalt. */
+export const NEIGHBOUR_COLOR = '#e6e1d2';
+export const NATIONAL_BORDER_COLOR = '#8a7650';
 
 /** Beginbeeld: de hele wereld. */
 export const WORLD_CENTER: LatLngTuple = [20, 0];

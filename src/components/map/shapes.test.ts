@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import type { Polygon, MultiPolygon } from 'geojson';
-import { AREA_TINTS, containsPoint, SEA_TINTS, seaTints, shapeStyle } from './shapes';
+import {
+  AREA_TINTS,
+  containsPoint,
+  highlightStyle,
+  SEA_TINTS,
+  seaTints,
+  shapeStyle,
+} from './shapes';
 import shapes from '../../data/wateren/shapes.json';
 
 // Vierkant van 0 tot 10 met een 'eiland' (gat) van 4 tot 6.
@@ -90,6 +97,13 @@ describe('kleuren van vormen', () => {
     expect(shapeStyle('river', 'unanswered', { hovered: true }).weight).toBeGreaterThan(
       shapeStyle('river', 'unanswered').weight!,
     );
+  });
+
+  it('geeft provincies hun eigen tint en tekent een dijk als lijn', () => {
+    expect(shapeStyle('province', 'unanswered', { tint: 2 }).fillColor).toBe(AREA_TINTS[2]);
+    expect(shapeStyle('province', 'green', { tint: 2 }).fillColor).toBe('#34a853');
+    expect(shapeStyle('dike', 'unanswered').fill).toBe(false);
+    expect(highlightStyle('dike').fill).toBe(false);
   });
 
   it('kleurt een land met zijn eigen tint, gevonden gaat voor', () => {

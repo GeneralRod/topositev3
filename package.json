@@ -41,6 +41,8 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.7",
     "globals": "^17.12.0",
+    "jsts": "^2.12.1",
+    "polygon-clipping": "^0.15.7",
     "polylabel": "^2.1.0",
     "prettier": "^3.9.9",
     "topojson-server": "^3.0.1",

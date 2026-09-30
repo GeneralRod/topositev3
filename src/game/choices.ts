@@ -41,6 +41,10 @@ const KIND_GROUP: Record<string, string> = {
   range: 'land',
   peak: 'land',
   country: 'country',
+  province: 'province',
+  island: 'island',
+  region: 'region',
+  dike: 'region',
 };
 
 /**

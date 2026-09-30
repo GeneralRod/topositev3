@@ -33,13 +33,16 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 - `src/ui/`: gedeelde knoppen, kaarten en kleuren
 - `src/components/game/`: onderdelen van het spelscherm
 - `src/components/map/`: wereldkaart (`world.ts`), vormen voor zeeën/rivieren/gebieden
-  (`ShapeLayers.tsx`, `shapes.ts`)
+  (`ShapeLayers.tsx`, `shapes.ts`), eigen ondergrond per onderwerp (`baseMap.ts`, `BaseLayer.tsx`)
 - `scripts/wateren/`: maakt de kaartgegevens van "Wateren en landschappen" uit Natural Earth
   (`items.mjs` = de lijst; na aanpassen `node scripts/wateren/build.mjs` draaien)
 - `scripts/landen/`: lijst van "Landen van de wereld" (`items.mjs`); `node scripts/landen/build.mjs`
   maakt `src/data/landen/places.json` en `england.json`; de vormen zelf komen van de wereldkaart
+- `scripts/nederland/`: maakt de kaart van Nederland uit CBS, Kadaster, Rijkswaterstaat en
+  Natural Earth (`items.mjs` = de lijst, `water.mjs` = indeling van het water; daarna
+  `node scripts/nederland/build.mjs` draaien, ± 2 minuten)
 
-## Stand van zaken (overdracht, 29 september 2026)
+## Stand van zaken (overdracht, 30 september 2026)
 
 - Live: fase 1 t/m 3, nieuwe prijzenkast met werkplaats, fase 6 deel 1 t/m 5 (kaart, lastige
   steden en sterren, meerkeuze, dagelijkse uitdaging, extra prijzen en prestatiebord), en de
@@ -47,19 +50,16 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   1 t/m 4 (met tinten per zee, oplichten bij aanwijzen, namen op de interactieve kaart).
 - Ook live: meren buiten het pakket altijd als gewoon water.
 - Ook in het plan: fase 7 (optionele accounts).
-- Open: pull request #108 "Nederland" (branch `nederland`, 79 plekken, eigen precieze kaart). De
-  eigenaar heeft nog wat feedback (80-90% goed) en wil die later afmaken.
+- Open: pull request #108 "Nederland" (branch `nederland`), nu samengevoegd met main (landen en
+  oefentoets) en met de feedback van de eigenaar verwerkt; wacht op test/oké.
 - Ook live: "Landen van de wereld" (75 landen, pakket 1 ook per werelddeel).
 - Ook live: de oefentoets (namen opschrijven, in delen per pakket, met cijfer; onderaan de
   pagina van elk onderwerp). Code in `src/game/toets.ts` en `src/components/Toets.tsx`.
 - Jules (Google) maakt soms pull requests; die worden beoordeeld en het goede wordt overgenomen
   in één eigen pull request (zie #111).
-- Let op bij het mergen van Nederland: main heeft intussen landen (soort 'country', tinten
-  `AREA_TINTS`) en de oefentoets; Nederland voegt 'province' e.d. toe (`cities.ts`, `shapes.ts`,
-  `ShapeLayers.tsx`, `choices.ts`, `catalog.ts`, `GameMap.tsx`); samenvoegen.
 - Netlify heet nu `topografiewereld` (live: https://topografiewereld.netlify.app); voorbeeldlinks
   zijn `deploy-preview-<nummer>--topografiewereld.netlify.app`.
-- Volgende: feedback Nederland verwerken. Zie `PLAN.md` fase 6. Voor later: optionele accounts voor kinderen en
+- Volgende: na oké op Nederland bijv. Europa (`PLAN.md` fase 6). Voor later: optionele accounts voor kinderen en
   leerkrachten (`PLAN.md` fase 7); oefenen zonder account moet altijd blijven werken.
 - Kaartprecisie nooit lager dan nu (Natural Earth 10m, `SEA_SIMPLIFY = 1e-3`): wens eigenaar.
 - Pakket-id's moeten uniek zijn over alle categorieën (sterren en spellen worden per id bewaard).

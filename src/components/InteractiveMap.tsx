@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { MapContainer as LeafletMap, Marker, Popup } from 'react-leaflet';
+import { MapContainer as LeafletMap, Marker, Popup, Tooltip } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { City } from '../data/cities';
 import ResetViewButton from './map/ResetViewButton';
 import ShapeLayers from './map/ShapeLayers';
 import type { ShapeData } from './map/shapes';
 import WorldLayer from './map/WorldLayer';
+import BaseLayer from './map/BaseLayer';
+import type { CategoryMap } from './map/baseMap';
 import {
   MAX_ZOOM,
   MIN_ZOOM,
@@ -26,6 +28,8 @@ interface InteractiveMapProps {
   /** Vormen (zeeën, rivieren, ...) voor onderwerpen die dat hebben. */
   loadShapes?: () => Promise<ShapeData>;
   maxZoom?: number;
+  /** Eigen kaart (bijv. Nederland) in plaats van de wereldkaart. */
+  map?: CategoryMap;
 }
 
 const Container = styled.div`
@@ -153,6 +157,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   title,
   loadShapes,
   maxZoom = MAX_ZOOM,
+  map,
 }) => {
   const dotIcon = createDotIcon();
   const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
@@ -169,19 +174,26 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
           <LeafletMap
             style={{ background: WATER_COLOR }}
             preferCanvas
-            center={WORLD_CENTER}
-            zoom={WORLD_ZOOM}
-            minZoom={MIN_ZOOM}
+            {...(map
+              ? { bounds: map.view.fit, zoomSnap: 0.25 }
+              : { center: WORLD_CENTER, zoom: WORLD_ZOOM })}
+            minZoom={map?.view.minZoom ?? MIN_ZOOM}
             maxZoom={maxZoom}
-            maxBounds={WORLD_BOUNDS}
+            maxBounds={map?.view.maxBounds ?? WORLD_BOUNDS}
             maxBoundsViscosity={1}
             wheelPxPerZoomLevel={WHEEL_PX_PER_ZOOM_LEVEL}
           >
-            <WorldLayer />
-            <ResetViewButton />
-            {loadShapes && others.length > 0 && <ShapeLayers places={others} load={loadShapes} />}
+            {map ? <BaseLayer load={map.loadBase} attribution={map.attribution} /> : <WorldLayer />}
+            <ResetViewButton view={map?.view} />
+            {loadShapes && others.length > 0 && (
+              <ShapeLayers places={others} load={loadShapes} isOnLand={map?.isOnLand} />
+            )}
             {dots.map((city) => (
               <Marker key={city.name} position={[city.lat, city.lng]} icon={dotIcon}>
+                {/* Naam meteen bij aanwijzen, net als bij zeeën, rivieren en gebieden. */}
+                <Tooltip direction="top" offset={[0, -6]}>
+                  {city.name}
+                </Tooltip>
                 <Popup>
                   <CityPopup>
                     <CityName>{city.name}</CityName>

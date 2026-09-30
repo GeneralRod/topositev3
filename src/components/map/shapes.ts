@@ -11,7 +11,7 @@ import { COAST_COLOR, WATER_COLOR } from './mapSettings';
 export interface ShapeProperties {
   name: string;
   kind: PlaceKind;
-  /** Vaste tint (landen: buren verschillen, zoals op een atlaskaart). */
+  /** Vaste tint (landen, provincies, rivieren: buren verschillen, zoals op een atlaskaart). */
   tint?: number;
 }
 
@@ -66,14 +66,21 @@ export const SHAPE_COLORS = {
   /** Trog: donker, zoals diep water op een atlaskaart. */
   trench: '#1b2a6b',
   trenchEdge: '#0d1540',
-  /** Rand van een land als de muis erop staat. */
+  /** Rand van een land of provincie als de muis erop staat. */
   countryEdge: '#8a7650',
+  /** Streek of polder: oranjebruin met een gestippelde rand. */
+  region: '#e08a2e',
+  regionEdge: '#a3591a',
+  /** Eiland: zandkleur met een donkere rand. */
+  island: '#d9a441',
+  islandEdge: '#8a6420',
+  dike: '#5d4037',
   highlight: '#ff9800',
 } as const;
 
 /**
- * Tinten voor landen (zacht, zoals op een atlaskaart). Buurlanden krijgen een
- * andere tint. Geen groen of paars: die betekenen 'gevonden'.
+ * Tinten voor landen en provincies (zacht, zoals op een atlaskaart). Buren krijgen
+ * een andere tint. Geen groen of paars: die betekenen 'gevonden'.
  */
 export const AREA_TINTS = ['#f6d38b', '#f4b49a', '#e9c7a0', '#f2a7b8', '#d8c48c'] as const;
 
@@ -123,15 +130,21 @@ export function seaTints(
 export interface StyleOptions {
   /** Muis staat erop: laat duidelijk zien wat je aanklikt. */
   hovered?: boolean;
-  /** Tint van een zee (zie seaTints). */
+  /** Tint van een zee (zie seaTints), land, provincie of rivier. */
   tint?: number;
 }
+
+/**
+ * Tinten blauw voor rivieren die een eigen tint hebben (Nederland): aansluitende
+ * rivieren verschillen, zodat je ziet waar de ene ophoudt. Zonder tint: gewoon blauw.
+ */
+export const RIVER_TINTS = ['#1f5fbf', '#0097a7', '#0b2e6b', '#4aa3e8', '#00796b'] as const;
 
 /** Stijl van een vorm, afhankelijk van soort, of hij al gevonden is en of de muis erop staat. */
 export function shapeStyle(
   kind: PlaceKind,
   status: CityStatus,
-  { hovered = false, tint = 0 }: StyleOptions = {},
+  { hovered = false, tint }: StyleOptions = {},
 ): PathOptions {
   const done = status === 'green' || status === 'blue';
   const doneColor = status === 'green' ? SHAPE_COLORS.found : SHAPE_COLORS.retry;
@@ -142,7 +155,7 @@ export function shapeStyle(
         stroke: hovered,
         color: '#ffffff',
         weight: 2.5,
-        fillColor: done ? doneColor : SEA_TINTS[tint % SEA_TINTS.length],
+        fillColor: done ? doneColor : SEA_TINTS[(tint ?? 0) % SEA_TINTS.length],
         fillOpacity: hovered ? 0.85 : done ? 0.6 : 0.5,
       };
     case 'lake':
@@ -154,8 +167,12 @@ export function shapeStyle(
       };
     case 'river':
       return {
-        color: done ? doneColor : SHAPE_COLORS.river,
-        weight: (done ? 4 : 2.5) + (hovered ? 2.5 : 0),
+        color: done
+          ? doneColor
+          : tint === undefined
+            ? SHAPE_COLORS.river
+            : RIVER_TINTS[tint % RIVER_TINTS.length],
+        weight: (done ? 4 : tint === undefined ? 2.5 : 3.5) + (hovered ? 2.5 : 0),
         fill: false,
       };
     case 'trench':
@@ -174,11 +191,34 @@ export function shapeStyle(
         fillOpacity: (done ? 0.55 : 0.45) + (hovered ? 0.25 : 0),
       };
     case 'country':
+    case 'province':
       return {
         color: hovered ? SHAPE_COLORS.countryEdge : '#ffffff',
         weight: hovered ? 3 : 1,
-        fillColor: done ? doneColor : AREA_TINTS[tint % AREA_TINTS.length],
+        fillColor: done ? doneColor : AREA_TINTS[(tint ?? 0) % AREA_TINTS.length],
         fillOpacity: (done ? 0.65 : 0.8) + (hovered ? 0.15 : 0),
+      };
+    case 'region':
+      return {
+        color: done ? doneColor : SHAPE_COLORS.regionEdge,
+        weight: hovered ? 3 : 1.5,
+        dashArray: done ? undefined : '6 4',
+        fillColor: done ? doneColor : SHAPE_COLORS.region,
+        fillOpacity: (done ? 0.55 : 0.3) + (hovered ? 0.25 : 0),
+      };
+    case 'island':
+      return {
+        color: done ? doneColor : SHAPE_COLORS.islandEdge,
+        weight: hovered ? 3 : 1.2,
+        fillColor: done ? doneColor : SHAPE_COLORS.island,
+        fillOpacity: (done ? 0.6 : 0.45) + (hovered ? 0.25 : 0),
+      };
+    case 'dike':
+      return {
+        color: done ? doneColor : SHAPE_COLORS.dike,
+        weight: (done ? 5 : 4) + (hovered ? 2.5 : 0),
+        lineCap: 'butt',
+        fill: false,
       };
     default:
       return {
@@ -192,7 +232,9 @@ export function shapeStyle(
 
 /** Stijl voor de vorm die bij meerkeuze knippert. */
 export function highlightStyle(kind: PlaceKind): PathOptions {
-  if (kind === 'river') return { color: SHAPE_COLORS.highlight, weight: 6, fill: false };
+  if (kind === 'river' || kind === 'dike') {
+    return { color: SHAPE_COLORS.highlight, weight: 6, fill: false };
+  }
   return {
     color: SHAPE_COLORS.highlight,
     weight: kind === 'sea' ? 0 : 3,

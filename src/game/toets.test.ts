@@ -92,6 +92,17 @@ describe('oefentoets: nakijken (topo, geen spelling)', () => {
     expect(goed('Paraguay', 'Uruguay')).toBe(false);
   });
 
+  it('kent bekende andere namen in Nederland (Den Bosch, provincie zonder "(provincie)")', () => {
+    const nl = makeCandidates(
+      ["'s-Hertogenbosch", 'Utrecht', 'Utrecht (provincie)', 'Groningen', 'Groningen (provincie)'],
+      ALIASES,
+    );
+    expect(judgeAnswer('Den Bosch', "'s-Hertogenbosch", nl).exact).toBe(true);
+    expect(judgeAnswer('Utrecht', 'Utrecht (provincie)', nl).exact).toBe(true);
+    expect(judgeAnswer('Utrecht', 'Utrecht', nl).exact).toBe(true);
+    expect(judgeAnswer('Groningen', 'Groningen (provincie)', nl).correct).toBe(true);
+  });
+
   it('rekent onzin en een leeg antwoord fout', () => {
     expect(goed('', 'Chili')).toBe(false);
     expect(goed('weet ik niet', 'Chili')).toBe(false);

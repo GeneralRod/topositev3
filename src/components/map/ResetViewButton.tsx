@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import L from 'leaflet';
 import { useMap } from 'react-leaflet';
-import { FaGlobeEurope } from 'react-icons/fa';
+import { FaGlobeEurope, FaMapMarkedAlt } from 'react-icons/fa';
+import type { MapView } from './baseMap';
 import { WORLD_CENTER, WORLD_ZOOM } from './mapSettings';
 
 const Button = styled.button`
@@ -26,8 +27,8 @@ const Button = styled.button`
   }
 `;
 
-/** Knop rechtsboven op de kaart: terug naar de hele wereld. */
-const ResetViewButton: React.FC = () => {
+/** Knop rechtsboven op de kaart: terug naar het beginbeeld (de hele wereld of het land). */
+const ResetViewButton: React.FC<{ view?: MapView }> = ({ view }) => {
   const map = useMap();
   const ref = useRef<HTMLButtonElement>(null);
 
@@ -39,9 +40,14 @@ const ResetViewButton: React.FC = () => {
     }
   }, []);
 
+  const reset = () => {
+    if (view) map.fitBounds(view.fit);
+    else map.setView(WORLD_CENTER, WORLD_ZOOM);
+  };
+
   return (
-    <Button ref={ref} type="button" onClick={() => map.setView(WORLD_CENTER, WORLD_ZOOM)}>
-      <FaGlobeEurope /> Hele wereld
+    <Button ref={ref} type="button" onClick={reset}>
+      {view ? <FaMapMarkedAlt /> : <FaGlobeEurope />} {view ? view.resetLabel : 'Hele wereld'}
     </Button>
   );
 };

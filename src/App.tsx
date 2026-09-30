@@ -199,6 +199,7 @@ const InteractiveMapWrapper: React.FC = () => {
       title={route.pkg.title}
       loadShapes={route.category.loadShapes}
       maxZoom={route.category.maxZoom}
+      map={route.category.map}
     />
   );
 };

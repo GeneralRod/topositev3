@@ -15,6 +15,13 @@ export const ALIASES: Record<string, string[]> = {
   Oekraïne: ['Ukraine'],
   Myanmar: ['Birma', 'Burma'],
   Haïti: ['Haiti'],
+  // Nederland
+  Friesland: ['Fryslân'],
+  "'s-Hertogenbosch": ['Den Bosch', 'Hertogenbosch'],
+  'Den Haag': ["'s-Gravenhage"],
+  Nederrijn: ['Neder-Rijn'],
+  Biesbosch: ['De Biesbosch'],
+  'Loonse en Drunense Duinen': ['Loonse Duinen', 'Drunense Duinen'],
 };
 
 /**
