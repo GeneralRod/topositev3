@@ -160,6 +160,29 @@ export function setNewPassword(password: string): Promise<Result> {
   });
 }
 
+/**
+ * Account en alle online voortgang voorgoed verwijderen, en daarna ook niets
+ * op deze computer achterlaten.
+ */
+export function deleteAccount(): Promise<Result> {
+  return run(async () => {
+    const supabase = await getClient();
+    const current = sync;
+    // Eerst stoppen, anders zou bewaren de voortgang meteen weer online zetten.
+    sync?.stop();
+    sync = null;
+    const { error } = await supabase.rpc('delete_my_account');
+    if (error) {
+      if (current) followAccount(supabase, account);
+      return failed(error);
+    }
+    // Het account bestaat niet meer; dit ruimt alleen de inlog in de browser op.
+    await supabase.auth.signOut({ scope: 'local' });
+    forgetAccountData(syncStore());
+    return { ok: true };
+  });
+}
+
 export type SignOutResult = Result | { ok: false; unsaved: true; message: string };
 
 /**
@@ -179,14 +202,15 @@ export function signOut(force = false): Promise<SignOutResult> {
           'Je laatste voortgang is nog niet online bewaard, want er is geen verbinding. Als je nu uitlogt, ben je die kwijt.',
       };
     }
-    const current = sync;
     sync?.stop();
     sync = null;
     const { error } = await supabase.auth.signOut({ scope: 'local' });
-    if (error) {
+    // Supabase haalt de inlog meestal ook bij een fout uit de browser; kijk wat er echt is.
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
       // Nog steeds ingelogd: gewoon verder bijhouden.
-      if (current) followAccount(supabase, account);
-      return failed(error);
+      followAccount(supabase, fromSession(data.session));
+      return failed(error ?? {});
     }
     forgetAccountData(syncStore());
     return { ok: true };

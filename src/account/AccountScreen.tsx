@@ -3,9 +3,11 @@
 
 import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { getSaveData } from '../storage';
 import { BackLink, Button, colors, Page, PageTitle } from '../ui';
 import {
+  deleteAccount,
   sendPasswordReset,
   setNewPassword,
   signIn,
@@ -143,6 +145,12 @@ const Email = styled.strong`
   word-break: break-all;
 `;
 
+const FooterLink = styled(Link)`
+  color: ${colors.muted};
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+`;
+
 type View = 'login' | 'signup' | 'forgot';
 
 /** Houdt bij of een formulier bezig is en wat de uitkomst was. */
@@ -278,8 +286,15 @@ const SignUpForm: React.FC<{ email: string; setEmail: (v: string) => void }> = (
           onChange={(e) => setConsent(e.target.checked)}
           required
         />
-        Ik ben 16 jaar of ouder, of mijn ouder of verzorger maakt dit account samen met mij en vult
-        zijn of haar e-mailadres in.
+        <span>
+          Ik ben 16 jaar of ouder, of mijn ouder of verzorger maakt dit account samen met mij en
+          vult zijn of haar e-mailadres in. We bewaren alleen het e-mailadres en je voortgang (lees
+          de{' '}
+          <a href="/privacy" target="_blank" rel="noopener">
+            privacyverklaring
+          </a>
+          ).
+        </span>
       </CheckLabel>
       {error && <Notice kind="error">{error}</Notice>}
       <SubmitButton type="submit" disabled={busy || !consent}>
@@ -365,7 +380,70 @@ const NewPasswordForm: React.FC<{ onDone: () => void; onCancel?: () => void }> =
   );
 };
 
-const SignedIn: React.FC<{ email: string; recovering: boolean }> = ({ email, recovering }) => {
+/** Een bestand met alles wat er van je bewaard wordt (recht op inzage, AVG). */
+function downloadData(email: string): void {
+  const content = JSON.stringify(
+    { account: email, gedownload: new Date().toISOString(), voortgang: getSaveData() },
+    null,
+    2,
+  );
+  const url = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'topografiewereld-mijn-gegevens.json';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+const Divider = styled.hr`
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 0.5rem 0;
+`;
+
+const DeleteAccount: React.FC<{ onDeleted: () => void }> = ({ onDeleted }) => {
+  const [confirming, setConfirming] = useState(false);
+  const { busy, error, submit } = useSubmit();
+  if (!confirming) {
+    return (
+      <LinkButton
+        type="button"
+        onClick={() => setConfirming(true)}
+        style={{ color: colors.danger }}
+      >
+        Account verwijderen
+      </LinkButton>
+    );
+  }
+  return (
+    <>
+      <Notice kind="error">
+        Weet je het zeker? Je account en al je voortgang (munten, prijzen, sterren) worden voorgoed
+        verwijderd, online én op deze computer. Dit kan niet ongedaan worden gemaakt.
+      </Notice>
+      {error && <Notice kind="error">{error}</Notice>}
+      <SubmitButton
+        type="button"
+        variant="danger"
+        disabled={busy}
+        onClick={async () => {
+          if ((await submit(deleteAccount)).ok) onDeleted();
+        }}
+      >
+        {busy ? 'Bezig…' : 'Ja, verwijder mijn account'}
+      </SubmitButton>
+      <LinkButton type="button" onClick={() => setConfirming(false)}>
+        Nee, toch niet
+      </LinkButton>
+    </>
+  );
+};
+
+const SignedIn: React.FC<{
+  email: string;
+  recovering: boolean;
+  onLeave: (message: string) => void;
+}> = ({ email, recovering, onLeave }) => {
   const [changing, setChanging] = useState(recovering);
   const [saved, setSaved] = useState(false);
   const [unsaved, setUnsaved] = useState(false);
@@ -391,6 +469,7 @@ const SignedIn: React.FC<{ email: string; recovering: boolean }> = ({ email, rec
   const logOut = async (force: boolean) => {
     const result = await submit(() => signOut(force));
     setUnsaved(!result.ok && 'unsaved' in result);
+    if (result.ok) onLeave('Je bent uitgelogd.');
   };
 
   return (
@@ -416,6 +495,11 @@ const SignedIn: React.FC<{ email: string; recovering: boolean }> = ({ email, rec
       <Muted style={{ fontSize: '0.9rem' }}>
         Na uitloggen staat je voortgang niet meer op deze computer. Log weer in om verder te gaan.
       </Muted>
+      <Divider />
+      <LinkButton type="button" onClick={() => downloadData(email)}>
+        Download mijn gegevens
+      </LinkButton>
+      <DeleteAccount onDeleted={() => onLeave('Je account en al je voortgang zijn verwijderd.')} />
     </Form>
   );
 };
@@ -458,6 +542,8 @@ const AccountScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   // Fout uit een verlopen maillink; één keer lezen, Supabase haalt de # daarna weg.
   const [linkError] = useState(() => linkErrorMessage(window.location.hash));
+  // Melding na uitloggen of verwijderen.
+  const [leftMessage, setLeftMessage] = useState<string | null>(null);
   const recovering = new URLSearchParams(location.search).has('herstel');
 
   useEffect(() => {
@@ -483,10 +569,17 @@ const AccountScreen: React.FC = () => {
       )}
       <Panel>
         {account.status === 'loading' && <Muted>Even laden…</Muted>}
-        {account.status === 'in' && <SignedIn email={account.email} recovering={recovering} />}
+        {account.status === 'in' && (
+          <SignedIn email={account.email} recovering={recovering} onLeave={setLeftMessage} />
+        )}
         {account.status === 'out' && (
           <>
-            {linkError && (
+            {leftMessage && (
+              <Notice kind="success" style={{ marginBottom: '1rem' }}>
+                {leftMessage}
+              </Notice>
+            )}
+            {linkError && !leftMessage && (
               <Notice kind="error" style={{ marginBottom: '1rem' }}>
                 {linkError}
               </Notice>
@@ -523,6 +616,7 @@ const AccountScreen: React.FC = () => {
           </>
         )}
       </Panel>
+      <FooterLink to="/privacy">Privacyverklaring</FooterLink>
     </Page>
   );
 };

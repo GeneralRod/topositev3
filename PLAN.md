@@ -316,7 +316,13 @@ nooit met dit account ingelogd was). Zo telt alleen wat er sindsdien nieuw is bi
       (`src/account/sync.ts`, getest met een nep-server). Wijzigingen gaan 3 seconden later
       online; bij terugkomen in het tabblad wordt opgehaald; zonder internet om de 30 seconden
       opnieuw. Uitloggen zonder internet vraagt eerst "Toch uitloggen?".
-- [ ] Privacyverklaring en account + gegevens verwijderen
+- [x] Privacyverklaring (`/privacy`, `src/account/PrivacyScreen.tsx`, gegevens in
+      `PRIVACY` in `src/account/config.ts`); op het accountscherm "Download mijn gegevens" en
+      "Account verwijderen" (databasefunctie `delete_my_account`, getest met proefaccounts:
+      verwijdert alleen je eigen account en voortgang). Naam verantwoordelijke: "Topografiewereld"
+      (keuze eigenaar).
+- [ ] Vóór livegang: contactadres invullen in `PRIVACY.contact` (eigenaar maakt een apart
+      adres aan) en `PRIVACY.mailService` aanpassen als er een eigen maildienst komt
 - [ ] Accountknop voor iedereen zichtbaar maken (de `?account`-vlag in `src/account/flag.ts` weg)
 
 **Later 7b: klassen en leerkrachten**

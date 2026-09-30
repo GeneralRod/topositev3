@@ -34,6 +34,7 @@ const InteractiveMap = lazy(() => import('./components/InteractiveMap'));
 const Toets = lazy(() => import('./components/Toets'));
 const PrizeCabinet = lazy(() => import('./cabinet/PrizeCabinet'));
 const AccountScreen = lazy(() => import('./account/AccountScreen'));
+const PrivacyScreen = lazy(() => import('./account/PrivacyScreen'));
 
 const AppContainer = styled.div`
   width: 100vw;
@@ -246,6 +247,7 @@ const App: React.FC = () => {
             <Route path="/toets/:category/:upto" element={<ToetsWrapper />} />
             <Route path="/trophy-cabinet" element={<PrizeCabinet />} />
             <Route path="/account" element={<AccountScreen />} />
+            <Route path="/privacy" element={<PrivacyScreen />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
