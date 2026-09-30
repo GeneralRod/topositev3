@@ -10,6 +10,10 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   via een pull request. Netlify maakt per pull request een voorbeeldlink; de eigenaar test die
   en geeft een oké, pas daarna mergen. Merge nooit zonder oké van de eigenaar.
 - Werkwijze: het verbeterplan staat in `PLAN.md` (fase 6). Elk deel is één pull request.
+- Uitzondering, wens eigenaar (30 september 2026): de accounts (fase 7a) worden stap voor stap
+  op één branch gebouwd (`account-inloggen`) en lokaal getest; GitHub is daarbij de back-up.
+  Eén pull request (#115) voor alles samen, pas mergen als het helemaal af is en de eigenaar
+  oké geeft.
 - Het herbouwplan en de voortgang staan in `PLAN.md`. Vink taken af als ze klaar zijn.
 - Voor elke commit: `npm run lint`, `npm run format:check`, `npm test` en `npm run build` moeten slagen.
 - Voortgang en munten van spelers in localStorage mogen niet verloren gaan.

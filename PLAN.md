@@ -311,8 +311,11 @@ nooit met dit account ingelogd was). Zo telt alleen wat er sindsdien nieuw is bi
       opent of al ingelogd is.
 - [ ] Instellingen in het Supabase-dashboard door de eigenaar (zie `supabase/README.md`):
       adressen van de site, gratis maildienst (bijv. Brevo), Nederlandse mailteksten
-- [ ] Synchroniseren: voortgang online bewaren en ophalen, samenvoegen bij inloggen; uitloggen
+- [x] Synchroniseren: voortgang online bewaren en ophalen, samenvoegen bij inloggen; uitloggen
       op een gedeelde computer laat de voortgang van dat account niet achter
+      (`src/account/sync.ts`, getest met een nep-server). Wijzigingen gaan 3 seconden later
+      online; bij terugkomen in het tabblad wordt opgehaald; zonder internet om de 30 seconden
+      opnieuw. Uitloggen zonder internet vraagt eerst "Toch uitloggen?".
 - [ ] Privacyverklaring en account + gegevens verwijderen
 - [ ] Accountknop voor iedereen zichtbaar maken (de `?account`-vlag in `src/account/flag.ts` weg)
 

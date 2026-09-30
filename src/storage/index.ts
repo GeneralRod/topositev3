@@ -14,7 +14,7 @@ import {
 } from './storage';
 
 export type { PlayMode, SaveData } from './storage';
-export { mergeSaveData } from './merge';
+export { mergeSaveData, sameData } from './merge';
 
 function memoryStore(): KeyValueStore {
   const map = new Map<string, string>();

@@ -16,6 +16,7 @@ import {
   type Result,
 } from './session';
 import { linkErrorMessage, passwordProblem } from './messages';
+import { useSyncStatus, type SyncStatus } from './sync';
 import { MIN_PASSWORD_LENGTH } from './config';
 
 const Panel = styled.div`
@@ -367,6 +368,7 @@ const NewPasswordForm: React.FC<{ onDone: () => void; onCancel?: () => void }> =
 const SignedIn: React.FC<{ email: string; recovering: boolean }> = ({ email, recovering }) => {
   const [changing, setChanging] = useState(recovering);
   const [saved, setSaved] = useState(false);
+  const [unsaved, setUnsaved] = useState(false);
   const { busy, error, submit } = useSubmit();
 
   if (changing) {
@@ -386,21 +388,66 @@ const SignedIn: React.FC<{ email: string; recovering: boolean }> = ({ email, rec
     );
   }
 
+  const logOut = async (force: boolean) => {
+    const result = await submit(() => signOut(force));
+    setUnsaved(!result.ok && 'unsaved' in result);
+  };
+
   return (
     <Form as="div">
       <Muted>
         Je bent ingelogd als <Email>{email}</Email>.
       </Muted>
+      <SyncNotice />
       {saved && <Notice kind="success">Je nieuwe wachtwoord is opgeslagen.</Notice>}
       {error && <Notice kind="error">{error}</Notice>}
       <SubmitButton type="button" variant="outline" onClick={() => setChanging(true)}>
         Wachtwoord wijzigen
       </SubmitButton>
-      <SubmitButton type="button" disabled={busy} onClick={() => void submit(signOut)}>
-        {busy ? 'Bezig…' : 'Uitloggen'}
-      </SubmitButton>
+      {unsaved ? (
+        <SubmitButton type="button" variant="danger" disabled={busy} onClick={() => logOut(true)}>
+          {busy ? 'Bezig…' : 'Toch uitloggen'}
+        </SubmitButton>
+      ) : (
+        <SubmitButton type="button" disabled={busy} onClick={() => logOut(false)}>
+          {busy ? 'Bezig…' : 'Uitloggen'}
+        </SubmitButton>
+      )}
+      <Muted style={{ fontSize: '0.9rem' }}>
+        Na uitloggen staat je voortgang niet meer op deze computer. Log weer in om verder te gaan.
+      </Muted>
     </Form>
   );
+};
+
+const SYNC_TEXT: Record<
+  SyncStatus,
+  { kind: 'success' | 'waiting' | 'error'; text: string } | null
+> = {
+  off: null,
+  saved: { kind: 'success', text: '✓ Je voortgang is online bewaard.' },
+  pending: { kind: 'waiting', text: 'Je voortgang wordt bewaard…' },
+  offline: {
+    kind: 'error',
+    text: 'Je voortgang is nog niet online bewaard: geen verbinding. Dat gebeurt vanzelf zodra er weer internet is.',
+  },
+};
+
+const SyncBox = styled.p<{ kind: 'success' | 'waiting' | 'error' }>`
+  margin: 0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  background: ${(p) =>
+    p.kind === 'success' ? '#e6f4ea' : p.kind === 'error' ? '#fef7e0' : '#f1f3f4'};
+  color: ${(p) => (p.kind === 'success' ? '#137333' : p.kind === 'error' ? '#b06000' : colors.muted)};
+`;
+
+/** Staat alles online? */
+const SyncNotice: React.FC = () => {
+  const info = SYNC_TEXT[useSyncStatus()];
+  return info && <SyncBox kind={info.kind}>{info.text}</SyncBox>;
 };
 
 const AccountScreen: React.FC = () => {

@@ -2,9 +2,11 @@
 // useAccount(); het inloggen zelf loopt via de functies hieronder.
 
 import { useSyncExternalStore } from 'react';
-import type { Session } from '@supabase/supabase-js';
+import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { getClient } from './client';
 import { authErrorMessage, OFFLINE_MESSAGE, UNKNOWN_MESSAGE, type AuthErrorLike } from './messages';
+import { supabaseBackend } from './remote';
+import { createSync, forgetAccountData, type Sync } from './sync';
 
 export type Account =
   { status: 'loading' } | { status: 'out' } | { status: 'in'; userId: string; email: string };
@@ -36,15 +38,56 @@ export function useAccount(): Account {
   return useSyncExternalStore(subscribeAccount, getAccount);
 }
 
+// --- Voortgang bijhouden zolang je ingelogd bent (zie sync.ts) ---------------
+
+let sync: Sync | null = null;
+
+function syncStore(): Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> {
+  try {
+    return window.localStorage;
+  } catch {
+    const map = new Map<string, string>();
+    return {
+      getItem: (key) => map.get(key) ?? null,
+      setItem: (key, value) => void map.set(key, value),
+      removeItem: (key) => void map.delete(key),
+    };
+  }
+}
+
+function followAccount(supabase: SupabaseClient, next: Account): void {
+  const userId = next.status === 'in' ? next.userId : null;
+  if (sync?.userId === userId) return;
+  sync?.stop();
+  sync = userId ? createSync(userId, supabaseBackend(supabase, userId), syncStore()) : null;
+}
+
+function listenToBrowser(): void {
+  // Weer internet: bewaren wat nog wacht.
+  window.addEventListener('online', () => void sync?.flush());
+  // Tabblad weg: meteen bewaren. Terug: ophalen wat een andere computer bewaarde.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') void sync?.flush();
+    else void sync?.pull();
+  });
+}
+
 /** Laad Supabase en kijk of er iemand ingelogd is. Gebeurt maar één keer. */
 export function startAccount(): Promise<void> {
   started ??= (async () => {
     setAccount({ status: 'loading' });
     try {
       const supabase = await getClient();
-      supabase.auth.onAuthStateChange((_event, session) => setAccount(fromSession(session)));
+      const apply = (session: Session | null) => {
+        const next = fromSession(session);
+        setAccount(next);
+        // Pas na afloop van deze melding met de database praten (advies van Supabase).
+        setTimeout(() => followAccount(supabase, next), 0);
+      };
+      supabase.auth.onAuthStateChange((_event, session) => apply(session));
       const { data } = await supabase.auth.getSession();
-      setAccount(fromSession(data.session));
+      apply(data.session);
+      listenToBrowser();
     } catch {
       started = null;
       setAccount({ status: 'out' });
@@ -117,11 +160,35 @@ export function setNewPassword(password: string): Promise<Result> {
   });
 }
 
-/** Uitloggen op deze computer (andere computers blijven ingelogd). */
-export function signOut(): Promise<Result> {
-  return run(async () => {
+export type SignOutResult = Result | { ok: false; unsaved: true; message: string };
+
+/**
+ * Uitloggen op deze computer (andere computers blijven ingelogd). Eerst wordt
+ * de laatste voortgang online bewaard; lukt dat niet, dan vragen we het eerst
+ * (force = toch uitloggen). Daarna blijft er van het account niets achter in
+ * deze browser.
+ */
+export function signOut(force = false): Promise<SignOutResult> {
+  return run<SignOutResult>(async () => {
     const supabase = await getClient();
+    if (!force && sync && !(await sync.flush())) {
+      return {
+        ok: false,
+        unsaved: true,
+        message:
+          'Je laatste voortgang is nog niet online bewaard, want er is geen verbinding. Als je nu uitlogt, ben je die kwijt.',
+      };
+    }
+    const current = sync;
+    sync?.stop();
+    sync = null;
     const { error } = await supabase.auth.signOut({ scope: 'local' });
-    return error ? failed(error) : { ok: true };
+    if (error) {
+      // Nog steeds ingelogd: gewoon verder bijhouden.
+      if (current) followAccount(supabase, account);
+      return failed(error);
+    }
+    forgetAccountData(syncStore());
+    return { ok: true };
   });
 }
