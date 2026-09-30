@@ -264,6 +264,38 @@ function provinceTints() {
   return tints;
 }
 const tints = provinceTints();
+
+/**
+ * Rivieren die op elkaar aansluiten (binnen 1 km) krijgen een andere tint blauw,
+ * zodat je ziet waar de ene rivier ophoudt en de volgende begint (wens eigenaar).
+ */
+function riverTints() {
+  const rivers = shapes.filter((x) => x.kind === 'river');
+  const points = new Map(rivers.map((r) => [r.name, r.geometry.coordinates.flat()]));
+  const ends = new Map(
+    rivers.map((r) => [r.name, r.geometry.coordinates.flatMap((l) => [l[0], l[l.length - 1]])]),
+  );
+  const touch = (a, b) =>
+    ends.get(a).some((p) => points.get(b).some((q) => km(p, q) < 1)) ||
+    ends.get(b).some((p) => points.get(a).some((q) => km(p, q) < 1));
+  // Vijf tinten (zie RIVER_TINTS in src/components/map/shapes.ts); steeds de minst
+  // gebruikte die mag, zodat zoveel mogelijk rivieren een eigen tint hebben.
+  const TINTS = 5;
+  const out = {};
+  for (const r of [...rivers].sort((a, b) => a.name.localeCompare(b.name))) {
+    const taken = new Set(
+      rivers
+        .filter((o) => o.name !== r.name && out[o.name] !== undefined && touch(r.name, o.name))
+        .map((o) => out[o.name]),
+    );
+    const used = (t) => Object.values(out).filter((x) => x === t).length;
+    const free = [...Array(TINTS).keys()].filter((t) => !taken.has(t));
+    out[r.name] = free.reduce((best, t) => (used(t) < used(best) ? t : best));
+  }
+  return out;
+}
+const riverTint = riverTints();
+log('tinten rivieren:', JSON.stringify(riverTint));
 const cbsName = new Map(
   items.filter((i) => i.kind === 'province').map((i) => [i.province, i.name]),
 );
@@ -348,7 +380,14 @@ const topo = topology(
     shapes: collection(
       shapes
         .filter((s) => s.kind !== 'province')
-        .map((s) => ({ ...s.geometry, properties: { name: s.name, kind: s.kind } })),
+        .map((s) => ({
+          ...s.geometry,
+          properties: {
+            name: s.name,
+            kind: s.kind,
+            ...(riverTint[s.name] !== undefined ? { tint: riverTint[s.name] } : {}),
+          },
+        })),
     ),
     seaBorders: collection(
       borders.map((b) => ({

@@ -487,14 +487,14 @@ export const categories: Category[] = [
           {
             id: 'nederland5',
             title: 'Pakket 5',
-            description: 'Rivieren en kanalen',
+            description: 'Rivieren: van de Rijn en de Maas tot aan zee',
             color: '#1565c0',
             groups: ['nederland5'],
           },
           {
             id: 'nederland6',
             title: 'Pakket 6',
-            description: 'Eilanden, gebieden, de Afsluitdijk en de Vaalserberg',
+            description: 'Waddeneilanden, gebieden, de Afsluitdijk en de Vaalserberg',
             color: '#8d6e63',
             groups: ['nederland6'],
           },
@@ -528,21 +528,21 @@ export const categories: Category[] = [
           {
             id: 'nederland4-5',
             title: 'Pakket 4 + 5',
-            description: 'Al het water: zeeën, meren, rivieren en kanalen',
+            description: 'Al het water: zeeën, meren en rivieren',
             color: '#00695c',
             groups: ['nederland4', 'nederland5'],
           },
           {
             id: 'nederland4-5-6',
             title: 'Pakket 4 + 5 + 6',
-            description: 'Water, eilanden en gebieden',
+            description: 'Water, Waddeneilanden en gebieden',
             color: '#5d4037',
             groups: ['nederland4', 'nederland5', 'nederland6'],
           },
           {
             id: 'nederland-alles',
             title: 'Alle pakketten',
-            description: 'Alle 79 plekken van Nederland uit pakket 1 t/m 6',
+            description: 'Alle 74 plekken van Nederland uit pakket 1 t/m 6',
             color: '#37474f',
             groups: [
               'nederland1',
@@ -590,14 +590,14 @@ export const categories: Category[] = [
           {
             id: 'nederland-kaart5',
             title: 'Interactieve kaart pakket 5',
-            description: 'Bekijk rivieren en kanalen',
+            description: 'Bekijk de rivieren',
             color: '#1565c0',
             groups: ['nederland5'],
           },
           {
             id: 'nederland-kaart6',
             title: 'Interactieve kaart pakket 6',
-            description: 'Bekijk eilanden, gebieden, de Afsluitdijk en de Vaalserberg',
+            description: 'Bekijk Waddeneilanden, gebieden, de Afsluitdijk en de Vaalserberg',
             color: '#8d6e63',
             groups: ['nederland6'],
           },

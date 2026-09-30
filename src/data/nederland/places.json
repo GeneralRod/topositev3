@@ -443,7 +443,7 @@
     "name": "Lek",
     "package": "nederland5",
     "kind": "river",
-    "hint": "Vervolg van de Nederrijn, naar Rotterdam",
+    "hint": "Vervolg van de Nederrijn, tot bij Rotterdam",
     "lat": 51.96878,
     "lng": 5.02997
   },
@@ -459,7 +459,7 @@
     "name": "Maas",
     "package": "nederland5",
     "kind": "river",
-    "hint": "Door Limburg en Brabant, langs Maastricht en Venlo",
+    "hint": "Door Limburg en Brabant, langs Maastricht en Venlo, tot het Hollands Diep",
     "lat": 51.02979,
     "lng": 5.76237
   },
@@ -472,36 +472,20 @@
     "lng": 4.8303
   },
   {
-    "name": "Vecht",
+    "name": "Nieuwe Maas",
     "package": "nederland5",
     "kind": "river",
-    "hint": "Van Utrecht naar Muiden",
-    "lat": 52.11846,
-    "lng": 5.08906
+    "hint": "Vervolg van de Lek, door Rotterdam",
+    "lat": 51.8937,
+    "lng": 4.59626
   },
   {
     "name": "Nieuwe Waterweg",
     "package": "nederland5",
     "kind": "river",
     "hint": "Van Rotterdam naar zee bij Hoek van Holland",
-    "lat": 51.9682,
-    "lng": 4.13684
-  },
-  {
-    "name": "Noordzeekanaal",
-    "package": "nederland5",
-    "kind": "river",
-    "hint": "Van Amsterdam naar IJmuiden",
-    "lat": 52.44123,
-    "lng": 4.70085
-  },
-  {
-    "name": "Amsterdam-Rijnkanaal",
-    "package": "nederland5",
-    "kind": "river",
-    "hint": "Van Amsterdam naar de Waal bij Tiel",
-    "lat": 51.99454,
-    "lng": 5.22558
+    "lat": 51.92805,
+    "lng": 4.22405
   },
   {
     "name": "Texel",
@@ -544,30 +528,6 @@
     "lng": 6.19296
   },
   {
-    "name": "Walcheren",
-    "package": "nederland6",
-    "kind": "island",
-    "hint": "Zeeland, met Middelburg en Vlissingen",
-    "lat": 51.52024,
-    "lng": 3.57529
-  },
-  {
-    "name": "Schouwen-Duiveland",
-    "package": "nederland6",
-    "kind": "island",
-    "hint": "Zeeland, tussen Grevelingen en Oosterschelde",
-    "lat": 51.66192,
-    "lng": 3.97682
-  },
-  {
-    "name": "Goeree-Overflakkee",
-    "package": "nederland6",
-    "kind": "island",
-    "hint": "Zuid-Holland, tussen Grevelingen en Haringvliet",
-    "lat": 51.75662,
-    "lng": 4.08496
-  },
-  {
     "name": "Veluwe",
     "package": "nederland6",
     "kind": "region",
@@ -592,28 +552,28 @@
     "lng": 6.78203
   },
   {
-    "name": "Betuwe",
-    "package": "nederland6",
-    "kind": "region",
-    "hint": "Tussen Nederrijn/Lek en Waal",
-    "lat": 51.89353,
-    "lng": 5.24742
-  },
-  {
-    "name": "Zeeuws-Vlaanderen",
-    "package": "nederland6",
-    "kind": "region",
-    "hint": "Zeeland, ten zuiden van de Westerschelde",
-    "lat": 51.29169,
-    "lng": 3.93911
-  },
-  {
     "name": "Noordoostpolder",
     "package": "nederland6",
     "kind": "region",
     "hint": "Flevoland, drooggelegd in 1942",
     "lat": 52.72375,
     "lng": 5.71267
+  },
+  {
+    "name": "Biesbosch",
+    "package": "nederland6",
+    "kind": "region",
+    "hint": "Zoetwatergetijdengebied bij Dordrecht (nationaal park)",
+    "lat": 51.76509,
+    "lng": 4.82313
+  },
+  {
+    "name": "Loonse en Drunense Duinen",
+    "package": "nederland6",
+    "kind": "region",
+    "hint": "Zandverstuiving in Noord-Brabant (nationaal park)",
+    "lat": 51.65338,
+    "lng": 5.10733
   },
   {
     "name": "Afsluitdijk",

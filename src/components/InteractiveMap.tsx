@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { MapContainer as LeafletMap, Marker, Popup } from 'react-leaflet';
+import { MapContainer as LeafletMap, Marker, Popup, Tooltip } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { City } from '../data/cities';
 import ResetViewButton from './map/ResetViewButton';
@@ -190,6 +190,10 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
             )}
             {dots.map((city) => (
               <Marker key={city.name} position={[city.lat, city.lng]} icon={dotIcon}>
+                {/* Naam meteen bij aanwijzen, net als bij zeeën, rivieren en gebieden. */}
+                <Tooltip direction="top" offset={[0, -6]}>
+                  {city.name}
+                </Tooltip>
                 <Popup>
                   <CityPopup>
                     <CityName>{city.name}</CityName>

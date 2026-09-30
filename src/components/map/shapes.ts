@@ -130,15 +130,21 @@ export function seaTints(
 export interface StyleOptions {
   /** Muis staat erop: laat duidelijk zien wat je aanklikt. */
   hovered?: boolean;
-  /** Tint van een zee (zie seaTints). */
+  /** Tint van een zee (zie seaTints), land, provincie of rivier. */
   tint?: number;
 }
+
+/**
+ * Tinten blauw voor rivieren die een eigen tint hebben (Nederland): aansluitende
+ * rivieren verschillen, zodat je ziet waar de ene ophoudt. Zonder tint: gewoon blauw.
+ */
+export const RIVER_TINTS = ['#1f5fbf', '#0097a7', '#0b2e6b', '#4aa3e8', '#00796b'] as const;
 
 /** Stijl van een vorm, afhankelijk van soort, of hij al gevonden is en of de muis erop staat. */
 export function shapeStyle(
   kind: PlaceKind,
   status: CityStatus,
-  { hovered = false, tint = 0 }: StyleOptions = {},
+  { hovered = false, tint }: StyleOptions = {},
 ): PathOptions {
   const done = status === 'green' || status === 'blue';
   const doneColor = status === 'green' ? SHAPE_COLORS.found : SHAPE_COLORS.retry;
@@ -149,7 +155,7 @@ export function shapeStyle(
         stroke: hovered,
         color: '#ffffff',
         weight: 2.5,
-        fillColor: done ? doneColor : SEA_TINTS[tint % SEA_TINTS.length],
+        fillColor: done ? doneColor : SEA_TINTS[(tint ?? 0) % SEA_TINTS.length],
         fillOpacity: hovered ? 0.85 : done ? 0.6 : 0.5,
       };
     case 'lake':
@@ -161,8 +167,12 @@ export function shapeStyle(
       };
     case 'river':
       return {
-        color: done ? doneColor : SHAPE_COLORS.river,
-        weight: (done ? 4 : 2.5) + (hovered ? 2.5 : 0),
+        color: done
+          ? doneColor
+          : tint === undefined
+            ? SHAPE_COLORS.river
+            : RIVER_TINTS[tint % RIVER_TINTS.length],
+        weight: (done ? 4 : tint === undefined ? 2.5 : 3.5) + (hovered ? 2.5 : 0),
         fill: false,
       };
     case 'trench':
@@ -185,7 +195,7 @@ export function shapeStyle(
       return {
         color: hovered ? SHAPE_COLORS.countryEdge : '#ffffff',
         weight: hovered ? 3 : 1,
-        fillColor: done ? doneColor : AREA_TINTS[tint % AREA_TINTS.length],
+        fillColor: done ? doneColor : AREA_TINTS[(tint ?? 0) % AREA_TINTS.length],
         fillOpacity: (done ? 0.65 : 0.8) + (hovered ? 0.15 : 0),
       };
     case 'region':

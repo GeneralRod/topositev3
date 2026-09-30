@@ -153,13 +153,15 @@ const GENERIC_WORDS = new Set([
 
 /** Korte vorm van een naam zonder algemene woorden, of null als die er niet is. */
 function shortForm(name: string): string | null {
+  // Zonder toevoeging tussen haakjes: "Utrecht (provincie)" wordt "Utrecht".
   const words = name
     .replace(/\(.*?\)/g, ' ')
     .split(/[\s-]+/)
     .filter(Boolean);
   const kept = words.filter((w) => !GENERIC_WORDS.has(plainName(w)));
-  if (kept.length === 0 || kept.length === words.length) return null;
-  return kept.join(' ');
+  if (kept.length === 0) return null;
+  const short = kept.join(' ');
+  return plainName(short) === plainName(name) ? null : short;
 }
 
 export interface Candidate {

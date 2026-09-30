@@ -431,6 +431,7 @@ const Toets: React.FC<ToetsProps> = ({ category, upto, onBack }) => {
             highlight={phase === 'question' ? (current?.name ?? null) : null}
             loadShapes={category.loadShapes}
             maxZoom={category.maxZoom}
+            map={category.map}
           />
         </MapWrapper>
         <Panel aria-label="Antwoord">

@@ -105,7 +105,9 @@ export const items = [
     ['Hollands Diep', 'Breed water tussen Zuid-Holland en Noord-Brabant'],
   ].map(([name, hint]) => ({ name, package: 'nederland4', kind: 'sea', hint })),
 
-  // ---------- Pakket 5: rivieren en kanalen ----------
+  // ---------- Pakket 5: rivieren (wens eigenaar: alleen deze, en tot aan zee) ----------
+  // De Rijn komt via Nederrijn, Lek, Nieuwe Maas en Nieuwe Waterweg in zee; de Waal
+  // via de Merwede en de Maas via de Amer in het Hollands Diep (en zo in zee).
   ...[
     ['Rijn', ['Boven-Rijn', 'Bijlandsch Kanaal, Boven-Rijn'], 'Komt bij Lobith Nederland binnen'],
     ['Waal', ['Waal'], 'Grootste rivier, langs Nijmegen'],
@@ -131,19 +133,26 @@ export const items = [
         'Bovenstrooms Stuwkanaal te Hagestein, Lek',
         'Benedenstrooms Stuwkanaal te Hagestein, Lek',
       ],
-      'Vervolg van de Nederrijn, naar Rotterdam',
+      'Vervolg van de Nederrijn, tot bij Rotterdam',
     ],
     ['IJssel', ['Geldersche IJssel'], 'Van Arnhem naar het Ketelmeer, langs Deventer en Zwolle'],
-    ['Maas', ['Maas', 'Bergsche Maas'], 'Door Limburg en Brabant, langs Maastricht en Venlo'],
+    [
+      'Maas',
+      ['Maas', 'Bergsche Maas', 'Amer'],
+      'Door Limburg en Brabant, langs Maastricht en Venlo, tot het Hollands Diep',
+    ],
     [
       'Merwede',
       ['Boven-Merwede', 'Boven Merwede', 'Beneden-Merwede', 'Nieuwe Merwede'],
       'Vervolg van de Waal, bij Dordrecht',
     ],
-    ['Vecht', ['Vecht'], 'Van Utrecht naar Muiden'],
-    ['Nieuwe Waterweg', ['Nieuwe Waterweg'], 'Van Rotterdam naar zee bij Hoek van Holland'],
-    ['Noordzeekanaal', ['Noordzeekanaal'], 'Van Amsterdam naar IJmuiden'],
-    ['Amsterdam-Rijnkanaal', ['Amsterdam-Rijnkanaal'], 'Van Amsterdam naar de Waal bij Tiel'],
+    ['Nieuwe Maas', ['Nieuwe Maas'], 'Vervolg van de Lek, door Rotterdam'],
+    [
+      'Nieuwe Waterweg',
+      // Het Scheur verbindt de Nieuwe Maas met de Nieuwe Waterweg; de Maasmond is de monding.
+      ['Het Scheur', 'Nieuwe Waterweg', 'Maasmond'],
+      'Van Rotterdam naar zee bij Hoek van Holland',
+    ],
   ].map(([name, vaarwegen, hint]) => ({
     name,
     package: 'nederland5',
@@ -152,24 +161,13 @@ export const items = [
     hint,
   })),
 
-  // ---------- Pakket 6: eilanden, gebieden en bijzondere plekken ----------
+  // ---------- Pakket 6: Waddeneilanden, gebieden en bijzondere plekken ----------
   ...[
     ['Texel', ['Texel'], 'Grootste Waddeneiland (Noord-Holland)'],
     ['Vlieland', ['Vlieland'], 'Waddeneiland (Friesland)'],
     ['Terschelling', ['Terschelling'], 'Waddeneiland (Friesland)'],
     ['Ameland', ['Ameland'], 'Waddeneiland (Friesland)'],
     ['Schiermonnikoog', ['Schiermonnikoog'], 'Kleinste bewoonde Waddeneiland (Friesland)'],
-    [
-      'Walcheren',
-      ['Middelburg (Z.)', 'Vlissingen', 'Veere'],
-      'Zeeland, met Middelburg en Vlissingen',
-    ],
-    ['Schouwen-Duiveland', ['Schouwen-Duiveland'], 'Zeeland, tussen Grevelingen en Oosterschelde'],
-    [
-      'Goeree-Overflakkee',
-      ['Goeree-Overflakkee'],
-      'Zuid-Holland, tussen Grevelingen en Haringvliet',
-    ],
   ].map(([name, gemeenten, hint]) => ({
     name,
     package: 'nederland6',
@@ -181,16 +179,20 @@ export const items = [
     ['Veluwe', { streek: 'Veluwe' }, 'Bosrijk gebied in Gelderland'],
     ['Achterhoek', { streek: 'Achterhoek' }, 'Oosten van Gelderland, aan de Duitse grens'],
     ['Twente', { streek: 'Twente' }, 'Oosten van Overijssel, met Enschede'],
-    ['Betuwe', { streek: 'Betuwe' }, 'Tussen Nederrijn/Lek en Waal'],
-    [
-      'Zeeuws-Vlaanderen',
-      { gemeenten: ['Sluis', 'Terneuzen', 'Hulst'] },
-      'Zeeland, ten zuiden van de Westerschelde',
-    ],
     [
       'Noordoostpolder',
       { gemeenten: ['Noordoostpolder', 'Urk'] },
       'Flevoland, drooggelegd in 1942',
+    ],
+    [
+      'Biesbosch',
+      { streek: 'Biesbosch' },
+      'Zoetwatergetijdengebied bij Dordrecht (nationaal park)',
+    ],
+    [
+      'Loonse en Drunense Duinen',
+      { streek: 'Loonse en Drunense Duinen' },
+      'Zandverstuiving in Noord-Brabant (nationaal park)',
     ],
   ].map(([name, source, hint]) => ({
     name,

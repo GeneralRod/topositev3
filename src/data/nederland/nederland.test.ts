@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { feature, neighbors } from 'topojson-client';
 import type { GeometryCollection, Topology } from 'topojson-specification';
-import type { Feature, FeatureCollection, Geometry } from 'geojson';
+import type { Feature, FeatureCollection, Geometry, MultiLineString } from 'geojson';
 import places from './places.json';
 import mapFile from './map.json';
 import { containsPoint } from '../../components/map/shapes';
@@ -22,9 +22,9 @@ const inProvince = (lng: number, lat: number) =>
   provinces.find((p) => containsPoint(p.geometry, lng, lat))?.properties.name;
 
 describe('Nederland: gegevens', () => {
-  it('heeft alle 79 plekken van de lijst, verdeeld over 6 pakketten', () => {
-    expect(places).toHaveLength(79);
-    const perPackage = [12, 13, 15, 12, 11, 16];
+  it('heeft alle 74 plekken van de lijst, verdeeld over 6 pakketten', () => {
+    expect(places).toHaveLength(74);
+    const perPackage = [12, 13, 15, 12, 9, 13];
     perPackage.forEach((count, i) => {
       expect(
         places.filter((p) => p.package === `nederland${i + 1}`),
@@ -111,6 +111,51 @@ describe('Nederland: gegevens', () => {
         );
       }
     });
+  });
+
+  it('laat de rivieren tot aan zee lopen, met een eigen tint per rivier', () => {
+    const rivers = shapes.filter((f) => f.properties.kind === 'river');
+    expect(rivers.map((r) => r.properties.name).sort()).toEqual(
+      [
+        'IJssel',
+        'Lek',
+        'Maas',
+        'Merwede',
+        'Nederrijn',
+        'Nieuwe Maas',
+        'Nieuwe Waterweg',
+        'Rijn',
+        'Waal',
+      ].sort(),
+    );
+    const lines = (name: string) =>
+      (rivers.find((r) => r.properties.name === name)!.geometry as MultiLineString).coordinates;
+    // De Nieuwe Waterweg eindigt in zee voorbij Hoek van Holland (westelijker dan 4,1° oost).
+    expect(
+      Math.min(
+        ...lines('Nieuwe Waterweg')
+          .flat()
+          .map(([x]) => x),
+      ),
+    ).toBeLessThan(4.1);
+    // Aansluitende rivieren (binnen ~1 km) hebben een andere tint.
+    const near = (a: string, b: string) =>
+      lines(a)
+        .flatMap((l) => [l[0], l[l.length - 1]])
+        .some(([x, y]) =>
+          lines(b)
+            .flat()
+            .some(([u, v]) => Math.hypot((u - x) * 68, (v - y) * 111) < 1),
+        );
+    for (const a of rivers) {
+      expect(a.properties.tint, a.properties.name).toBeDefined();
+      for (const b of rivers) {
+        if (a === b || !near(a.properties.name, b.properties.name)) continue;
+        expect(a.properties.tint, `${a.properties.name}/${b.properties.name}`).not.toBe(
+          b.properties.tint,
+        );
+      }
+    }
   });
 
   it('heeft alleen grenzen tussen bekende wateren', () => {

@@ -138,11 +138,14 @@ oké; pas dan gaat het live. Het huidige pakket "Hoofd- en wereldsteden" blijft 
 
 **Deel 6 en verder: nieuwe onderwerpen** (elk onderwerp een eigen deel)
 
-- [x] Nederland (lijst gemaakt en goedgekeurd, 79 onderdelen in 6 pakketten, staat helemaal in
-      `scripts/nederland/items.mjs`): 1 provincies (12), 2 hoofdstad en provinciehoofdsteden
-      (13), 3 grote steden (15), 4 zeeën, meren en zeearmen (12), 5 rivieren en kanalen (11),
-      6 eilanden, gebieden, Afsluitdijk en Vaalserberg (16). Gecombineerd: 1+2, 2+3, 1+2+3, 4+5,
-      4+5+6 en alles; interactieve kaart per pakket. Zie "Kaart van Nederland" hieronder.
+- [x] Nederland (lijst gemaakt en goedgekeurd, na feedback 74 onderdelen in 6 pakketten, staat
+      helemaal in `scripts/nederland/items.mjs`): 1 provincies (12), 2 hoofdstad en
+      provinciehoofdsteden (13), 3 grote steden (15), 4 zeeën, meren en zeearmen (12), 5 rivieren
+      tot aan zee (9: Rijn, Waal, Nederrijn, Lek, IJssel, Maas, Merwede, Nieuwe Maas, Nieuwe
+      Waterweg; elke rivier een eigen tint blauw), 6 Waddeneilanden, gebieden, Afsluitdijk en
+      Vaalserberg (13, met Biesbosch en Loonse en Drunense Duinen). Gecombineerd: 1+2, 2+3,
+      1+2+3, 4+5, 4+5+6 en alles; interactieve kaart per pakket; oefentoets. Zie "Kaart van
+      Nederland" hieronder.
 - [ ] Europa: landen en hoofdsteden
 - [x] Landen van de wereld (lijst van de eigenaar, 75 landen in 3 pakketten; staat in
       `scripts/landen/items.mjs`): pakket 1 (50, ook los te oefenen per werelddeel: Europa,
@@ -214,8 +217,11 @@ en `map.json` (TopoJSON, ~260 KB ingepakt, pas geladen bij het spelen).
   de lijst staat (Veerse Meer, Volkerak, Eems, Duitse Waddenzee, Kanaal) blijft lichtblauw.
 - Buurlanden iets grijzer; kust blauw, landsgrens donkerbruin, provinciegrenzen dun.
 - Beginbeeld: heel Nederland, knop "Heel Nederland"; inzoomen tot niveau 11.
-- "Vecht" is de Utrechtse Vecht (van Utrecht naar Muiden): die staat als vaarweg in de bron. De
-  Overijsselse Vecht kan ook, maar moet dan uit een andere bron komen.
+- Rivieren tot aan zee (wens eigenaar): de Rijn via Nederrijn, Lek, Nieuwe Maas en Nieuwe
+  Waterweg (met het Scheur en de Maasmond); de Waal via de Merwede en de Maas via de Amer naar
+  het Hollands Diep. Aansluitende rivieren hebben altijd een andere tint blauw.
+- Op de interactieve kaart staat de naam van een stad er meteen bij als je de muis erop zet
+  (net als bij zeeën en gebieden), voor alle onderwerpen.
 
 **Oefentoets (september 2026, wens eigenaar)**
 
