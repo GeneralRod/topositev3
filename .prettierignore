@@ -6,3 +6,6 @@ src/data/wateren/shapes.json
 src/data/nederland/map.json
 # Map van een lokale Claude-plugin (niet van dit project)
 .remember
+
+# Mailteksten om in het Supabase-dashboard te plakken
+supabase/templates

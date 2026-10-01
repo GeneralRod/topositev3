@@ -16,6 +16,7 @@ import {
   setPlayMode,
   type PlayMode,
 } from '../storage';
+import { useSaveData } from '../storage/useSaveData';
 import { currentStreak, dailyBonus, dateKey, doneToday } from '../game/daily';
 import { hardCities } from '../game/progress';
 import {
@@ -119,6 +120,8 @@ function modeHelp(mode: PlayMode, one: string): string {
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
   const navigate = useNavigate();
+  // Opnieuw tekenen als de voortgang bij het account is opgehaald.
+  useSaveData();
   const { one, many } = category.words;
   const stars = getStars();
   const [mode, setMode] = useState<PlayMode>(getPlayMode);
