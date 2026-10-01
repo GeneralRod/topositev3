@@ -61,6 +61,8 @@ export type PlayMode = 'map' | 'choice';
 export interface Prefs {
   /** Aanwijzen op de kaart of meerkeuze. */
   playMode: PlayMode;
+  /** Geluidjes bij goed, fout en klaar (standaard aan). */
+  sound: boolean;
 }
 
 function parseDaily(value: unknown): Record<string, DailyRecord> {
@@ -79,7 +81,9 @@ function parseDaily(value: unknown): Record<string, DailyRecord> {
 
 function parsePrefs(value: unknown): Prefs {
   const playMode = isRecord(value) && value.playMode === 'choice' ? 'choice' : 'map';
-  return { playMode };
+  // Alleen uit als de speler het zelf uitzette.
+  const sound = !(isRecord(value) && value.sound === false);
+  return { playMode, sound };
 }
 
 /** Het oude formaat (versie 1 en de losse sleutels daarvoor). */
@@ -106,7 +110,7 @@ export function emptySaveData(): SaveData {
     games: {},
     cityStats: {},
     stars: {},
-    prefs: { playMode: 'map' },
+    prefs: { playMode: 'map', sound: true },
     daily: {},
     achievements: [],
     toetsen: {},
@@ -180,7 +184,7 @@ export function upgradeV1(old: SaveDataV1): SaveData {
     games: old.games,
     cityStats: {},
     stars: {},
-    prefs: { playMode: 'map' },
+    prefs: { playMode: 'map', sound: true },
     daily: {},
     achievements: [],
     toetsen: {},

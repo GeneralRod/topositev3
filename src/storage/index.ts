@@ -170,6 +170,14 @@ export function setPlayMode(playMode: PlayMode): void {
   update((d) => ({ ...d, prefs: { ...d.prefs, playMode } }));
 }
 
+export function getSoundOn(): boolean {
+  return state().prefs.sound;
+}
+
+export function setSoundOn(sound: boolean): void {
+  update((d) => ({ ...d, prefs: { ...d.prefs, sound } }));
+}
+
 export function getDaily(categoryId: string): DailyRecord {
   return state().daily[categoryId] ?? { lastCompleted: null, streak: 0 };
 }
