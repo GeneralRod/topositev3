@@ -6,6 +6,7 @@ import {
   planToets,
   questionCount,
   toetsGrade,
+  toetsKey,
 } from './toets';
 import { ALIASES, LOOKALIKES } from '../content/aliases';
 import places from '../data/landen/places.json';
@@ -28,6 +29,14 @@ describe('oefentoets: aantal vragen', () => {
     expect(questions.slice(0, 25).every((q) => q.part === 0 && q.name.startsWith('a'))).toBe(true);
     expect(questions.slice(25).every((q) => q.part === 1 && q.name.startsWith('b'))).toBe(true);
     expect(new Set(questions.map((q) => q.name)).size).toBe(30);
+  });
+});
+
+describe('oefentoets: bewaarsleutel', () => {
+  it('houdt de oude sleutel voor opschrijven en een eigen sleutel voor aanwijzen', () => {
+    expect(toetsKey('landen', 2, 'normaal')).toBe('landen:2:normaal');
+    expect(toetsKey('landen', 2, 'normaal', 'schrijven')).toBe('landen:2:normaal');
+    expect(toetsKey('landen', 2, 'normaal', 'aanwijzen')).toBe('landen:2:normaal:aanwijzen');
   });
 });
 
