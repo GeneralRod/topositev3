@@ -263,8 +263,11 @@ direct kunnen, zonder gedoe.
 - Alle opslag loopt al via `src/storage`; het account komt daar bij, de spellen zelf hoeven
   nauwelijks te veranderen. Online staat per account één rij met dezelfde gegevens als in de
   browser.
-- Er gaat niets verloren: wie inlogt op een computer waar al gespeeld is, neemt die voortgang
-  mee in het account (samenvoegen, zie hieronder).
+- Er gaat niets verloren: wie voor het eerst inlogt op een computer waar al gespeeld is,
+  krijgt de vraag "Is dit jouw voortgang?" (`src/account/guest.ts`). Ja: die voortgang komt op
+  het account (samenvoegen, zie hieronder). Nee: hij wordt apart bewaard en staat er na
+  uitloggen weer; op het accountscherm kan hij later alsnog op het account. Wie de vraag
+  wegklikt door het tabblad te sluiten, krijgt hem de volgende keer opnieuw.
 
 **Samenvoegregels** (`src/storage/merge.ts`)
 
@@ -323,6 +326,9 @@ nooit met dit account ingelogd was). Zo telt alleen wat er sindsdien nieuw is bi
       (keuze eigenaar).
 - [x] Contactadres in de privacyverklaring: `topografiewereld@gmail.com`
 - [x] Accountknop voor iedereen zichtbaar (de `?account`-vlag is weg)
+- [x] Vraag bij de eerste keer inloggen: "Is dit jouw voortgang?" (wens eigenaar: kinderen die
+      al zonder account gespeeld hebben, moeten dat op hun account kunnen krijgen; getest in
+      `src/account/session.test.ts` met een nagemaakte Supabase)
 - [ ] Vóór livegang (eigenaar): Brevo koppelen in Supabase (`supabase/README.md` stap 2 en 3),
       daarna `PRIVACY.mailService` op `Brevo`; één keer spelen terwijl je ingelogd bent en
       controleren dat de munten online aankomen; dan #115 mergen

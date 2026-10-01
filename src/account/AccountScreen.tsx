@@ -7,7 +7,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getSaveData } from '../storage';
 import { BackLink, Button, colors, Page, PageTitle } from '../ui';
 import {
+  adoptKeptGuest,
   deleteAccount,
+  getKeptGuest,
   sendPasswordReset,
   setNewPassword,
   signIn,
@@ -20,6 +22,7 @@ import {
 import { linkErrorMessage, passwordProblem } from './messages';
 import { useSyncStatus, type SyncStatus } from './sync';
 import { MIN_PASSWORD_LENGTH } from './config';
+import { progressSummary } from './guest';
 
 const Panel = styled.div`
   width: 100%;
@@ -439,6 +442,38 @@ const DeleteAccount: React.FC<{ onDeleted: () => void }> = ({ onDeleted }) => {
   );
 };
 
+/** Na "nee, van iemand anders" bij het inloggen: toch van jou? Dan alsnog erbij. */
+const KeptGuest: React.FC = () => {
+  const [kept, setKept] = useState(getKeptGuest);
+  const [added, setAdded] = useState(false);
+  const [busy, setBusy] = useState(false);
+  if (added)
+    return <Notice kind="success">De voortgang van deze computer staat nu op je account.</Notice>;
+  if (!kept) return null;
+  return (
+    <>
+      <Muted style={{ fontSize: '0.9rem' }}>
+        Op deze computer staat ook voortgang die je niet op je account hebt gezet (
+        {progressSummary(kept)}). Na uitloggen staat die er weer.
+      </Muted>
+      <SubmitButton
+        type="button"
+        variant="outline"
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true);
+          await adoptKeptGuest();
+          setBusy(false);
+          setKept(null);
+          setAdded(true);
+        }}
+      >
+        {busy ? 'Bezig…' : 'Is toch van mij: zet het op mijn account'}
+      </SubmitButton>
+    </>
+  );
+};
+
 const SignedIn: React.FC<{
   email: string;
   recovering: boolean;
@@ -478,6 +513,7 @@ const SignedIn: React.FC<{
         Je bent ingelogd als <Email>{email}</Email>.
       </Muted>
       <SyncNotice />
+      <KeptGuest />
       {saved && <Notice kind="success">Je nieuwe wachtwoord is opgeslagen.</Notice>}
       {error && <Notice kind="error">{error}</Notice>}
       <SubmitButton type="button" variant="outline" onClick={() => setChanging(true)}>

@@ -22,6 +22,7 @@ import {
   type SaveData,
 } from '../storage';
 import { emptySaveData, parseSaveData } from '../storage/storage';
+import { takeGuest } from './guest';
 
 export interface RemoteRow {
   data: unknown;
@@ -236,8 +237,12 @@ export function createSync(userId: string, backend: Backend, baseStore: BaseStor
   };
 }
 
-/** Na uitloggen: niets van dit account achterlaten op deze computer. */
+/**
+ * Na uitloggen: niets van dit account achterlaten op deze computer. Was er bij
+ * het inloggen voortgang van iemand anders apart gezet (guest.ts), dan staat die
+ * weer terug.
+ */
 export function forgetAccountData(baseStore: BaseStore): void {
   saveBase(baseStore, null);
-  replaceSaveData(emptySaveData());
+  replaceSaveData(takeGuest(baseStore) ?? emptySaveData());
 }

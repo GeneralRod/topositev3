@@ -6,7 +6,10 @@ import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { getClient } from './client';
 import { authErrorMessage, OFFLINE_MESSAGE, UNKNOWN_MESSAGE, type AuthErrorLike } from './messages';
 import { supabaseBackend } from './remote';
-import { createSync, forgetAccountData, type Sync } from './sync';
+import { getSaveData, mergeSaveData, replaceSaveData, type SaveData } from '../storage';
+import { emptySaveData } from '../storage/storage';
+import { keepGuest, needsGuestQuestion, progressSummary, readGuest, takeGuest } from './guest';
+import { createSync, forgetAccountData, loadBase, type Sync } from './sync';
 
 export type Account =
   { status: 'loading' } | { status: 'out' } | { status: 'in'; userId: string; email: string };
@@ -57,9 +60,83 @@ function syncStore(): Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> {
 
 function followAccount(supabase: SupabaseClient, next: Account): void {
   const userId = next.status === 'in' ? next.userId : null;
-  if (sync?.userId === userId) return;
+  if ((sync?.userId ?? question?.userId ?? null) === userId) return;
   sync?.stop();
-  sync = userId ? createSync(userId, supabaseBackend(supabase, userId), syncStore()) : null;
+  sync = null;
+  setQuestion(null);
+  if (!userId) return;
+  const store = syncStore();
+  const local = getSaveData();
+  // Eerste keer inloggen op deze computer en er staat al voortgang: eerst vragen
+  // van wie die is (zie guest.ts). Tot het antwoord wordt er niets bijgewerkt.
+  if (needsGuestQuestion(loadBase(store), local)) {
+    setQuestion({ userId, summary: progressSummary(local) });
+    return;
+  }
+  sync = createSync(userId, supabaseBackend(supabase, userId), store);
+}
+
+// --- Voortgang die al op deze computer stond (zie guest.ts) -----------------
+
+export interface GuestQuestion {
+  userId: string;
+  /** "120 munten, 7 sterren en 3 prijzen" */
+  summary: string;
+}
+
+let question: GuestQuestion | null = null;
+const questionListeners = new Set<() => void>();
+
+function setQuestion(next: GuestQuestion | null): void {
+  if (next === question) return;
+  question = next;
+  for (const listener of questionListeners) listener();
+}
+
+/** De vraag die nu beantwoord moet worden, of null. */
+export function getGuestQuestion(): GuestQuestion | null {
+  return question;
+}
+
+export function useGuestQuestion(): GuestQuestion | null {
+  return useSyncExternalStore((listener) => {
+    questionListeners.add(listener);
+    return () => void questionListeners.delete(listener);
+  }, getGuestQuestion);
+}
+
+/**
+ * Antwoord op "is deze voortgang van jou?". Ja: samenvoegen met het account.
+ * Nee: apart zetten; na uitloggen staat hij weer op de computer. Lukt apart
+ * zetten niet, dan voegen we toch samen: liever op het account dan kwijt.
+ */
+export async function answerGuestQuestion(mine: boolean): Promise<void> {
+  const asked = question;
+  if (!asked) return;
+  const supabase = await getClient();
+  if (question !== asked) return;
+  const store = syncStore();
+  // Is er al een basis, dan is de vraag in een ander tabblad al beantwoord.
+  if (!mine && loadBase(store) === null && keepGuest(store, getSaveData())) {
+    replaceSaveData(emptySaveData());
+  }
+  setQuestion(null);
+  sync = createSync(asked.userId, supabaseBackend(supabase, asked.userId), store);
+}
+
+/** Apart gezette voortgang van deze computer (na "nee"), of null. */
+export function getKeptGuest(): SaveData | null {
+  return readGuest(syncStore());
+}
+
+/** Toch van mij: de apart gezette voortgang alsnog bij het account zetten. */
+export async function adoptKeptGuest(): Promise<boolean> {
+  if (!sync) return false;
+  const kept = takeGuest(syncStore());
+  if (!kept) return true;
+  // Zonder basis: munten van allebei tellen op, van de rest het beste.
+  replaceSaveData(mergeSaveData(null, getSaveData(), kept));
+  return sync.flush();
 }
 
 function listenToBrowser(): void {
@@ -168,17 +245,19 @@ export function deleteAccount(): Promise<Result> {
   return run(async () => {
     const supabase = await getClient();
     const current = sync;
+    const unanswered = question !== null;
     // Eerst stoppen, anders zou bewaren de voortgang meteen weer online zetten.
     sync?.stop();
     sync = null;
+    setQuestion(null);
     const { error } = await supabase.rpc('delete_my_account');
     if (error) {
-      if (current) followAccount(supabase, account);
+      if (current || unanswered) followAccount(supabase, account);
       return failed(error);
     }
     // Het account bestaat niet meer; dit ruimt alleen de inlog in de browser op.
     await supabase.auth.signOut({ scope: 'local' });
-    forgetAccountData(syncStore());
+    if (!unanswered) forgetAccountData(syncStore());
     return { ok: true };
   });
 }
@@ -202,8 +281,12 @@ export function signOut(force = false): Promise<SignOutResult> {
           'Je laatste voortgang is nog niet online bewaard, want er is geen verbinding. Als je nu uitlogt, ben je die kwijt.',
       };
     }
+    // Nog niet geantwoord op de vraag over de voortgang van deze computer: dan is
+    // wat er staat nog van de computer, niet van het account. Dat laten we staan.
+    const unanswered = question !== null;
     sync?.stop();
     sync = null;
+    setQuestion(null);
     const { error } = await supabase.auth.signOut({ scope: 'local' });
     // Supabase haalt de inlog meestal ook bij een fout uit de browser; kijk wat er echt is.
     const { data } = await supabase.auth.getSession();
@@ -212,7 +295,7 @@ export function signOut(force = false): Promise<SignOutResult> {
       followAccount(supabase, fromSession(data.session));
       return failed(error ?? {});
     }
-    forgetAccountData(syncStore());
+    if (!unanswered) forgetAccountData(syncStore());
     return { ok: true };
   });
 }

@@ -24,6 +24,7 @@ import { completeDailyChallenge, getCityStats, getDaily, type PlayMode } from '.
 import { dailyCities, dateKey, doneToday } from './game/daily';
 import { hardCities } from './game/progress';
 import AccountButton from './account/AccountButton';
+import GuestQuestion from './account/GuestQuestion';
 import { hasStoredSession } from './account/storedSession';
 import { startAccount } from './account/session';
 
@@ -252,6 +253,7 @@ const App: React.FC = () => {
           </Routes>
         </Suspense>
         <AccountButton />
+        <GuestQuestion />
       </AppContainer>
     </Router>
   );
