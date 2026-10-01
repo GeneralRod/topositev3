@@ -149,6 +149,8 @@ const GENERIC_WORDS = new Set([
   'straat',
   'kanaal',
   'provincie',
+  'mount',
+  'mountains',
 ]);
 
 /** Korte vorm van een naam zonder algemene woorden, of null als die er niet is. */
@@ -164,11 +166,28 @@ function shortForm(name: string): string | null {
   return plainName(short) === plainName(name) ? null : short;
 }
 
+/** Algemene woorden die vast aan een naam geschreven worden: "Oeralgebergte". */
+const GENERIC_ENDINGS = ['gebergte', 'woestijn', 'rivier', 'oceaan', 'meer', 'zee'];
+
+/**
+ * Naam van één woord zonder het algemene stuk aan het eind ("Oeral" voor
+ * Oeralgebergte, "Bajkal" voor Bajkalmeer), of null als die er niet is.
+ */
+function withoutEnding(name: string): string | null {
+  if (/[\s(-]/.test(name.trim())) return null;
+  const ending = GENERIC_ENDINGS.find((e) => plainName(name).endsWith(e));
+  if (!ending) return null;
+  const short = name.slice(0, name.length - ending.length);
+  return plainName(short).length >= 3 ? short : null;
+}
+
 export interface Candidate {
   /** De plek (het goede antwoord als dit gevraagd wordt). */
   name: string;
   /** Alle schrijfwijzen die bij deze plek horen. */
   forms: string[];
+  /** Ook goed, maar niet precies zo geschreven ("Oeral" voor Oeralgebergte). */
+  shortForms?: string[];
 }
 
 /**
@@ -181,7 +200,7 @@ export function makeCandidates(
   aliases: Record<string, string[]> = {},
   lookalikes: string[] = [],
 ): Candidate[] {
-  const own = names.map((name) => {
+  const own: Candidate[] = names.map((name) => {
     const short = shortForm(name);
     return {
       name,
@@ -192,7 +211,30 @@ export function makeCandidates(
   const others = lookalikes
     .filter((name) => !known.has(plainName(name)))
     .map((name) => ({ name: `~${name}`, forms: [name] }));
-  return [...own, ...others];
+  const all = [...own, ...others];
+  for (const candidate of own) {
+    const short = withoutEnding(candidate.name);
+    if (short && !ambiguous(short, candidate, all)) candidate.shortForms = [short];
+  }
+  return all;
+}
+
+/**
+ * Hoort een korte vorm ook bij een andere plek? Dan rekenen we hem niet als goed:
+ * "IJssel" is de rivier, niet het IJsselmeer, en "Wadden" kan ook de Waddeneilanden zijn.
+ */
+function ambiguous(short: string, candidate: Candidate, all: Candidate[]): boolean {
+  const plain = plainName(short);
+  return all.some(
+    (other) =>
+      other !== candidate &&
+      other.forms.some((form) => plainName(form) === plain || plainName(form).startsWith(plain)),
+  );
+}
+
+/** Alle schrijfwijzen die goed rekenen, ook de korte. */
+function allForms(candidate: Candidate): string[] {
+  return [...candidate.forms, ...(candidate.shortForms ?? [])];
 }
 
 export interface Judgement {
@@ -205,7 +247,7 @@ export interface Judgement {
 function closeness(typed: string, candidate: Candidate): number {
   const key = soundKey(typed);
   return Math.min(
-    ...candidate.forms.map((form) => {
+    ...allForms(candidate).map((form) => {
       const target = soundKey(form);
       return editDistance(key, target) / Math.max(target.length, key.length, 1);
     }),
@@ -221,8 +263,14 @@ export function judgeAnswer(typed: string, answer: string, candidates: Candidate
   const own = candidates.find((c) => c.name === answer) ?? { name: answer, forms: [answer] };
   if (own.forms.some((form) => plainName(form) === plain)) return { correct: true, exact: true };
   // Precies een andere plek opgeschreven: fout, hoe dicht die naam ook bij ligt.
-  if (candidates.some((c) => c.name !== answer && c.forms.some((f) => plainName(f) === plain))) {
+  if (
+    candidates.some((c) => c.name !== answer && allForms(c).some((f) => plainName(f) === plain))
+  ) {
     return { correct: false, exact: false };
+  }
+  // Korte vorm ("Oeral"): goed, en daarna zie je hoe je het helemaal schrijft.
+  if (own.shortForms?.some((form) => plainName(form) === plain)) {
+    return { correct: true, exact: false };
   }
   const mine = closeness(typed, own);
   const nearestOther = Math.min(
