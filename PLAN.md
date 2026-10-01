@@ -312,7 +312,7 @@ nooit met dit account ingelogd was). Zo telt alleen wat er sindsdien nieuw is bi
       `?account` in de url (`?account=uit` zet hem weer uit), tot synchroniseren en de
       privacyverklaring klaar zijn. Supabase wordt alleen geladen voor wie het accountscherm
       opent of al ingelogd is.
-- [ ] Instellingen in het Supabase-dashboard door de eigenaar (zie `supabase/README.md`):
+- [x] Instellingen in het Supabase-dashboard door de eigenaar (zie `supabase/README.md`):
       adressen van de site, gratis maildienst (bijv. Brevo), Nederlandse mailteksten
 - [x] Synchroniseren: voortgang online bewaren en ophalen, samenvoegen bij inloggen; uitloggen
       op een gedeelde computer laat de voortgang van dat account niet achter
@@ -329,7 +329,7 @@ nooit met dit account ingelogd was). Zo telt alleen wat er sindsdien nieuw is bi
 - [x] Vraag bij de eerste keer inloggen: "Is dit jouw voortgang?" (wens eigenaar: kinderen die
       al zonder account gespeeld hebben, moeten dat op hun account kunnen krijgen; getest in
       `src/account/session.test.ts` met een nagemaakte Supabase)
-- [ ] Vóór livegang (eigenaar): Brevo koppelen in Supabase (`supabase/README.md` stap 2 en 3),
+- [x] Vóór livegang (eigenaar): Brevo koppelen in Supabase (`supabase/README.md` stap 2 en 3),
       daarna `PRIVACY.mailService` op `Brevo`; één keer spelen terwijl je ingelogd bent en
       controleren dat de munten online aankomen; dan #115 mergen
 
@@ -341,3 +341,35 @@ nooit met dit account ingelogd was). Zo telt alleen wat er sindsdien nieuw is bi
 - Leerkracht: overzicht per klas (welke pakketten, hoeveel sterren, lastige plekken van de klas,
   reeksen) en eventueel pakketten als huiswerk klaarzetten.
 - Gebruik via scholen: de school is verantwoordelijk, met een verwerkersovereenkomst.
+
+### Fase 8: volgende upgrades (oktober 2026, besluiten eigenaar)
+
+Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
+
+0. ✓ **Accounts afmaken** (fase 7a, pull request #115): mail via Brevo gekoppeld, live sinds
+   1 oktober 2026.
+1. ✓ **Updates van hulpprogramma's** (Dependabot): samen in één pull request (#116).
+2. **Geluidjes** bij goed, fout en klaar (stond onder "Later"). Makkelijk aan en uit te zetten:
+   een luidsprekerknop op het spelscherm, de keuze wordt onthouden. Bij de oefentoets geen
+   geluid tijdens de vragen (je hoort pas aan het eind of het goed was).
+3. **Toets met aanwijzen** als speelmanier van de oefentoets: je kiest "Opschrijven" (zoals nu)
+   of "Aanwijzen" (de naam staat in beeld, je klikt de plek aan op de kaart). Zelfde delen per
+   pakket, nakijken pas aan het eind, zelfde cijfer.
+4. **Europa**: nieuw onderwerp met landen (vlakken) en hoofdsteden (stippen), in pakketten.
+   Lijst van de eigenaar of een voorstel. Kleine landen (Luxemburg, Malta, Andorra) vragen een
+   preciezere kaart dan de wereldkaart; waarschijnlijk een eigen kaart van Europa, zoals bij
+   Nederland.
+5. **Vlaggen van de wereld**: nieuw onderwerp. Er verschijnt een vlag en je zegt welk land het
+   is, op drie manieren: meerkeuze, zelf typen (net zo coulant nagekeken als de oefentoets) en
+   aanwijzen op de kaart. Pakketten per werelddeel. Vlaggen als plaatjes uit een vrij te
+   gebruiken bron. Bij "Landen van de wereld" ook de vlag tonen op de interactieve kaart.
+6. **Oefenkaart printen**: per pakket een blinde kaart (A4) met nummers bij de plekken en
+   invulregels, plus een apart antwoordblad. Via de printknop van de browser (ook op te slaan
+   als PDF). Handig voor oefenen op papier en in de klas.
+7. **Klas en leerkracht** (fase 7b): pas na de accounts.
+
+**Nog te beslissen door de eigenaar**
+
+- Geluidjes: standaard aan of uit?
+- Europa: welke landen en hoofdsteden, en in welke pakketten?
+- Vlaggen: alle landen van de wereld, of eerst de landen uit "Landen van de wereld"?
