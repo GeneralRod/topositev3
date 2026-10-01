@@ -19,15 +19,7 @@ import {
 import { useSaveData } from '../storage/useSaveData';
 import { currentStreak, dailyBonus, dateKey, doneToday } from '../game/daily';
 import { hardCities } from '../game/progress';
-import {
-  formatGrade,
-  TOETS_LENGTHS,
-  TOETS_WAYS,
-  toetsKey,
-  toetsTitle,
-  type ToetsLength,
-  type ToetsWay,
-} from '../game/toets';
+import { formatGrade, TOETS_LENGTHS, toetsKey, toetsTitle, type ToetsLength } from '../game/toets';
 import { BackLink, Card, CardGrid, Page, PageTitle, SectionTitle, Stars } from '../ui';
 
 interface HomeScreenProps {
@@ -139,19 +131,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
   const grades = getToetsGrades();
   /** Beste cijfer van een toets, over alle lengtes: "Beste cijfer: 8,5 (Normaal)". */
   const bestGrade = (upto: number): string => {
-    const results = (Object.keys(TOETS_WAYS) as ToetsWay[])
-      .flatMap((way) =>
-        (Object.keys(TOETS_LENGTHS) as ToetsLength[]).map((length) => ({
-          way,
-          length,
-          grade: grades[toetsKey(category.id, upto, length, way)],
-        })),
-      )
+    const results = (Object.keys(TOETS_LENGTHS) as ToetsLength[])
+      .map((length) => ({ length, grade: grades[toetsKey(category.id, upto, length)] }))
       .filter((r) => r.grade !== undefined);
     if (results.length === 0) return '';
     const best = results.reduce((a, b) => (b.grade > a.grade ? b : a));
-    const how = `${TOETS_LENGTHS[best.length].label}, ${TOETS_WAYS[best.way].label.toLowerCase()}`;
-    return ` Beste cijfer: ${formatGrade(best.grade)} (${how}).`;
+    return ` Beste cijfer: ${formatGrade(best.grade)} (${TOETS_LENGTHS[best.length].label}).`;
   };
   const hardCount = hardCities(
     getCityStats(category.id),
@@ -243,7 +228,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
             title={toetsTitle(i + 1)}
             description={
               (i === 0
-                ? `Namen opschrijven of plekken aanwijzen, net als op de toets.`
+                ? `Schrijf de namen op, net als op de toets.`
                 : `In ${i + 1} delen: eerst pakket 1, dan ${toetsen
                     .slice(1, i + 1)
                     .map((p) => p.title.toLowerCase())

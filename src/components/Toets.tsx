@@ -13,10 +13,8 @@ import {
   toetsGrade,
   toetsKey,
   toetsTitle,
-  TOETS_WAYS,
   type ToetsLength,
   type ToetsQuestion,
-  type ToetsWay,
 } from '../game/toets';
 import { addCoins, getToetsGrades, recordCityAnswer, recordToetsGrade } from '../storage';
 import { Button, colors, SoundToggle } from '../ui';
@@ -116,13 +114,6 @@ const AnswerInput = styled.input`
   }
 `;
 
-/** De gevraagde plek bij aanwijzen: groot en duidelijk. */
-const PointName = styled.div`
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: ${colors.primary};
-`;
-
 const Row = styled.div`
   display: flex;
   gap: 10px;
@@ -213,7 +204,6 @@ const AnswerItem = styled.li<{ correct: boolean }>`
 
 interface ToetsAnswer {
   question: ToetsQuestion;
-  /** Wat het kind schreef, of (bij aanwijzen) welke plek het aanklikte. */
   typed: string;
   correct: boolean;
   exact: boolean;
@@ -248,7 +238,6 @@ const Toets: React.FC<ToetsProps> = ({ category, upto, onBack }) => {
 
   const [phase, setPhase] = useState<Phase>('start');
   const [length, setLength] = useState<ToetsLength>('normaal');
-  const [way, setWay] = useState<ToetsWay>('schrijven');
   const [questions, setQuestions] = useState<ToetsQuestion[]>([]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<ToetsAnswer[]>([]);
@@ -282,19 +271,15 @@ const Toets: React.FC<ToetsProps> = ({ category, upto, onBack }) => {
     for (const a of all) {
       recordCityAnswer(category.id, a.question.name, a.correct ? 'first-try' : 'wrong');
     }
-    recordToetsGrade(toetsKey(category.id, upto, length, way), toetsGrade(correct, all.length));
+    recordToetsGrade(toetsKey(category.id, upto, length), toetsGrade(correct, all.length));
     // Tijdens de vragen geen geluid (je hoort pas aan het eind of het goed was).
     playSound('complete');
     setPhase('result');
   };
 
-  /** Opschrijven: soepel nakijken. Aanwijzen: goed als je de gevraagde plek aanklikt. */
   const submit = (typed: string) => {
     if (!current) return;
-    const judged =
-      way === 'aanwijzen'
-        ? { correct: typed === current.name, exact: true }
-        : judgeAnswer(typed, current.name, candidates);
+    const judged = judgeAnswer(typed, current.name, candidates);
     const all = [...answers, { question: current, typed: typed.trim(), ...judged }];
     setAnswers(all);
     setDraft('');
@@ -320,10 +305,9 @@ const Toets: React.FC<ToetsProps> = ({ category, upto, onBack }) => {
           <Box>
             <Question>Zo werkt de oefentoets</Question>
             <Help>
-              {way === 'schrijven'
-                ? `Er knippert een ${one} op de kaart. Schrijf op ${which.toLowerCase()} ${one} het is. Spelling maakt niet uit, als maar duidelijk is ${which.toLowerCase()} ${one} je bedoelt.`
-                : `De naam van een ${one} staat in beeld. Klik ${neuter ? 'dat' : 'die'} ${one} aan op de kaart.`}{' '}
-              Pas aan het eind zie je wat goed was, met een cijfer.
+              Er knippert een {one} op de kaart. Schrijf op {neuter ? 'welk' : 'welke'} {one} het
+              is. Spelling maakt niet uit, als maar duidelijk is {which.toLowerCase()} {one} je
+              bedoelt. Pas aan het eind zie je wat goed was, met een cijfer.
             </Help>
             <Help>
               {packages.length === 1
@@ -332,26 +316,12 @@ const Toets: React.FC<ToetsProps> = ({ category, upto, onBack }) => {
                     .map((p, i) => `deel ${i + 1} gaat over ${p.title.toLowerCase()}`)
                     .join(', ')}.`}
             </Help>
-            <Question>Hoe?</Question>
-            <Row>
-              {(Object.keys(TOETS_WAYS) as ToetsWay[]).map((key) => (
-                <LengthButton
-                  key={key}
-                  active={way === key}
-                  aria-pressed={way === key}
-                  onClick={() => setWay(key)}
-                >
-                  <strong>{TOETS_WAYS[key].label}</strong>
-                  {TOETS_WAYS[key].help}
-                </LengthButton>
-              ))}
-            </Row>
             <Question>Hoe lang?</Question>
             <Row>
               {(Object.keys(TOETS_LENGTHS) as ToetsLength[]).map((key) => {
                 const counts = parts.map((places) => questionCount(places.length, key));
                 const total = counts.reduce((a, b) => a + b, 0);
-                const record = best[toetsKey(category.id, upto, key, way)];
+                const record = best[toetsKey(category.id, upto, key)];
                 return (
                   <LengthButton
                     key={key}
@@ -416,10 +386,7 @@ const Toets: React.FC<ToetsProps> = ({ category, upto, onBack }) => {
                       <AnswerItem key={a.question.name} correct={a.correct}>
                         {a.correct ? '✓' : '✗'} {a.question.name}
                         {!a.correct && (
-                          <small>
-                            {way === 'aanwijzen' ? 'Jij wees aan' : 'Jij schreef'}:{' '}
-                            {a.typed === '' ? '(niets)' : a.typed}
-                          </small>
+                          <small>Jij schreef: {a.typed === '' ? '(niets)' : a.typed}</small>
                         )}
                         {a.correct && !a.exact && (
                           <small>
@@ -466,18 +433,8 @@ const Toets: React.FC<ToetsProps> = ({ category, upto, onBack }) => {
           <GameMap
             cities={places}
             status={{}}
-            // Aanwijzen: alle plekken van dit deel zijn aan te klikken (zonder kleur
-            // voor goed of fout). Opschrijven: alleen de gevraagde plek knippert.
-            onCityClick={(name) => {
-              if (way === 'aanwijzen' && phase === 'question') submit(name);
-            }}
-            highlight={
-              way === 'aanwijzen'
-                ? undefined
-                : phase === 'question'
-                  ? (current?.name ?? null)
-                  : null
-            }
+            onCityClick={() => {}}
+            highlight={phase === 'question' ? (current?.name ?? null) : null}
             loadShapes={category.loadShapes}
             maxZoom={category.maxZoom}
             map={category.map}
@@ -492,17 +449,6 @@ const Toets: React.FC<ToetsProps> = ({ category, upto, onBack }) => {
                 vragen).
               </Help>
               <Button onClick={() => setPhase('question')}>Verder</Button>
-            </>
-          ) : way === 'aanwijzen' && current ? (
-            <>
-              <Question>Wijs aan op de kaart:</Question>
-              <PointName>{current.name}</PointName>
-              <Row>
-                <Button type="button" variant="outline" onClick={() => submit('')}>
-                  Weet ik niet
-                </Button>
-              </Row>
-              <Help>Klik op de kaart; je kunt in- en uitzoomen.</Help>
             </>
           ) : (
             <form
