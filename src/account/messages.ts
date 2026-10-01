@@ -34,9 +34,18 @@ const MESSAGES: Record<string, string> = {
 
 export const OFFLINE_MESSAGE = 'Geen verbinding met internet. Probeer het straks nog eens.';
 export const UNKNOWN_MESSAGE = 'Er ging iets mis. Probeer het straks nog eens.';
+export const MAIL_FAILED_MESSAGE =
+  'De mail kon niet worden verstuurd. Probeer het later nog eens, of mail topografiewereld@gmail.com.';
 
-export function authErrorMessage(error: AuthErrorLike): string {
+/**
+ * @param sendsMail de actie verstuurt een mail (account maken, nieuw wachtwoord): een
+ *   onverwachte fout van de server ligt dan bijna altijd aan het versturen van de mail.
+ */
+export function authErrorMessage(error: AuthErrorLike, sendsMail = false): string {
   if (error.code && MESSAGES[error.code]) return MESSAGES[error.code];
+  if (sendsMail && (error.code === 'unexpected_failure' || error.status === 500)) {
+    return MAIL_FAILED_MESSAGE;
+  }
   // Geen antwoord van de server: meestal geen internet.
   if (error.name === 'AuthRetryableFetchError' || error.status === 0) return OFFLINE_MESSAGE;
   if (error.status === 429) return MESSAGES.over_request_rate_limit;

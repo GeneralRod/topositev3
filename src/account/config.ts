@@ -17,7 +17,7 @@ export const PRIVACY = {
   controller: 'Topografiewereld',
   /** Contactadres voor vragen en verzoeken. */
   contact: 'topografiewereld@gmail.com',
-  /** Wie de mails verstuurt; aanpassen als er een eigen maildienst (bijv. Brevo) komt. */
-  mailService: 'Supabase',
+  /** Wie de mails verstuurt (via Supabase, zie supabase/README.md). */
+  mailService: 'Brevo (een Frans bedrijf, ook in de Europese Unie)',
   updated: '1 oktober 2026',
 };

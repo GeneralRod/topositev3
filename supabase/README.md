@@ -39,7 +39,11 @@ paar per uur. Voor echte spelers is een gratis maildienst nodig, bijvoorbeeld Br
    - Host: `smtp-relay.brevo.com`, Port: `587`
    - Username: de "Login" die Brevo bij SMTP toont (eindigt meestal op `@smtp-brevo.com`)
    - Password: de SMTP-sleutel uit stap 3
-5. Zet daarna in `src/account/config.ts` bij `PRIVACY.mailService` `Brevo` in plaats van
+5. Zet in Brevo bij **Security → Authorized IPs** de IP-blokkering uit. Anders weigert Brevo de
+   mails van Supabase ("525 5.7.1 Unauthorized IP address" in het logboek van Supabase, en op
+   de site "De mail kon niet worden verstuurd"). Supabase verstuurt vanaf wisselende adressen,
+   dus één adres toestaan helpt niet.
+6. Zet daarna in `src/account/config.ts` bij `PRIVACY.mailService` `Brevo` in plaats van
    `Supabase` (voor de privacyverklaring).
 
 Let op: mails vanaf een gewoon Gmail-adres komen soms bij ongewenste mail terecht. Een eigen

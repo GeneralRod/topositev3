@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   authErrorMessage,
   linkErrorMessage,
+  MAIL_FAILED_MESSAGE,
   OFFLINE_MESSAGE,
   passwordProblem,
   UNKNOWN_MESSAGE,
@@ -21,6 +22,15 @@ describe('foutmeldingen', () => {
 
   it('herkent te vaak proberen, ook zonder code', () => {
     expect(authErrorMessage({ status: 429 })).toContain('te vaak');
+  });
+
+  it('zegt dat de mail niet verstuurd kon worden als dat waarschijnlijk is', () => {
+    // Bijv. de maildienst weigert ("Unauthorized IP address"): Supabase geeft dan 500.
+    expect(authErrorMessage({ code: 'unexpected_failure', status: 500 }, true)).toBe(
+      MAIL_FAILED_MESSAGE,
+    );
+    // Zonder mail (inloggen) blijft het een algemene melding.
+    expect(authErrorMessage({ code: 'unexpected_failure', status: 500 })).toBe(UNKNOWN_MESSAGE);
   });
 
   it('geeft een algemene melding voor onbekende fouten', () => {

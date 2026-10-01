@@ -98,8 +98,8 @@ export function startAccount(): Promise<void> {
 
 export type Result = { ok: true } | { ok: false; message: string };
 
-function failed(error: AuthErrorLike): Result {
-  return { ok: false, message: authErrorMessage(error) };
+function failed(error: AuthErrorLike, sendsMail = false): Result {
+  return { ok: false, message: authErrorMessage(error, sendsMail) };
 }
 
 /** Voer een actie uit; lukt het laden van Supabase niet, dan is er geen internet. */
@@ -134,7 +134,7 @@ export function signUp(email: string, password: string): Promise<SignUpResult> {
       password,
       options: { emailRedirectTo: `${window.location.origin}/account` },
     });
-    if (error) return failed(error);
+    if (error) return failed(error, true);
     // Bestaat het account al, dan geeft Supabase een gebruiker zonder identiteiten terug.
     if (data.user?.identities?.length === 0) return failed({ code: 'user_already_exists' });
     return data.session ? { ok: true } : { ok: true, checkMail: true };
@@ -148,7 +148,7 @@ export function sendPasswordReset(email: string): Promise<Result> {
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
       redirectTo: `${window.location.origin}/account?herstel`,
     });
-    return error ? failed(error) : { ok: true };
+    return error ? failed(error, true) : { ok: true };
   });
 }
 
