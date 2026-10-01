@@ -22,6 +22,19 @@ export const ALIASES: Record<string, string[]> = {
   Nederrijn: ['Neder-Rijn'],
   Biesbosch: ['De Biesbosch'],
   'Loonse en Drunense Duinen': ['Loonse Duinen', 'Drunense Duinen'],
+  // Europa
+  'Verenigd Koninkrijk': ['Groot-Brittannië', 'VK', 'UK', 'Engeland'],
+  'Wit-Rusland': ['Belarus'],
+  Tsjechië: ['Tsjechische Republiek'],
+  'Noord-Macedonië': ['Macedonië'],
+  'Bosnië en Herzegovina': ['Bosnië', 'Bosnië-Herzegovina'],
+  Moldavië: ['Moldova'],
+  Turkije: ['Türkiye'],
+  Vaticaanstad: ['Vaticaan'],
+  'Luxemburg (stad)': ['Luxemburg-Stad'],
+  Kyiv: ['Kiev', 'Kiëv'],
+  Chisinau: ['Chișinău', 'Kisjinev'],
+  Pristina: ['Prishtina', 'Priština'],
 };
 
 /**

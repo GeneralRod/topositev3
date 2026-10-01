@@ -5,6 +5,7 @@ import { cities, type City } from '../data/cities';
 import { loadWaterShapes, waterPlaces } from '../data/wateren';
 import { countryPlaces, loadCountryShapes } from '../data/landen';
 import { loadNederlandShapes, nederlandMap, nederlandPlaces } from '../data/nederland';
+import { europaMap, europaPlaces, loadEuropaShapes } from '../data/europa';
 import type { ShapeData } from '../components/map/shapes';
 import type { CategoryMap } from '../components/map/baseMap';
 
@@ -600,6 +601,153 @@ export const categories: Category[] = [
             description: 'Bekijk Waddeneilanden, gebieden, de Afsluitdijk en de Vaalserberg',
             color: '#8d6e63',
             groups: ['nederland6'],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'europa',
+    title: 'Europa',
+    description: 'Landen en hoofdsteden van Europa, en de kleine landen',
+    color: '#3949ab',
+    heading: 'Topografie Europa',
+    locations: europaPlaces,
+    words: { one: 'plek', many: 'plekken' },
+    loadShapes: loadEuropaShapes,
+    // Diep genoeg om Vaticaanstad naast Rome te zien.
+    maxZoom: 11,
+    map: europaMap,
+    sections: [
+      {
+        title: 'Oefenpakketten',
+        kind: 'game',
+        packages: [
+          {
+            id: 'europa1',
+            title: 'Pakket 1',
+            description: 'Landen van West- en Noord-Europa',
+            color: '#3949ab',
+            groups: ['europa1'],
+          },
+          {
+            id: 'europa2',
+            title: 'Pakket 2',
+            description: 'Landen van Midden- en Oost-Europa',
+            color: '#1a73e8',
+            groups: ['europa2'],
+          },
+          {
+            id: 'europa3',
+            title: 'Pakket 3',
+            description: 'Landen van Zuidoost-Europa',
+            color: '#34a853',
+            groups: ['europa3'],
+          },
+          {
+            id: 'europa4',
+            title: 'Pakket 4',
+            description: 'Hoofdsteden van West- en Noord-Europa',
+            color: '#e8710a',
+            groups: ['europa4'],
+          },
+          {
+            id: 'europa5',
+            title: 'Pakket 5',
+            description: 'Hoofdsteden van Midden-, Oost- en Zuidoost-Europa',
+            color: '#c2185b',
+            groups: ['europa5'],
+          },
+          {
+            id: 'europa6',
+            title: 'Pakket 6',
+            description:
+              'Kleine landen: Andorra, Monaco, Liechtenstein, San Marino, Vaticaanstad en Malta',
+            color: '#8d6e63',
+            groups: ['europa6'],
+          },
+        ],
+      },
+      {
+        title: 'Gecombineerde Pakketten',
+        kind: 'game',
+        packages: [
+          {
+            id: 'europa1-2-3',
+            title: 'Pakket 1 + 2 + 3',
+            description: 'Alle 41 landen van Europa',
+            color: '#283593',
+            groups: ['europa1', 'europa2', 'europa3'],
+          },
+          {
+            id: 'europa4-5',
+            title: 'Pakket 4 + 5',
+            description: 'Alle 41 hoofdsteden',
+            color: '#6a1b9a',
+            groups: ['europa4', 'europa5'],
+          },
+          {
+            id: 'europa1-4',
+            title: 'Pakket 1 + 4',
+            description: 'West- en Noord-Europa: landen en hoofdsteden',
+            color: '#00695c',
+            groups: ['europa1', 'europa4'],
+          },
+          {
+            id: 'europa-alles',
+            title: 'Alle pakketten',
+            description: 'Alle 88 plekken van Europa uit pakket 1 t/m 6',
+            color: '#37474f',
+            groups: ['europa1', 'europa2', 'europa3', 'europa4', 'europa5', 'europa6'],
+          },
+        ],
+      },
+      {
+        title: 'Interactieve Kaarten',
+        kind: 'map',
+        packages: [
+          {
+            id: 'europa-kaart1',
+            title: 'Interactieve kaart pakket 1',
+            description: 'Bekijk landen van West- en Noord-Europa',
+            color: '#3949ab',
+            groups: ['europa1'],
+          },
+          {
+            id: 'europa-kaart2',
+            title: 'Interactieve kaart pakket 2',
+            description: 'Bekijk landen van Midden- en Oost-Europa',
+            color: '#1a73e8',
+            groups: ['europa2'],
+          },
+          {
+            id: 'europa-kaart3',
+            title: 'Interactieve kaart pakket 3',
+            description: 'Bekijk landen van Zuidoost-Europa',
+            color: '#34a853',
+            groups: ['europa3'],
+          },
+          {
+            id: 'europa-kaart4',
+            title: 'Interactieve kaart pakket 4',
+            description: 'Bekijk hoofdsteden van West- en Noord-Europa',
+            color: '#e8710a',
+            groups: ['europa4'],
+          },
+          {
+            id: 'europa-kaart5',
+            title: 'Interactieve kaart pakket 5',
+            description: 'Bekijk hoofdsteden van Midden-, Oost- en Zuidoost-Europa',
+            color: '#c2185b',
+            groups: ['europa5'],
+          },
+          {
+            id: 'europa-kaart6',
+            title: 'Interactieve kaart pakket 6',
+            description:
+              'Bekijk kleine landen: Andorra, Monaco, Liechtenstein, San Marino, Vaticaanstad en Malta',
+            color: '#8d6e63',
+            groups: ['europa6'],
           },
         ],
       },

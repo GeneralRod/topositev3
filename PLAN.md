@@ -358,10 +358,10 @@ Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
    goed antwoord en het beste cijfer op de pakketkaart (`src/game/aanwijstoets.ts`,
    `src/components/Aanwijstoets.tsx`). De uitdaging van vandaag en de lastige plekken blijven
    gewoon aanwijzen.
-4. **Europa**: nieuw onderwerp met landen (vlakken) en hoofdsteden (stippen), in pakketten.
-   Lijst van de eigenaar of een voorstel. Kleine landen (Luxemburg, Malta, Andorra) vragen een
-   preciezere kaart dan de wereldkaart; waarschijnlijk een eigen kaart van Europa, zoals bij
-   Nederland.
+4. ✓ **Europa**: nieuw onderwerp, indeling goedgekeurd door de eigenaar (1 oktober 2026): pakket
+   1–3 landen (West/Noord, Midden/Oost, Zuidoost; met Kosovo, Turkije en Cyprus), pakket 4–5 de
+   hoofdsteden, pakket 6 de kleine landen (stip). Eigen kaart uit Natural Earth 1:10 miljoen,
+   niet vereenvoudigd; de Krim bij Oekraïne (`scripts/europa/`, `src/data/europa/`).
 5. **Vlaggen van de wereld**: nieuw onderwerp. Er verschijnt een vlag en je zegt welk land het
    is, op drie manieren: meerkeuze, zelf typen (net zo coulant nagekeken als de oefentoets) en
    aanwijzen op de kaart. Pakketten per werelddeel. Vlaggen als plaatjes uit een vrij te
@@ -375,5 +375,5 @@ Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
 
 - ✓ Geluidjes: standaard aan (uit te zetten met de luidsprekerknop).
 - ✓ Aanwijzen als speelmanier: een aanwijstoets met cijfer.
-- Europa: welke landen en hoofdsteden, en in welke pakketten? (Eigenaar: Claude maakt een voorstel.)
+- ✓ Europa: voorstel van Claude, goedgekeurd door de eigenaar.
 - ✓ Vlaggen: alle landen van de wereld (keuze eigenaar).
