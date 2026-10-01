@@ -284,3 +284,35 @@ zonder account moet altijd direct kunnen, zonder gedoe.
       internet of account)
 - [ ] Overzicht voor de leerkracht
 - [ ] Privacyverklaring en gegevens verwijderen
+
+### Fase 8: volgende upgrades (oktober 2026, besluiten eigenaar)
+
+Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
+
+0. **Accounts afmaken** (fase 7a, pull request #115): eerst de mail via Brevo koppelen in
+   Supabase (eigenaar, zie `supabase/README.md`), daarna samen testen en mergen.
+1. **Updates van hulpprogramma's** (Dependabot): samen in één pull request (#116).
+2. **Geluidjes** bij goed, fout en klaar (stond onder "Later"). Makkelijk aan en uit te zetten:
+   een luidsprekerknop op het spelscherm, de keuze wordt onthouden. Bij de oefentoets geen
+   geluid tijdens de vragen (je hoort pas aan het eind of het goed was).
+3. **Toets met aanwijzen** als speelmanier van de oefentoets: je kiest "Opschrijven" (zoals nu)
+   of "Aanwijzen" (de naam staat in beeld, je klikt de plek aan op de kaart). Zelfde delen per
+   pakket, nakijken pas aan het eind, zelfde cijfer.
+4. **Europa**: nieuw onderwerp met landen (vlakken) en hoofdsteden (stippen), in pakketten.
+   Lijst van de eigenaar of een voorstel. Kleine landen (Luxemburg, Malta, Andorra) vragen een
+   preciezere kaart dan de wereldkaart; waarschijnlijk een eigen kaart van Europa, zoals bij
+   Nederland.
+5. **Vlaggen van de wereld**: nieuw onderwerp. Er verschijnt een vlag en je zegt welk land het
+   is, op drie manieren: meerkeuze, zelf typen (net zo coulant nagekeken als de oefentoets) en
+   aanwijzen op de kaart. Pakketten per werelddeel. Vlaggen als plaatjes uit een vrij te
+   gebruiken bron. Bij "Landen van de wereld" ook de vlag tonen op de interactieve kaart.
+6. **Oefenkaart printen**: per pakket een blinde kaart (A4) met nummers bij de plekken en
+   invulregels, plus een apart antwoordblad. Via de printknop van de browser (ook op te slaan
+   als PDF). Handig voor oefenen op papier en in de klas.
+7. **Klas en leerkracht** (fase 7b): pas na de accounts.
+
+**Nog te beslissen door de eigenaar**
+
+- Geluidjes: standaard aan of uit?
+- Europa: welke landen en hoofdsteden, en in welke pakketten?
+- Vlaggen: alle landen van de wereld, of eerst de landen uit "Landen van de wereld"?
