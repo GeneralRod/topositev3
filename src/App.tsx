@@ -44,6 +44,7 @@ const Toets = lazy(() => import('./components/Toets'));
 const Aanwijstoets = lazy(() => import('./components/Aanwijstoets'));
 const FlagQuiz = lazy(() => import('./components/FlagQuiz'));
 const FlagGallery = lazy(() => import('./components/FlagGallery'));
+const PrintMap = lazy(() => import('./components/PrintMap'));
 const PrizeCabinet = lazy(() => import('./cabinet/PrizeCabinet'));
 const AccountScreen = lazy(() => import('./account/AccountScreen'));
 const PrivacyScreen = lazy(() => import('./account/PrivacyScreen'));
@@ -102,6 +103,20 @@ const FlagQuizWrapper: React.FC = () => {
       places={places}
       mode={mode}
       onBack={() => navigate(`/main/${category.id}`)}
+    />
+  );
+};
+
+// Oefenkaart printen voor een pakket.
+const PrintWrapper: React.FC = () => {
+  const route = usePackageRoute('game');
+  if (!route) return <Navigate to="/categories" replace />;
+  return (
+    <PrintMap
+      category={route.category}
+      pkg={route.pkg}
+      places={route.cities}
+      onBack={route.onBack}
     />
   );
 };
@@ -333,6 +348,7 @@ const App: React.FC = () => {
             <Route path="/interactive/:category/:package" element={<InteractiveMapWrapper />} />
             <Route path="/toets/:category/:upto" element={<ToetsWrapper />} />
             <Route path="/vlaggen/bekijk/:package" element={<FlagGalleryWrapper />} />
+            <Route path="/print/:category/:package" element={<PrintWrapper />} />
             <Route path="/vlaggen/:package" element={<FlagQuizWrapper />} />
             <Route path="/trophy-cabinet" element={<PrizeCabinet />} />
             <Route path="/account" element={<AccountScreen />} />

@@ -199,6 +199,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
         ))}
       </CardGrid>
 
+      <SectionTitle>Oefenkaart printen</SectionTitle>
+      <CardGrid>
+        {toetsen.map((pkg) => (
+          <Card
+            key={pkg.id}
+            title={`Oefenkaart ${pkg.title.toLowerCase()}`}
+            description="Een kaart zonder namen, met nummers en invulregels. Plus een antwoordblad."
+            color="#5f6368"
+            onClick={() => navigate(`/print/${category.id}/${pkg.id}`)}
+          />
+        ))}
+      </CardGrid>
+
       <TrophyButton onClick={() => navigate('/trophy-cabinet')}>
         <TrophyIcon>🏆</TrophyIcon>
         Prijzenkast

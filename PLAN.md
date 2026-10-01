@@ -367,9 +367,10 @@ Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
    typen (eigen quiz met cijfer, `src/components/FlagQuiz.tsx`) en aanwijzen (het gewone spel met
    de vlag in beeld; kleine landen als stip). Ook "Mijn lastige vlaggen" en vlaggen bekijken per
    werelddeel. Vlaggen uit flag-icons (MIT) in `public/vlaggen/`; lijst in `scripts/vlaggen/`.
-6. **Oefenkaart printen**: per pakket een blinde kaart (A4) met nummers bij de plekken en
-   invulregels, plus een apart antwoordblad. Via de printknop van de browser (ook op te slaan
-   als PDF). Handig voor oefenen op papier en in de klas.
+6. ✓ **Oefenkaart printen**: per pakket een A4-blad met een kaart zonder namen, nummers in
+   leesvolgorde en invulregels (met naam, klas en datum), plus een antwoordblad op een eigen
+   blad (aan/uit). Via "Printen of opslaan als PDF". Onderaan de pagina van elk onderwerp
+   (`src/components/PrintMap.tsx`, `src/game/printMap.ts`).
 7. **Klas en leerkracht** (fase 7b): pas na de accounts.
 
 **Nog te beslissen door de eigenaar**
