@@ -116,7 +116,7 @@ describe('overzetten van oude gegevens', () => {
       games: {},
       cityStats: {},
       stars: {},
-      prefs: { playMode: 'map' },
+      prefs: { playMode: 'map', sound: true },
       daily: {},
       achievements: [],
       toetsen: {},
@@ -252,6 +252,15 @@ describe('opslag in de app', () => {
     storage.setPlayMode('choice');
     storage.setStoreForTesting(store);
     expect(storage.getPlayMode()).toBe('choice');
+  });
+
+  it('heeft geluid standaard aan en onthoudt het als je het uitzet', () => {
+    expect(storage.getSoundOn()).toBe(true);
+    storage.setSoundOn(false);
+    storage.setStoreForTesting(store);
+    expect(storage.getSoundOn()).toBe(false);
+    // Speelmanier en geluid zitten elkaar niet in de weg.
+    expect(storage.getPlayMode()).toBe('map');
   });
 
   it('geeft een lege dagelijkse status als de categorie nog niet bestaat', () => {

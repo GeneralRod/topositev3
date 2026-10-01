@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import type { City } from '../data/cities';
 import { countsStars, totalMistakes, useGame } from '../game/useGame';
@@ -7,6 +7,7 @@ import { starsFor } from '../game/progress';
 import { choicePool, hintRemovals, pickChoices, seededRandom } from '../game/choices';
 import type { PlayMode } from '../storage';
 import ChoicePanel from './game/ChoicePanel';
+import { playSound } from '../game/sounds';
 import {
   completionBonus,
   foundCount,
@@ -147,6 +148,15 @@ const Game: React.FC<GameProps> = ({
   });
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
 
+  // Alles gevonden: een vrolijk loopje (alleen op het moment zelf, niet bij een
+  // spel dat al klaar was toen je het opende).
+  const complete = isComplete(state);
+  const wasComplete = useRef(complete);
+  useEffect(() => {
+    if (complete && !wasComplete.current) playSound('complete');
+    wasComplete.current = complete;
+  }, [complete]);
+
   // Laat een melding na een tijdje weer verdwijnen.
   useEffect(() => {
     if (!feedback) return;
@@ -161,6 +171,7 @@ const Game: React.FC<GameProps> = ({
       const asked = state.currentCity;
       const result = clickCity(cityName);
       if (result.kind === 'ignored') return;
+      playSound(result.kind === 'correct' ? 'correct' : 'wrong');
       if (result.kind === 'wrong') {
         setWrongPicks((prev) => ({
           city: asked,
