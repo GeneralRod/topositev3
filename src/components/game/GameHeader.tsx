@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { FaCoins } from 'react-icons/fa';
-import { Button, colors } from '../../ui';
+import { Button, colors, SoundToggle } from '../../ui';
 
 const Header = styled.header`
   display: flex;
@@ -160,6 +160,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({
         Herstart
       </Button>
       <Button onClick={onBack}>Terug</Button>
+      <SoundToggle />
     </Controls>
   </Header>
 );

@@ -10,6 +10,10 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   via een pull request. Netlify maakt per pull request een voorbeeldlink; de eigenaar test die
   en geeft een oké, pas daarna mergen. Merge nooit zonder oké van de eigenaar.
 - Werkwijze: het verbeterplan staat in `PLAN.md` (fase 6). Elk deel is één pull request.
+- Uitzondering, wens eigenaar (30 september 2026): de accounts (fase 7a) worden stap voor stap
+  op één branch gebouwd (`account-inloggen`) en lokaal getest; GitHub is daarbij de back-up.
+  Eén pull request (#115) voor alles samen, pas mergen als het helemaal af is en de eigenaar
+  oké geeft.
 - Het herbouwplan en de voortgang staan in `PLAN.md`. Vink taken af als ze klaar zijn.
 - Voor elke commit: `npm run lint`, `npm run format:check`, `npm test` en `npm run build` moeten slagen.
 - Voortgang en munten van spelers in localStorage mogen niet verloren gaan.
@@ -38,6 +42,12 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   (`items.mjs` = de lijst; na aanpassen `node scripts/wateren/build.mjs` draaien)
 - `scripts/landen/`: lijst van "Landen van de wereld" (`items.mjs`); `node scripts/landen/build.mjs`
   maakt `src/data/landen/places.json` en `england.json`; de vormen zelf komen van de wereldkaart
+- `src/storage/merge.ts`: voortgang van browser en account samenvoegen (regels in `PLAN.md` fase 7)
+- `src/account/`: accounts (inloggen via Supabase, scherm `/account`, synchroniseren in
+  `sync.ts`, privacyverklaring `/privacy` met gegevens in `config.ts`)
+- `supabase/`: de database van de accounts (Supabase-project `topografiewereld`,
+  id `xjzapefnqfmwudchwvhl`, Frankfurt, gratis plan; moet gratis blijven: wens eigenaar);
+  `supabase/README.md` = instellingen die de eigenaar in het dashboard doet
 - `scripts/nederland/`: maakt de kaart van Nederland uit CBS, Kadaster, Rijkswaterstaat en
   Natural Earth (`items.mjs` = de lijst, `water.mjs` = indeling van het water; daarna
   `node scripts/nederland/build.mjs` draaien, ± 2 minuten)

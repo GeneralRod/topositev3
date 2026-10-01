@@ -116,7 +116,7 @@ describe('overzetten van oude gegevens', () => {
       games: {},
       cityStats: {},
       stars: {},
-      prefs: { playMode: 'map' },
+      prefs: { playMode: 'map', sound: true },
       daily: {},
       achievements: [],
       toetsen: {},
@@ -254,6 +254,15 @@ describe('opslag in de app', () => {
     expect(storage.getPlayMode()).toBe('choice');
   });
 
+  it('heeft geluid standaard aan en onthoudt het als je het uitzet', () => {
+    expect(storage.getSoundOn()).toBe(true);
+    storage.setSoundOn(false);
+    storage.setStoreForTesting(store);
+    expect(storage.getSoundOn()).toBe(false);
+    // Speelmanier en geluid zitten elkaar niet in de weg.
+    expect(storage.getPlayMode()).toBe('map');
+  });
+
   it('geeft een lege dagelijkse status als de categorie nog niet bestaat', () => {
     expect(storage.getDaily('onbekend')).toEqual({ lastCompleted: null, streak: 0 });
   });
@@ -302,6 +311,31 @@ describe('opslag in de app', () => {
     expect(storage.loadGame('pakket2')).toEqual(game);
     storage.clearGame('pakket2');
     expect(storage.loadGame('pakket2')).toBeNull();
+  });
+
+  it('meldt elke wijziging aan wie meeluistert, tot die stopt', () => {
+    const seen: [number, string][] = [];
+    const stop = storage.subscribe((data, reason) => seen.push([data.coins, reason]));
+    storage.addCoins(5);
+    storage.spendCoins(10);
+    stop();
+    storage.addCoins(1);
+    expect(seen).toEqual([
+      [25, 'change'],
+      [15, 'change'],
+    ]);
+  });
+
+  it('vervangt alle gegevens in één keer en bewaart ze', () => {
+    const seen: string[] = [];
+    storage.subscribe((_, reason) => seen.push(reason));
+    const next = { ...emptySaveData(), coins: 999, prizes: ['globe'] };
+    storage.replaceSaveData(next);
+    expect(seen).toEqual(['replace']);
+    expect(storage.getSaveData()).toEqual(next);
+    storage.setStoreForTesting(store);
+    expect(storage.getCoins()).toBe(999);
+    expect(storage.getPrizes()).toEqual(['globe']);
   });
 
   it('blijft werken als opslaan mislukt', () => {

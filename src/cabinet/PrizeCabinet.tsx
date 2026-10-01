@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useEffectEvent, useState } from 'react';
 import styled from '@emotion/styled';
 import { css, keyframes } from '@emotion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -14,6 +14,7 @@ import {
   getStyle,
   getUpgrades,
   setStyle,
+  subscribe,
 } from '../storage';
 import {
   allPrizes,
@@ -525,6 +526,16 @@ export const PrizeCabinet: React.FC = () => {
     setStyleState(getStyle());
     setEarned(getAchievements());
   };
+
+  // Voortgang bij het account opgehaald (bijv. van een andere computer): opnieuw inlezen.
+  const onReplaced = useEffectEvent(refresh);
+  useEffect(
+    () =>
+      subscribe((_, reason) => {
+        if (reason === 'replace') onReplaced();
+      }),
+    [],
+  );
 
   const changeStyle = (next: CabinetStyle) => {
     setStyle(next);
