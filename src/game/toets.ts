@@ -17,17 +17,6 @@ export const TOETS_LENGTHS: Record<ToetsLength, { label: string; share: number; 
   alles: { label: 'Alles', share: 1, min: 0 },
 };
 
-/**
- * Hoe je antwoordt: opschrijven (er knippert een plek, jij schrijft de naam) of
- * aanwijzen (de naam staat er, jij klikt de plek aan op de kaart).
- */
-export type ToetsWay = 'schrijven' | 'aanwijzen';
-
-export const TOETS_WAYS: Record<ToetsWay, { label: string; help: string }> = {
-  schrijven: { label: 'Opschrijven', help: 'Er knippert een plek, jij schrijft de naam op.' },
-  aanwijzen: { label: 'Aanwijzen', help: 'De naam staat er, jij klikt de plek aan op de kaart.' },
-};
-
 /** Munten per goed antwoord (net als bij aanwijzen, zonder snelheidsbonus). */
 export const TOETS_COINS_PER_CORRECT = 5;
 
@@ -77,15 +66,8 @@ export function formatGrade(grade: number): string {
 }
 
 /** Sleutel voor het beste cijfer, bijv. 'landen:2:normaal'. */
-export function toetsKey(
-  categoryId: string,
-  upto: number,
-  length: ToetsLength,
-  way: ToetsWay = 'schrijven',
-): string {
-  const key = `${categoryId}:${upto}:${length}`;
-  // Opschrijven houdt de oude sleutel, zodat eerder behaalde cijfers blijven staan.
-  return way === 'schrijven' ? key : `${key}:aanwijzen`;
+export function toetsKey(categoryId: string, upto: number, length: ToetsLength): string {
+  return `${categoryId}:${upto}:${length}`;
 }
 
 /** "Toets pakket 1 + 2 + 3" */
