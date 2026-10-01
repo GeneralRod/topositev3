@@ -1,6 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { TEST_FLAG_KEY } from './config';
-import { readAccountFlag } from './flag';
 import {
   authErrorMessage,
   linkErrorMessage,
@@ -8,36 +6,6 @@ import {
   passwordProblem,
   UNKNOWN_MESSAGE,
 } from './messages';
-
-function fakeStore(initial: Record<string, string> = {}) {
-  const map = new Map(Object.entries(initial));
-  return {
-    map,
-    getItem: (key: string) => map.get(key) ?? null,
-    setItem: (key: string, value: string) => void map.set(key, value),
-    removeItem: (key: string) => void map.delete(key),
-  };
-}
-
-describe('accountknop (in aanbouw)', () => {
-  it('is verborgen zonder ?account', () => {
-    expect(readAccountFlag('', fakeStore())).toBe(false);
-    expect(readAccountFlag('?modus=meerkeuze', fakeStore())).toBe(false);
-  });
-
-  it('gaat aan met ?account en blijft dan aan in deze browser', () => {
-    const store = fakeStore();
-    expect(readAccountFlag('?account', store)).toBe(true);
-    expect(store.map.get(TEST_FLAG_KEY)).toBe('1');
-    expect(readAccountFlag('', store)).toBe(true);
-  });
-
-  it('gaat weer uit met ?account=uit', () => {
-    const store = fakeStore({ [TEST_FLAG_KEY]: '1' });
-    expect(readAccountFlag('?account=uit', store)).toBe(false);
-    expect(readAccountFlag('', store)).toBe(false);
-  });
-});
 
 describe('foutmeldingen', () => {
   it('vertaalt bekende fouten van Supabase', () => {

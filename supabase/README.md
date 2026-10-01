@@ -27,12 +27,20 @@ De ingebouwde mail van Supabase mailt alleen naar leden van je eigen Supabase-te
 paar per uur. Voor echte spelers is een gratis maildienst nodig, bijvoorbeeld Brevo (gratis tot
 300 mails per dag):
 
-1. Maak een gratis account op [brevo.com](https://www.brevo.com).
-2. Voeg bij **Senders** het e-mailadres toe waar de mails vandaan komen en bevestig het.
-3. Maak bij **SMTP & API → SMTP** een SMTP-sleutel.
-4. Zet in Supabase **Enable custom SMTP** aan en vul in: host `smtp-relay.brevo.com`, poort
-   `587`, gebruikersnaam en wachtwoord (de SMTP-sleutel) van Brevo, en als afzender het adres uit
-   stap 2 met naam `Topografiewereld`.
+1. Maak een gratis account op [brevo.com](https://www.brevo.com) met
+   `topografiewereld@gmail.com`.
+2. Voeg bij **Senders, Domains & Dedicated IPs → Senders** het adres
+   `topografiewereld@gmail.com` toe (naam `Topografiewereld`) en bevestig het met de code die
+   Brevo naar dat adres mailt.
+3. Maak bij **SMTP & API → SMTP** een SMTP-sleutel ("Generate a new SMTP key"). Bewaar hem
+   goed; Brevo laat hem maar één keer zien.
+4. Zet in Supabase **Enable custom SMTP** aan en vul in:
+   - Sender email: `topografiewereld@gmail.com`, Sender name: `Topografiewereld`
+   - Host: `smtp-relay.brevo.com`, Port: `587`
+   - Username: de "Login" die Brevo bij SMTP toont (eindigt meestal op `@smtp-brevo.com`)
+   - Password: de SMTP-sleutel uit stap 3
+5. Zet daarna in `src/account/config.ts` bij `PRIVACY.mailService` `Brevo` in plaats van
+   `Supabase` (voor de privacyverklaring).
 
 Let op: mails vanaf een gewoon Gmail-adres komen soms bij ongewenste mail terecht. Een eigen
 domein helpt daartegen, maar kost geld; dat kan later altijd nog.

@@ -321,9 +321,11 @@ nooit met dit account ingelogd was). Zo telt alleen wat er sindsdien nieuw is bi
       "Account verwijderen" (databasefunctie `delete_my_account`, getest met proefaccounts:
       verwijdert alleen je eigen account en voortgang). Naam verantwoordelijke: "Topografiewereld"
       (keuze eigenaar).
-- [ ] Vóór livegang: contactadres invullen in `PRIVACY.contact` (eigenaar maakt een apart
-      adres aan) en `PRIVACY.mailService` aanpassen als er een eigen maildienst komt
-- [ ] Accountknop voor iedereen zichtbaar maken (de `?account`-vlag in `src/account/flag.ts` weg)
+- [x] Contactadres in de privacyverklaring: `topografiewereld@gmail.com`
+- [x] Accountknop voor iedereen zichtbaar (de `?account`-vlag is weg)
+- [ ] Vóór livegang (eigenaar): Brevo koppelen in Supabase (`supabase/README.md` stap 2 en 3),
+      daarna `PRIVACY.mailService` op `Brevo`; één keer spelen terwijl je ingelogd bent en
+      controleren dat de munten online aankomen; dan #115 mergen
 
 **Later 7b: klassen en leerkrachten**
 

@@ -4,7 +4,6 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { colors } from '../ui';
-import { accountsVisible } from './flag';
 import { useAccount } from './session';
 
 /** Alleen op deze schermen; in een spel of de prijzenkast zit hij in de weg. */
@@ -48,10 +47,8 @@ const AccountButton: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const account = useAccount();
-  const visible = React.useMemo(() => accountsVisible(location.search), [location.search]);
 
   if (!SHOWN_ON.some((path) => matchPath(path, location.pathname))) return null;
-  if (!visible && account.status !== 'in') return null;
 
   return (
     <FloatingButton type="button" onClick={() => navigate('/account')}>

@@ -24,7 +24,7 @@ import { completeDailyChallenge, getCityStats, getDaily, type PlayMode } from '.
 import { dailyCities, dateKey, doneToday } from './game/daily';
 import { hardCities } from './game/progress';
 import AccountButton from './account/AccountButton';
-import { hasStoredSession } from './account/flag';
+import { hasStoredSession } from './account/storedSession';
 import { startAccount } from './account/session';
 
 // Deze schermen (met de kaartbibliotheek Leaflet) worden pas geladen als ze

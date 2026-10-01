@@ -43,8 +43,8 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 - `scripts/landen/`: lijst van "Landen van de wereld" (`items.mjs`); `node scripts/landen/build.mjs`
   maakt `src/data/landen/places.json` en `england.json`; de vormen zelf komen van de wereldkaart
 - `src/storage/merge.ts`: voortgang van browser en account samenvoegen (regels in `PLAN.md` fase 7)
-- `src/account/`: accounts (inloggen via Supabase, scherm `/account`); nog verborgen, knop
-  zichtbaar na `?account` in de url
+- `src/account/`: accounts (inloggen via Supabase, scherm `/account`, synchroniseren in
+  `sync.ts`, privacyverklaring `/privacy` met gegevens in `config.ts`)
 - `supabase/`: de database van de accounts (Supabase-project `topografiewereld`,
   id `xjzapefnqfmwudchwvhl`, Frankfurt, gratis plan; moet gratis blijven: wens eigenaar);
   `supabase/README.md` = instellingen die de eigenaar in het dashboard doet
