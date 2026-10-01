@@ -10,10 +10,6 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   via een pull request. Netlify maakt per pull request een voorbeeldlink; de eigenaar test die
   en geeft een oké, pas daarna mergen. Merge nooit zonder oké van de eigenaar.
 - Werkwijze: het verbeterplan staat in `PLAN.md` (fase 6). Elk deel is één pull request.
-- Uitzondering, wens eigenaar (30 september 2026): de accounts (fase 7a) worden stap voor stap
-  op één branch gebouwd (`account-inloggen`) en lokaal getest; GitHub is daarbij de back-up.
-  Eén pull request (#115) voor alles samen, pas mergen als het helemaal af is en de eigenaar
-  oké geeft.
 - Het herbouwplan en de voortgang staan in `PLAN.md`. Vink taken af als ze klaar zijn.
 - Voor elke commit: `npm run lint`, `npm run format:check`, `npm test` en `npm run build` moeten slagen.
 - Voortgang en munten van spelers in localStorage mogen niet verloren gaan.
@@ -52,7 +48,7 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   Natural Earth (`items.mjs` = de lijst, `water.mjs` = indeling van het water; daarna
   `node scripts/nederland/build.mjs` draaien, ± 2 minuten)
 
-## Stand van zaken (overdracht, 30 september 2026)
+## Stand van zaken (overdracht, 1 oktober 2026)
 
 - Live: fase 1 t/m 3, nieuwe prijzenkast met werkplaats, fase 6 deel 1 t/m 5 (kaart, lastige
   steden en sterren, meerkeuze, dagelijkse uitdaging, extra prijzen en prestatiebord), en de
@@ -62,7 +58,12 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 - Ook in het plan: fase 7 (optionele accounts).
 - Ook live: "Nederland" (74 plekken in 6 pakketten, eigen precieze kaart; rivieren tot aan zee
   met een eigen tint blauw, de Rijn tot Duisburg; ook in de oefentoets).
-- Nog open: 5 updates van Dependabot (#64, #103 t/m #106), nog niet bekeken.
+- Ook live (1 oktober 2026): accounts (fase 7a, #115) met Supabase en mail via Brevo. Wie voor
+  het eerst inlogt op een computer met voortgang, krijgt "Is dit jouw voortgang?"
+  (`src/account/guest.ts`): ja = op het account, nee = apart bewaard en terug na uitloggen.
+- Dependabot-updates zijn verwerkt in #116.
+- Wachten op oké van de eigenaar: #117 (plan fase 8), #118 (vanzelf herladen na update), #119
+  (geluidjes), #120 (toets aanwijzen, gebouwd op #119) en #121 ("Oeral" telt goed in de toets).
 - Ook live: "Landen van de wereld" (75 landen, pakket 1 ook per werelddeel).
 - Ook live: de oefentoets (namen opschrijven, in delen per pakket, met cijfer; onderaan de
   pagina van elk onderwerp). Code in `src/game/toets.ts` en `src/components/Toets.tsx`.
@@ -76,3 +77,5 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 - Pakket-id's moeten uniek zijn over alle categorieën (sterren en spellen worden per id bewaard).
 - Testen in de browser: `npm run build && npx vite preview`, prijzenkast met `?ontwikkelaar`.
 - GitHub Pages uitzetten (Settings → Pages) moet de eigenaar zelf nog doen.
+- Staat een live-update bij Netlify op "Skipped" ("a new one was scheduled"), dan bleef hij
+  hangen: de eigenaar drukt in Netlify op Deploys → Trigger deploy → Deploy site.
