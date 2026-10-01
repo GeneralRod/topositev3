@@ -11,6 +11,7 @@ import {
 import { ALIASES, LOOKALIKES } from '../content/aliases';
 import places from '../data/landen/places.json';
 import waters from '../data/wateren/places.json';
+import nederland from '../data/nederland/places.json';
 
 describe('oefentoets: aantal vragen', () => {
   it('neemt 25% (kort), 50% (normaal) of alles, met een minimum', () => {
@@ -125,5 +126,46 @@ describe('oefentoets: nakijken (topo, geen spelling)', () => {
     expect(judgeAnswer('Atlantische', withOcean, water).correct).toBe(true);
     const redSea = names.find((n) => /Rode Zee/.test(n))!;
     expect(judgeAnswer('rode zee', redSea, water).exact).toBe(true);
+  });
+
+  it('rekent een naam zonder "gebergte", "meer" enz. erachter goed ("Oeral")', () => {
+    const water = makeCandidates(
+      waters.map((p) => p.name),
+      ALIASES,
+      LOOKALIKES,
+    );
+    for (const [typed, answer] of [
+      ['Oeral', 'Oeralgebergte'],
+      ['oeral', 'Oeralgebergte'],
+      ['Andes', 'Andesgebergte'],
+      ['Atlas', 'Atlasgebergte'],
+      ['Gobi', 'Gobiwoestijn'],
+      ['Kongo', 'Kongorivier'],
+      ['Bajkal', 'Bajkalmeer'],
+      ['Victoria', 'Victoriameer'],
+      ['Barents', 'Barentszee'],
+      ['Everest', 'Mount Everest'],
+      ['Rocky', 'Rocky Mountains'],
+    ] as const) {
+      expect(judgeAnswer(typed, answer, water).correct, `${typed} → ${answer}`).toBe(true);
+    }
+    // Goed, en daarna zie je hoe je het helemaal schrijft.
+    expect(judgeAnswer('Oeral', 'Oeralgebergte', water)).toEqual({ correct: true, exact: false });
+    // Een ander gebergte blijft fout.
+    expect(judgeAnswer('Oeral', 'Andesgebergte', water).correct).toBe(false);
+  });
+
+  it('rekent een korte naam niet goed als die bij een andere plek hoort (IJssel ≠ IJsselmeer)', () => {
+    const nl = makeCandidates(
+      nederland.map((p) => p.name),
+      ALIASES,
+      LOOKALIKES,
+    );
+    expect(judgeAnswer('IJssel', 'IJsselmeer', nl).correct).toBe(false);
+    expect(judgeAnswer('IJssel', 'IJssel', nl)).toEqual({ correct: true, exact: true });
+    expect(judgeAnswer('Veluwe', 'Veluwemeer', nl).correct).toBe(false);
+    expect(judgeAnswer('Veluwe', 'Veluwe', nl).exact).toBe(true);
+    expect(judgeAnswer('Grevelingen', 'Grevelingenmeer', nl).correct).toBe(true);
+    expect(judgeAnswer('Lauwers', 'Lauwersmeer', nl).correct).toBe(true);
   });
 });
