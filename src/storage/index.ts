@@ -9,11 +9,12 @@ import {
   loadSaveData,
   writeSaveData,
   type KeyValueStore,
+  type FlagMode,
   type PlayMode,
   type SaveData,
 } from './storage';
 
-export type { GameMode, PlayMode, SaveData } from './storage';
+export type { FlagMode, GameMode, PlayMode, SaveData } from './storage';
 export { mergeSaveData, sameData } from './merge';
 
 function memoryStore(): KeyValueStore {
@@ -211,6 +212,14 @@ export function getSoundOn(): boolean {
 
 export function setSoundOn(sound: boolean): void {
   update((d) => ({ ...d, prefs: { ...d.prefs, sound } }));
+}
+
+export function getFlagMode(): FlagMode {
+  return state().prefs.flagMode;
+}
+
+export function setFlagMode(flagMode: FlagMode): void {
+  update((d) => ({ ...d, prefs: { ...d.prefs, flagMode } }));
 }
 
 export function getDaily(categoryId: string): DailyRecord {

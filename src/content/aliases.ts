@@ -35,6 +35,20 @@ export const ALIASES: Record<string, string[]> = {
   Kyiv: ['Kiev', 'Kiëv'],
   Chisinau: ['Chișinău', 'Kisjinev'],
   Pristina: ['Prishtina', 'Priština'],
+  // Vlaggen
+  Soedan: ['Sudan'],
+  'Zuid-Soedan': ['Zuid-Sudan'],
+  Eswatini: ['Swaziland'],
+  Ivoorkust: ["Côte d'Ivoire"],
+  'Oost-Timor': ['Timor-Leste'],
+  Kaapverdië: ['Cabo Verde'],
+  Micronesia: ['Micronesië'],
+  "Bahama's": ['Bahamas'],
+  Kirgizië: ['Kirgizstan', 'Kirgistan'],
+  'Verenigde Arabische Emiraten': ['VAE', 'Emiraten'],
+  'Congo-Brazzaville': ['Republiek Congo'],
+  Marshalleilanden: ['Marshall-eilanden'],
+  Salomonseilanden: ['Salomon-eilanden'],
 };
 
 /**

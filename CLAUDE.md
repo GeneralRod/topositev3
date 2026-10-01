@@ -46,6 +46,8 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   `supabase/README.md` = instellingen die de eigenaar in het dashboard doet
 - `scripts/europa/`: lijst van "Europa" (`items.mjs`); `node scripts/europa/build.mjs` maakt
   `src/data/europa/map.json` (Natural Earth 1:10 miljoen, de Krim bij Oekraïne) en `places.json`
+- `scripts/vlaggen/`: lijst van "Vlaggen van de wereld" (`items.mjs`); `node scripts/vlaggen/build.mjs`
+  kopieert de vlaggen (flag-icons, MIT) naar `public/vlaggen/` en maakt `src/data/vlaggen/places.json`
 - `scripts/nederland/`: maakt de kaart van Nederland uit CBS, Kadaster, Rijkswaterstaat en
   Natural Earth (`items.mjs` = de lijst, `water.mjs` = indeling van het water; daarna
   `node scripts/nederland/build.mjs` draaien, ± 2 minuten)

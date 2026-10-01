@@ -91,6 +91,17 @@ const EmptyMessage = styled.div`
 `;
 
 /** Steeds dezelfde lege lijst, zodat de kaart en de knoppen niet voor niets opnieuw tekenen. */
+/** De vlag in de kop bij de vlaggen (aanwijzen). */
+const FlagImage = styled.img`
+  height: 2.6rem;
+  width: auto;
+  margin-left: 0.6rem;
+  border: 1px solid #d6dde6;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  vertical-align: middle;
+`;
+
 const NONE: string[] = [];
 
 interface GameProps {
@@ -224,17 +235,24 @@ const Game: React.FC<GameProps> = ({
     );
   }
 
+  // Bij de vlaggen staat bij aanwijzen de vlag in beeld in plaats van de naam.
+  const flag = currentCity && !isChoice ? category?.flagOf?.(currentCity.name) : undefined;
+  const question = !currentCity ? null : isChoice ? (
+    `${which} ${words.one} knippert?`
+  ) : flag ? (
+    <>
+      Vind het land van deze vlag:
+      <FlagImage src={flag} alt="Vlag" />
+    </>
+  ) : (
+    `Vind: ${currentCity.name}`
+  );
+
   return (
     <GameContainer>
       <GameHeader
         title={title}
-        question={
-          currentCity
-            ? isChoice
-              ? `${which} ${words.one} knippert?`
-              : `Vind: ${currentCity.name}`
-            : null
-        }
+        question={question}
         hint={
           state.hintUsed && currentCity
             ? isChoice

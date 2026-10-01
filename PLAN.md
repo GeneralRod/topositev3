@@ -362,10 +362,11 @@ Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
    1–3 landen (West/Noord, Midden/Oost, Zuidoost; met Kosovo, Turkije en Cyprus), pakket 4–5 de
    hoofdsteden, pakket 6 de kleine landen (stip). Eigen kaart uit Natural Earth 1:10 miljoen,
    niet vereenvoudigd; de Krim bij Oekraïne (`scripts/europa/`, `src/data/europa/`).
-5. **Vlaggen van de wereld**: nieuw onderwerp. Er verschijnt een vlag en je zegt welk land het
-   is, op drie manieren: meerkeuze, zelf typen (net zo coulant nagekeken als de oefentoets) en
-   aanwijzen op de kaart. Pakketten per werelddeel. Vlaggen als plaatjes uit een vrij te
-   gebruiken bron. Bij "Landen van de wereld" ook de vlag tonen op de interactieve kaart.
+5. ✓ **Vlaggen van de wereld**: nieuw onderwerp met alle 195 landen (193 VN-landen, plus
+   Vaticaanstad en Kosovo), per werelddeel en "Alle vlaggen". Drie speelmanieren: meerkeuze en
+   typen (eigen quiz met cijfer, `src/components/FlagQuiz.tsx`) en aanwijzen (het gewone spel met
+   de vlag in beeld; kleine landen als stip). Ook "Mijn lastige vlaggen" en vlaggen bekijken per
+   werelddeel. Vlaggen uit flag-icons (MIT) in `public/vlaggen/`; lijst in `scripts/vlaggen/`.
 6. **Oefenkaart printen**: per pakket een blinde kaart (A4) met nummers bij de plekken en
    invulregels, plus een apart antwoordblad. Via de printknop van de browser (ook op te slaan
    als PDF). Handig voor oefenen op papier en in de klas.

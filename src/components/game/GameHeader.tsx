@@ -100,7 +100,8 @@ const Hint = styled.span`
 
 interface GameHeaderProps {
   title: string;
-  question: string | null;
+  /** De vraag: tekst, of (bij de vlaggen) een vlag. */
+  question: React.ReactNode;
   hint: string | null;
   coins: number;
   found: number;
