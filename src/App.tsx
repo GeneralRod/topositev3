@@ -20,7 +20,13 @@ import {
   PRACTICE_PACKAGE_ID,
   toetsPackages,
 } from './content/catalog';
-import { completeDailyChallenge, getCityStats, getDaily, type PlayMode } from './storage';
+import {
+  completeDailyChallenge,
+  getCityStats,
+  getDaily,
+  type GameMode,
+  type PlayMode,
+} from './storage';
 import { dailyCities, dateKey, doneToday } from './game/daily';
 import { hardCities } from './game/progress';
 import AccountButton from './account/AccountButton';
@@ -33,6 +39,7 @@ import { startAccount } from './account/session';
 const Game = lazy(() => import('./components/Game'));
 const InteractiveMap = lazy(() => import('./components/InteractiveMap'));
 const Toets = lazy(() => import('./components/Toets'));
+const Aanwijstoets = lazy(() => import('./components/Aanwijstoets'));
 const PrizeCabinet = lazy(() => import('./cabinet/PrizeCabinet'));
 const AccountScreen = lazy(() => import('./account/AccountScreen'));
 const PrivacyScreen = lazy(() => import('./account/PrivacyScreen'));
@@ -75,14 +82,15 @@ function usePackageRoute(kind: 'game' | 'map') {
   };
 }
 
-/** Speelmanier uit de url: ?modus=meerkeuze, anders aanwijzen op de kaart. */
+/** Speelmanier uit de url: ?modus=meerkeuze of ?modus=toets, anders aanwijzen op de kaart. */
 function usePlayMode(): PlayMode {
   const [params] = useSearchParams();
-  return params.get('modus') === 'meerkeuze' ? 'choice' : 'map';
+  const modus = params.get('modus');
+  return modus === 'meerkeuze' ? 'choice' : modus === 'toets' ? 'test' : 'map';
 }
 
 /** Voortgang per speelmanier apart bewaren. */
-function gameKey(packageId: string, mode: PlayMode): string {
+function gameKey(packageId: string, mode: GameMode): string {
   return mode === 'choice' ? `${packageId}@meerkeuze` : packageId;
 }
 
@@ -91,7 +99,11 @@ const GameWrapper: React.FC = () => {
     category: string;
     package: string;
   }>();
-  const mode = usePlayMode();
+  const chosen = usePlayMode();
+  if (chosen === 'test' && packageId !== DAILY_PACKAGE_ID && packageId !== PRACTICE_PACKAGE_ID)
+    return <AanwijstoetsWrapper />;
+  // De uitdaging en de lastige plekken speel je bij de aanwijstoets gewoon met aanwijzen.
+  const mode: GameMode = chosen === 'test' ? 'map' : chosen;
   if (packageId === DAILY_PACKAGE_ID)
     return <DailyWrapper key={mode} categoryId={categoryId} mode={mode} />;
   if (packageId === PRACTICE_PACKAGE_ID)
@@ -99,7 +111,22 @@ const GameWrapper: React.FC = () => {
   return <PackageGameWrapper mode={mode} />;
 };
 
-const PackageGameWrapper: React.FC<{ mode: PlayMode }> = ({ mode }) => {
+const AanwijstoetsWrapper: React.FC = () => {
+  const route = usePackageRoute('game');
+  if (!route) return <Navigate to="/categories" replace />;
+  return (
+    <Aanwijstoets
+      key={route.pkg.id}
+      category={route.category}
+      packageId={route.pkg.id}
+      title={route.pkg.title}
+      cities={route.cities}
+      onBack={route.onBack}
+    />
+  );
+};
+
+const PackageGameWrapper: React.FC<{ mode: GameMode }> = ({ mode }) => {
   const route = usePackageRoute('game');
   if (!route) return <Navigate to="/categories" replace />;
   return (
@@ -117,7 +144,7 @@ const PackageGameWrapper: React.FC<{ mode: PlayMode }> = ({ mode }) => {
 };
 
 // Oefenrondje: alleen de plekken die je vaak fout hebt (zie game/progress.ts).
-const PracticeWrapper: React.FC<{ categoryId: string | undefined; mode: PlayMode }> = ({
+const PracticeWrapper: React.FC<{ categoryId: string | undefined; mode: GameMode }> = ({
   categoryId,
   mode,
 }) => {
@@ -150,7 +177,7 @@ const PracticeWrapper: React.FC<{ categoryId: string | undefined; mode: PlayMode
 };
 
 // Dagelijkse uitdaging: elke dag 10 vaste plekken (zie game/daily.ts).
-const DailyWrapper: React.FC<{ categoryId: string | undefined; mode: PlayMode }> = ({
+const DailyWrapper: React.FC<{ categoryId: string | undefined; mode: GameMode }> = ({
   categoryId,
   mode,
 }) => {

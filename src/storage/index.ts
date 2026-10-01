@@ -13,7 +13,7 @@ import {
   type SaveData,
 } from './storage';
 
-export type { PlayMode, SaveData } from './storage';
+export type { GameMode, PlayMode, SaveData } from './storage';
 export { mergeSaveData, sameData } from './merge';
 
 function memoryStore(): KeyValueStore {

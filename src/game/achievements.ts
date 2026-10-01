@@ -2,13 +2,13 @@
 // doen. Pure functies, getest in achievements.test.ts. De tekeningen staan in
 // cabinet/art.tsx (zelfde id).
 
-import type { PlayMode } from '../storage/storage';
+import type { GameMode } from '../storage/storage';
 import type { GameKind } from './rules';
 
 /** Een spel dat net helemaal af is. */
 export interface FinishedGame {
   kind: GameKind;
-  mode: PlayMode;
+  mode: GameMode;
   mistakes: number;
 }
 

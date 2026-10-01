@@ -352,9 +352,12 @@ Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
 2. ✓ **Geluidjes** bij goed, fout en klaar (stond onder "Later"). Makkelijk aan en uit te zetten:
    een luidsprekerknop op het spelscherm, de keuze wordt onthouden. Bij de oefentoets geen
    geluid tijdens de vragen (je hoort pas aan het eind of het goed was).
-3. **Aanwijzen als toets, maar dan als gewone speelmanier** (correctie eigenaar, 1 oktober 2026):
-   de oefentoets blijft alleen typen; aanwijzen-als-toets is eruit gehaald (#120 teruggedraaid)
-   en komt terug als eigen speelmanier bij de pakketten. Hoe precies: zie "Nog te beslissen".
+3. ✓ **Aanwijstoets** als derde speelmanier bij de pakketten (naast Aanwijzen en Meerkeuze,
+   correctie eigenaar 1 oktober 2026; de oefentoets blijft alleen typen). Elke plek één keer,
+   één klik, geen hints en geen geluid tijdens de vragen; aan het eind een cijfer, 5 munten per
+   goed antwoord en het beste cijfer op de pakketkaart (`src/game/aanwijstoets.ts`,
+   `src/components/Aanwijstoets.tsx`). De uitdaging van vandaag en de lastige plekken blijven
+   gewoon aanwijzen.
 4. **Europa**: nieuw onderwerp met landen (vlakken) en hoofdsteden (stippen), in pakketten.
    Lijst van de eigenaar of een voorstel. Kleine landen (Luxemburg, Malta, Andorra) vragen een
    preciezere kaart dan de wereldkaart; waarschijnlijk een eigen kaart van Europa, zoals bij
@@ -371,6 +374,6 @@ Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
 **Nog te beslissen door de eigenaar**
 
 - ✓ Geluidjes: standaard aan (uit te zetten met de luidsprekerknop).
-- Aanwijzen als speelmanier: hoe moet die eruitzien?
-- Europa: welke landen en hoofdsteden, en in welke pakketten?
-- Vlaggen: alle landen van de wereld, of eerst de landen uit "Landen van de wereld"?
+- ✓ Aanwijzen als speelmanier: een aanwijstoets met cijfer.
+- Europa: welke landen en hoofdsteden, en in welke pakketten? (Eigenaar: Claude maakt een voorstel.)
+- ✓ Vlaggen: alle landen van de wereld (keuze eigenaar).
