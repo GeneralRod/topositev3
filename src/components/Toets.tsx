@@ -17,7 +17,8 @@ import {
   type ToetsQuestion,
 } from '../game/toets';
 import { addCoins, getToetsGrades, recordCityAnswer, recordToetsGrade } from '../storage';
-import { Button, colors } from '../ui';
+import { Button, colors, SoundToggle } from '../ui';
+import { playSound } from '../game/sounds';
 import GameMap from './game/GameMap';
 
 // Oefentoets (zie src/game/toets.ts): er knippert een plek, het kind schrijft de
@@ -271,6 +272,8 @@ const Toets: React.FC<ToetsProps> = ({ category, upto, onBack }) => {
       recordCityAnswer(category.id, a.question.name, a.correct ? 'first-try' : 'wrong');
     }
     recordToetsGrade(toetsKey(category.id, upto, length), toetsGrade(correct, all.length));
+    // Tijdens de vragen geen geluid (je hoort pas aan het eind of het goed was).
+    playSound('complete');
     setPhase('result');
   };
 
@@ -418,9 +421,12 @@ const Toets: React.FC<ToetsProps> = ({ category, upto, onBack }) => {
             Deel {current.part + 1} · Vraag {numberInPart} van {partQuestions.length}
           </Progress>
         )}
-        <Button variant="danger" onClick={onBack}>
-          Stoppen
-        </Button>
+        <Row>
+          <SoundToggle />
+          <Button variant="danger" onClick={onBack}>
+            Stoppen
+          </Button>
+        </Row>
       </Header>
       <PlayArea>
         <MapWrapper>
