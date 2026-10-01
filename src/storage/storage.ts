@@ -61,9 +61,14 @@ export type PlayMode = 'map' | 'choice' | 'test';
 /** Speelmanieren van het gewone spel (de aanwijstoets is een eigen scherm). */
 export type GameMode = Exclude<PlayMode, 'test'>;
 
+/** Speelmanier bij de vlaggen: meerkeuze, typen of aanwijzen op de kaart. */
+export type FlagMode = 'choice' | 'type' | 'map';
+
 export interface Prefs {
   /** Aanwijzen op de kaart of meerkeuze. */
   playMode: PlayMode;
+  /** Speelmanier bij de vlaggen (standaard meerkeuze). */
+  flagMode: FlagMode;
   /** Geluidjes bij goed, fout en klaar (standaard aan). */
   sound: boolean;
 }
@@ -87,7 +92,9 @@ function parsePrefs(value: unknown): Prefs {
   const playMode: PlayMode = saved === 'choice' || saved === 'test' ? saved : 'map';
   // Alleen uit als de speler het zelf uitzette.
   const sound = !(isRecord(value) && value.sound === false);
-  return { playMode, sound };
+  const flag = isRecord(value) ? value.flagMode : undefined;
+  const flagMode: FlagMode = flag === 'type' || flag === 'map' ? flag : 'choice';
+  return { playMode, flagMode, sound };
 }
 
 /** Het oude formaat (versie 1 en de losse sleutels daarvoor). */
@@ -114,7 +121,7 @@ export function emptySaveData(): SaveData {
     games: {},
     cityStats: {},
     stars: {},
-    prefs: { playMode: 'map', sound: true },
+    prefs: { playMode: 'map', flagMode: 'choice', sound: true },
     daily: {},
     achievements: [],
     toetsen: {},
@@ -188,7 +195,7 @@ export function upgradeV1(old: SaveDataV1): SaveData {
     games: old.games,
     cityStats: {},
     stars: {},
-    prefs: { playMode: 'map', sound: true },
+    prefs: { playMode: 'map', flagMode: 'choice', sound: true },
     daily: {},
     achievements: [],
     toetsen: {},

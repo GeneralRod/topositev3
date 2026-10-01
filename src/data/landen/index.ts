@@ -55,19 +55,27 @@ function partWithin(poly: Position[][], [w, s, e, n]: number[]): boolean {
   return x >= w && x <= e && y >= s && y <= n;
 }
 
-/** De vormen van alle landen uit de lijst, uit de landen van de wereldkaart. */
-export function countryShapes(land: FeatureCollection, england: Geometry): ShapeData {
+/**
+ * De vormen van alle landen uit de lijst, uit de landen van de wereldkaart. Ook
+ * gebruikt door de vlaggen (met hun eigen lijst, zonder Engeland).
+ */
+export function countryShapes(
+  land: FeatureCollection,
+  england: Geometry | null,
+  list: CountryRecord[] = records,
+): ShapeData {
   const byName = new Map(
     land.features.map((f) => [(f.properties as { name: string }).name, f as Feature]),
   );
-  const features = records.map((record): ShapeFeature => {
-    const parts = record.england
-      ? polygonsOf(england)
-      : (record.atlas ?? []).flatMap((name) => {
-          const f = byName.get(name);
-          if (!f) throw new Error(`Land niet gevonden op de wereldkaart: ${name}`);
-          return polygonsOf(f.geometry);
-        });
+  const features = list.map((record): ShapeFeature => {
+    const parts =
+      record.england && england
+        ? polygonsOf(england)
+        : (record.atlas ?? []).flatMap((name) => {
+            const f = byName.get(name);
+            if (!f) throw new Error(`Land niet gevonden op de wereldkaart: ${name}`);
+            return polygonsOf(f.geometry);
+          });
     const kept = record.within ? parts.filter((poly) => partWithin(poly, record.within!)) : parts;
     const geometry: MultiPolygon = { type: 'MultiPolygon', coordinates: kept };
     return {

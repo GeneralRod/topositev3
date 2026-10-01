@@ -163,10 +163,10 @@ describe('lopende spellen', () => {
 describe('kaststijl en speelmanier', () => {
   it('neemt de keuze van deze computer als die veranderd is, anders die van online', () => {
     const base = save();
-    const local = save({ prefs: { playMode: 'choice', sound: true } });
+    const local = save({ prefs: { playMode: 'choice', flagMode: 'choice', sound: true } });
     const remote = save({ style: { finish: 'cherry', extras: ['lampje'] } });
     const merged = mergeSaveData(base, local, remote);
-    expect(merged.prefs).toEqual({ playMode: 'choice', sound: true });
+    expect(merged.prefs).toEqual({ playMode: 'choice', flagMode: 'choice', sound: true });
     expect(merged.style).toEqual({ finish: 'cherry', extras: ['lampje'] });
   });
 });

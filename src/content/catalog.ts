@@ -6,6 +6,7 @@ import { loadWaterShapes, waterPlaces } from '../data/wateren';
 import { countryPlaces, loadCountryShapes } from '../data/landen';
 import { loadNederlandShapes, nederlandMap, nederlandPlaces } from '../data/nederland';
 import { europaMap, europaPlaces, loadEuropaShapes } from '../data/europa';
+import { flagOf, flagPlaces, loadFlagShapes } from '../data/vlaggen';
 import type { ShapeData } from '../components/map/shapes';
 import type { CategoryMap } from '../components/map/baseMap';
 
@@ -41,6 +42,11 @@ export interface Category {
   maxZoom?: number;
   /** Eigen kaart (bijv. Nederland) in plaats van de wereldkaart. */
   map?: CategoryMap;
+  /**
+   * Vlaggen: de vlag van een plek. Dan heeft het onderwerp een eigen beginscherm
+   * (meerkeuze, typen of aanwijzen) en staat bij aanwijzen de vlag in beeld.
+   */
+  flagOf?: (name: string) => string | undefined;
 }
 
 export const categories: Category[] = [
@@ -748,6 +754,87 @@ export const categories: Category[] = [
               'Bekijk kleine landen: Andorra, Monaco, Liechtenstein, San Marino, Vaticaanstad en Malta',
             color: '#8d6e63',
             groups: ['europa6'],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'vlaggen',
+    title: 'Vlaggen van de wereld',
+    description: 'Alle 195 vlaggen, per werelddeel: meerkeuze, typen of aanwijzen',
+    color: '#c62828',
+    heading: 'Vlaggen van de wereld',
+    locations: flagPlaces,
+    words: { one: 'land', many: 'landen', neuter: true },
+    loadShapes: loadFlagShapes,
+    flagOf,
+    sections: [
+      {
+        title: 'Vlaggen per werelddeel',
+        kind: 'game',
+        packages: [
+          {
+            id: 'vlaggen-europa',
+            title: 'Europa',
+            description: '46 vlaggen',
+            color: '#3949ab',
+            groups: ['vlaggen-europa'],
+          },
+          {
+            id: 'vlaggen-afrika',
+            title: 'Afrika',
+            description: '54 vlaggen',
+            color: '#e8710a',
+            groups: ['vlaggen-afrika'],
+          },
+          {
+            id: 'vlaggen-azie',
+            title: 'Azië',
+            description: '46 vlaggen',
+            color: '#c2185b',
+            groups: ['vlaggen-azie'],
+          },
+          {
+            id: 'vlaggen-noord-amerika',
+            title: 'Noord- en Midden-Amerika',
+            description: '23 vlaggen',
+            color: '#1a73e8',
+            groups: ['vlaggen-noord-amerika'],
+          },
+          {
+            id: 'vlaggen-zuid-amerika',
+            title: 'Zuid-Amerika',
+            description: '12 vlaggen',
+            color: '#34a853',
+            groups: ['vlaggen-zuid-amerika'],
+          },
+          {
+            id: 'vlaggen-oceanie',
+            title: 'Oceanië',
+            description: '14 vlaggen',
+            color: '#0f8b8d',
+            groups: ['vlaggen-oceanie'],
+          },
+        ],
+      },
+      {
+        title: 'Alle vlaggen',
+        kind: 'game',
+        packages: [
+          {
+            id: 'vlaggen-alles',
+            title: 'Alle vlaggen',
+            description: 'Alle 195 vlaggen van de wereld',
+            color: '#37474f',
+            groups: [
+              'vlaggen-europa',
+              'vlaggen-afrika',
+              'vlaggen-azie',
+              'vlaggen-noord-amerika',
+              'vlaggen-zuid-amerika',
+              'vlaggen-oceanie',
+            ],
           },
         ],
       },

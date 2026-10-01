@@ -117,7 +117,7 @@ describe('overzetten van oude gegevens', () => {
       games: {},
       cityStats: {},
       stars: {},
-      prefs: { playMode: 'map', sound: true },
+      prefs: { playMode: 'map', flagMode: 'choice', sound: true },
       daily: {},
       achievements: [],
       toetsen: {},
@@ -380,9 +380,19 @@ describe('writeSaveData', () => {
 describe('speelmanier', () => {
   it('onthoudt de aanwijstoets, en valt bij iets onbekends terug op aanwijzen', () => {
     const read = (playMode: unknown) =>
-      parseSaveData({ ...emptySaveData(), prefs: { playMode, sound: true } })?.prefs.playMode;
+      parseSaveData({ ...emptySaveData(), prefs: { playMode, flagMode: 'choice', sound: true } })
+        ?.prefs.playMode;
     expect(read('test')).toBe('test');
     expect(read('choice')).toBe('choice');
     expect(read('iets anders')).toBe('map');
+  });
+});
+
+describe('speelmanier bij de vlaggen', () => {
+  it('is standaard meerkeuze, ook bij oude gegevens zonder deze keuze', () => {
+    const old = { ...emptySaveData(), prefs: { playMode: 'map', sound: true } };
+    expect(parseSaveData(old)?.prefs.flagMode).toBe('choice');
+    const typed = { ...emptySaveData(), prefs: { playMode: 'map', flagMode: 'type', sound: true } };
+    expect(parseSaveData(typed)?.prefs.flagMode).toBe('type');
   });
 });

@@ -11,8 +11,10 @@ import {
 import styled from '@emotion/styled';
 import HomeScreen from './components/HomeScreen';
 import TitlePage from './components/TitlePage';
+import FlagsHome from './components/FlagsHome';
 import CategoryScreen from './components/CategoryScreen';
 import {
+  categories,
   DAILY_PACKAGE_ID,
   findCategory,
   findPackage,
@@ -40,6 +42,8 @@ const Game = lazy(() => import('./components/Game'));
 const InteractiveMap = lazy(() => import('./components/InteractiveMap'));
 const Toets = lazy(() => import('./components/Toets'));
 const Aanwijstoets = lazy(() => import('./components/Aanwijstoets'));
+const FlagQuiz = lazy(() => import('./components/FlagQuiz'));
+const FlagGallery = lazy(() => import('./components/FlagGallery'));
 const PrizeCabinet = lazy(() => import('./cabinet/PrizeCabinet'));
 const AccountScreen = lazy(() => import('./account/AccountScreen'));
 const PrivacyScreen = lazy(() => import('./account/PrivacyScreen'));
@@ -60,7 +64,62 @@ const HomeScreenWrapper: React.FC = () => {
   const { category: categoryId } = useParams<{ category: string }>();
   const category = findCategory(categoryId);
   if (!category) return <Navigate to="/categories" replace />;
+  if (category.flagOf) return <FlagsHome category={category} />;
   return <HomeScreen category={category} />;
+};
+
+/** Het onderwerp met de vlaggen (er is er één). */
+const flagCategory = () => categories.find((c) => c.flagOf);
+
+/** Vlaggenquiz: meerkeuze (?modus=meerkeuze) of typen (?modus=typen). */
+const FlagQuizWrapper: React.FC = () => {
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const { package: packageId } = useParams<{ package: string }>();
+  const category = flagCategory();
+  const found = findPackage(category, packageId);
+  // Lastige vlaggen: één keer bepalen bij het openen.
+  const [hard] = React.useState(() => {
+    if (!category || packageId !== PRACTICE_PACKAGE_ID) return [];
+    const names = new Set(
+      hardCities(
+        getCityStats(category.id),
+        category.locations.map((l) => l.name),
+      ),
+    );
+    return category.locations.filter((l) => names.has(l.name));
+  });
+  if (!category) return <Navigate to="/categories" replace />;
+  const places = found ? locationsFor(category, found.pkg) : hard;
+  if (places.length === 0) return <Navigate to={`/main/${category.id}`} replace />;
+  const mode = params.get('modus') === 'typen' ? 'type' : 'choice';
+  return (
+    <FlagQuiz
+      key={`${packageId}-${mode}`}
+      category={category}
+      packageId={packageId ?? PRACTICE_PACKAGE_ID}
+      title={found?.pkg.title ?? 'Mijn lastige vlaggen'}
+      places={places}
+      mode={mode}
+      onBack={() => navigate(`/main/${category.id}`)}
+    />
+  );
+};
+
+const FlagGalleryWrapper: React.FC = () => {
+  const navigate = useNavigate();
+  const { package: packageId } = useParams<{ package: string }>();
+  const category = flagCategory();
+  const found = findPackage(category, packageId);
+  if (!category || !found) return <Navigate to="/categories" replace />;
+  return (
+    <FlagGallery
+      category={category}
+      pkg={found.pkg}
+      places={locationsFor(category, found.pkg)}
+      onBack={() => navigate(`/main/${category.id}`)}
+    />
+  );
 };
 
 // Zoekt het pakket uit de url op in de catalogus; onbekend → terug naar het menu.
@@ -273,6 +332,8 @@ const App: React.FC = () => {
             <Route path="/game/:category/:package" element={<GameWrapper />} />
             <Route path="/interactive/:category/:package" element={<InteractiveMapWrapper />} />
             <Route path="/toets/:category/:upto" element={<ToetsWrapper />} />
+            <Route path="/vlaggen/bekijk/:package" element={<FlagGalleryWrapper />} />
+            <Route path="/vlaggen/:package" element={<FlagQuizWrapper />} />
             <Route path="/trophy-cabinet" element={<PrizeCabinet />} />
             <Route path="/account" element={<AccountScreen />} />
             <Route path="/privacy" element={<PrivacyScreen />} />
