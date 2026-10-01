@@ -5,7 +5,7 @@ import { countsStars, totalMistakes, useGame } from '../game/useGame';
 import { findAchievement, type Achievement } from '../game/achievements';
 import { starsFor } from '../game/progress';
 import { choicePool, hintRemovals, pickChoices, seededRandom } from '../game/choices';
-import type { PlayMode } from '../storage';
+import type { GameMode } from '../storage';
 import ChoicePanel from './game/ChoicePanel';
 import { playSound } from '../game/sounds';
 import {
@@ -98,7 +98,7 @@ interface GameProps {
   categoryId: string;
   kind: GameKind;
   /** Aanwijzen op de kaart of meerkeuze. */
-  mode: PlayMode;
+  mode: GameMode;
   /**
    * Extra actie als het spel af is (bijv. dagelijkse uitdaging); geeft een
    * extra regel terug voor het eindscherm.

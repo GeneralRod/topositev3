@@ -10,7 +10,7 @@ import {
   recordCityAnswer,
   recordStars,
   saveGame,
-  type PlayMode,
+  type GameMode,
 } from '../storage';
 import { starsFor } from './progress';
 import {
@@ -36,7 +36,7 @@ export interface GameOptions {
   categoryId: string;
   kind: GameKind;
   /** Aanwijzen op de kaart of meerkeuze. */
-  mode: PlayMode;
+  mode: GameMode;
   /** Wordt één keer aangeroepen op het moment dat het spel af is. */
   onComplete?: () => void;
 }
@@ -50,7 +50,7 @@ export function totalMistakes(state: GameState): number {
  * Sterren tellen alleen bij gewone pakketten op de kaart: niet bij het
  * oefenrondje, de dagelijkse uitdaging of meerkeuze (dat is makkelijker).
  */
-export function countsStars(kind: GameKind, mode: PlayMode): boolean {
+export function countsStars(kind: GameKind, mode: GameMode): boolean {
   return kind === 'package' && mode === 'map';
 }
 

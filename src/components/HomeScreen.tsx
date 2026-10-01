@@ -19,6 +19,7 @@ import {
 import { useSaveData } from '../storage/useSaveData';
 import { currentStreak, dailyBonus, dateKey, doneToday } from '../game/daily';
 import { hardCities } from '../game/progress';
+import { aanwijstoetsKey } from '../game/aanwijstoets';
 import { formatGrade, TOETS_LENGTHS, toetsKey, toetsTitle, type ToetsLength } from '../game/toets';
 import { BackLink, Card, CardGrid, Page, PageTitle, SectionTitle, Stars } from '../ui';
 
@@ -104,11 +105,19 @@ const ModeHelp = styled.p`
   margin-bottom: 0.5rem;
 `;
 
-function modeHelp(mode: PlayMode, one: string): string {
-  return mode === 'map'
-    ? `Klik op de kaart de ${one} aan die gevraagd wordt.`
-    : 'Er knippert iets op de kaart: kies de goede naam uit vier. Makkelijker, dus halve munten en geen sterren.';
+function modeHelp(mode: PlayMode, one: string, many: string): string {
+  if (mode === 'map') return `Klik op de kaart de ${one} aan die gevraagd wordt.`;
+  if (mode === 'choice')
+    return 'Er knippert iets op de kaart: kies de goede naam uit vier. Makkelijker, dus halve munten en geen sterren.';
+  return `Elke ${one} één keer, en je mag maar één keer klikken. Pas aan het eind zie je wat goed was, met een cijfer. De uitdaging van vandaag en je lastige ${many} speel je gewoon met aanwijzen.`;
 }
+
+/** Wat er achter de link van een pakket komt bij deze speelmanier. */
+const MODE_QUERY: Record<PlayMode, string> = {
+  map: '',
+  choice: '?modus=meerkeuze',
+  test: '?modus=toets',
+};
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
   const navigate = useNavigate();
@@ -117,7 +126,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
   const { one, many } = category.words;
   const stars = getStars();
   const [mode, setMode] = useState<PlayMode>(getPlayMode);
-  const modeQuery = mode === 'choice' ? '?modus=meerkeuze' : '';
+  const modeQuery = MODE_QUERY[mode];
+  // De uitdaging en de lastige plekken hebben geen aanwijstoets.
+  const practiceQuery = mode === 'test' ? '' : modeQuery;
   const today = dateKey(new Date());
   const daily = getDaily(category.id);
   const dailyDone = doneToday(daily, today);
@@ -137,6 +148,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
     if (results.length === 0) return '';
     const best = results.reduce((a, b) => (b.grade > a.grade ? b : a));
     return ` Beste cijfer: ${formatGrade(best.grade)} (${TOETS_LENGTHS[best.length].label}).`;
+  };
+  /** Bij de aanwijstoets: het beste cijfer van een pakket. */
+  const testGrade = (kind: string, packageId: string): string => {
+    const grade = grades[aanwijstoetsKey(packageId)];
+    return mode === 'test' && kind === 'game' && grade !== undefined
+      ? ` Beste cijfer: ${formatGrade(grade)}.`
+      : '';
   };
   const hardCount = hardCities(
     getCityStats(category.id),
@@ -165,9 +183,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
           >
             Meerkeuze
           </ModeButton>
+          <ModeButton
+            active={mode === 'test'}
+            aria-pressed={mode === 'test'}
+            onClick={() => chooseMode('test')}
+          >
+            Aanwijstoets
+          </ModeButton>
         </ModeSwitch>
       </ModeBar>
-      <ModeHelp>{modeHelp(mode, one)}</ModeHelp>
+      <ModeHelp>{modeHelp(mode, one, many)}</ModeHelp>
 
       <SectionTitle>Oefenen</SectionTitle>
       <CardGrid>
@@ -180,7 +205,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
           }
           color="#8e44ad"
           disabled={dailyDone}
-          onClick={() => navigate(`/game/${category.id}/${DAILY_PACKAGE_ID}${modeQuery}`)}
+          onClick={() => navigate(`/game/${category.id}/${DAILY_PACKAGE_ID}${practiceQuery}`)}
         />
         <Card
           title={`Mijn lastige ${many}`}
@@ -191,7 +216,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
           }
           color="#e67e22"
           disabled={hardCount === 0}
-          onClick={() => navigate(`/game/${category.id}/${PRACTICE_PACKAGE_ID}${modeQuery}`)}
+          onClick={() => navigate(`/game/${category.id}/${PRACTICE_PACKAGE_ID}${practiceQuery}`)}
         />
       </CardGrid>
 
@@ -203,9 +228,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ category }) => {
               <Card
                 key={pkg.id}
                 title={pkg.title}
-                description={pkg.description}
+                description={pkg.description + testGrade(section.kind, pkg.id)}
                 color={pkg.color}
-                extra={section.kind === 'game' ? <Stars count={stars[pkg.id] ?? 0} /> : undefined}
+                extra={
+                  section.kind === 'game' && mode !== 'test' ? (
+                    <Stars count={stars[pkg.id] ?? 0} />
+                  ) : undefined
+                }
                 onClick={() =>
                   navigate(
                     section.kind === 'map'

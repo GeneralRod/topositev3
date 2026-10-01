@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import {
   loadSaveData,
   migrateLegacyGame,
+  parseSaveData,
   STORAGE_KEY,
   writeSaveData,
   emptySaveData,
@@ -373,5 +374,15 @@ describe('writeSaveData', () => {
     const result = writeSaveData(store, data);
 
     expect(result).toBe(false);
+  });
+});
+
+describe('speelmanier', () => {
+  it('onthoudt de aanwijstoets, en valt bij iets onbekends terug op aanwijzen', () => {
+    const read = (playMode: unknown) =>
+      parseSaveData({ ...emptySaveData(), prefs: { playMode, sound: true } })?.prefs.playMode;
+    expect(read('test')).toBe('test');
+    expect(read('choice')).toBe('choice');
+    expect(read('iets anders')).toBe('map');
   });
 });

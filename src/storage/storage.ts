@@ -56,7 +56,10 @@ export interface SaveData {
   toetsen: Record<string, number>;
 }
 
-export type PlayMode = 'map' | 'choice';
+/** Aanwijzen op de kaart, meerkeuze, of de aanwijstoets (zie game/aanwijstoets.ts). */
+export type PlayMode = 'map' | 'choice' | 'test';
+/** Speelmanieren van het gewone spel (de aanwijstoets is een eigen scherm). */
+export type GameMode = Exclude<PlayMode, 'test'>;
 
 export interface Prefs {
   /** Aanwijzen op de kaart of meerkeuze. */
@@ -80,7 +83,8 @@ function parseDaily(value: unknown): Record<string, DailyRecord> {
 }
 
 function parsePrefs(value: unknown): Prefs {
-  const playMode = isRecord(value) && value.playMode === 'choice' ? 'choice' : 'map';
+  const saved = isRecord(value) ? value.playMode : undefined;
+  const playMode: PlayMode = saved === 'choice' || saved === 'test' ? saved : 'map';
   // Alleen uit als de speler het zelf uitzette.
   const sound = !(isRecord(value) && value.sound === false);
   return { playMode, sound };
