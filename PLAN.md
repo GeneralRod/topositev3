@@ -352,9 +352,9 @@ Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
 2. ✓ **Geluidjes** bij goed, fout en klaar (stond onder "Later"). Makkelijk aan en uit te zetten:
    een luidsprekerknop op het spelscherm, de keuze wordt onthouden. Bij de oefentoets geen
    geluid tijdens de vragen (je hoort pas aan het eind of het goed was).
-3. ✓ **Toets met aanwijzen** als speelmanier van de oefentoets: je kiest "Opschrijven" (zoals nu)
-   of "Aanwijzen" (de naam staat in beeld, je klikt de plek aan op de kaart). Zelfde delen per
-   pakket, nakijken pas aan het eind, zelfde cijfer.
+3. **Aanwijzen als toets, maar dan als gewone speelmanier** (correctie eigenaar, 1 oktober 2026):
+   de oefentoets blijft alleen typen; aanwijzen-als-toets is eruit gehaald (#120 teruggedraaid)
+   en komt terug als eigen speelmanier bij de pakketten. Hoe precies: zie "Nog te beslissen".
 4. **Europa**: nieuw onderwerp met landen (vlakken) en hoofdsteden (stippen), in pakketten.
    Lijst van de eigenaar of een voorstel. Kleine landen (Luxemburg, Malta, Andorra) vragen een
    preciezere kaart dan de wereldkaart; waarschijnlijk een eigen kaart van Europa, zoals bij
@@ -371,5 +371,6 @@ Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
 **Nog te beslissen door de eigenaar**
 
 - ✓ Geluidjes: standaard aan (uit te zetten met de luidsprekerknop).
+- Aanwijzen als speelmanier: hoe moet die eruitzien?
 - Europa: welke landen en hoofdsteden, en in welke pakketten?
 - Vlaggen: alle landen van de wereld, of eerst de landen uit "Landen van de wereld"?
