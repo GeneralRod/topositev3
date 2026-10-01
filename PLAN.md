@@ -241,46 +241,103 @@ en `map.json` (TopoJSON, ~260 KB ingepakt, pas geladen bij het spelen).
 
 - [ ] Geluidjes bij goed en fout (met aan/uit-knop)
 
-### Fase 7: accounts (optioneel, toekomst)
+### Fase 7: accounts (optioneel)
 
-Wens eigenaar (september 2026): een account voor kinderen én leerkrachten, zodat voortgang
-overal meegaat en de leerkracht inzicht heeft. **Inloggen blijft optioneel**: gewoon oefenen
-zonder account moet altijd direct kunnen, zonder gedoe.
+Wens eigenaar (september 2026): een account zodat je voortgang bewaard blijft en op elke
+computer terug is. **Inloggen blijft optioneel**: gewoon oefenen zonder account moet altijd
+direct kunnen, zonder gedoe.
+
+**Besluiten eigenaar (30 september 2026)**
+
+- Eerst alleen een account voor kinderen en ouders. Klassen en leerkrachten komen later (7b).
+- Inloggen met e-mail + wachtwoord. Een kind kan het zelf; is het jonger dan 16, dan vult een
+  ouder of verzorger het e-mailadres in (toestemming ouders, AVG).
+- Dienst: Supabase, met de gegevens in Europa. De eigenaar heeft al een Supabase-account.
 
 **Uitgangspunten**
 
 - Zonder account verandert er niets: voortgang blijft in de browser (localStorage), zoals nu.
 - Met account wordt dezelfde voortgang óók online bewaard en is hij op elke computer terug.
-  Wie later inlogt op een computer waar al gespeeld is, neemt die voortgang mee in het account;
-  er gaat niets verloren (regels voor samenvoegen van munten, sterren, reeksen vooraf vastleggen).
+  De site blijft eerst in de browser opslaan en stuurt wijzigingen daarna door; zonder internet
+  speel je gewoon door en wordt het later bijgewerkt.
 - Alle opslag loopt al via `src/storage`; het account komt daar bij, de spellen zelf hoeven
-  nauwelijks te veranderen.
-- Inloggen voor kinderen zonder e-mailadres: de leerkracht maakt een klas en krijgt een
-  klascode; een kind logt in met klascode + voornaam of bijnaam + plaatjes- of cijfercode
-  (eventueel inlogkaartjes met QR-code). Thuis op dezelfde manier.
-- Leerkracht: overzicht per klas (welke pakketten, hoeveel sterren, lastige plekken van de klas,
-  reeksen) en eventueel pakketten als huiswerk klaarzetten.
+  nauwelijks te veranderen. Online staat per account één rij met dezelfde gegevens als in de
+  browser.
+- Er gaat niets verloren: wie voor het eerst inlogt op een computer waar al gespeeld is,
+  krijgt de vraag "Is dit jouw voortgang?" (`src/account/guest.ts`). Ja: die voortgang komt op
+  het account (samenvoegen, zie hieronder). Nee: hij wordt apart bewaard en staat er na
+  uitloggen weer; op het accountscherm kan hij later alsnog op het account. Wie de vraag
+  wegklikt door het tabblad te sluiten, krijgt hem de volgende keer opnieuw.
 
-**Techniek (voorstel)**
+**Samenvoegregels** (`src/storage/merge.ts`)
 
-- Een kleine online dienst met database en inloggen, bijv. Supabase (opslag in de EU/Frankfurt,
-  gratis voor klein gebruik) of Firebase. Geen eigen server nodig.
+Samenvoegen gebeurt met drie versies: wat er online staat, wat er in deze browser staat, en
+wat er bij het laatste bijwerken hetzelfde was (de "basis"; leeg als je op deze computer nog
+nooit met dit account ingelogd was). Zo telt alleen wat er sindsdien nieuw is bij.
+
+- Munten: online + wat er in deze browser sinds de basis bij kwam of af ging (nooit onder 0).
+  Heb je zonder account gespeeld en log je voor het eerst in, dan tellen beide dus op.
+- Prijzen, stickers, kast-upgrades en prestatieprijzen: alles van beide kanten.
+- Sterren en toetscijfers: het beste van de twee.
+- Lastige plekken: fouten van beide kanten opgeteld; de reeks van de kant waar het laatst
+  gespeeld is.
+- Dagelijkse uitdaging: de recentste dag; is dat dezelfde dag, de langste reeks.
+- Lopende spellen, kaststijl en speelmanier: is maar één kant veranderd, dan die kant. Is een
+  spel aan beide kanten veranderd, dan het spel waarin het verst gekomen is; bij kaststijl en
+  speelmanier dan de keuze van deze computer.
+- Bekend nadeel: koop je zonder internet op twee computers dezelfde prijs, dan betaal je
+  twee keer. Dat komt bijna nooit voor en is het ingewikkelder maken niet waard.
 
 **Privacy (AVG) gaat vóór de techniek**
 
-- Zo min mogelijk bewaren: bijnaam en spelgegevens; geen achternamen, e-mail of geboortedatum
-  van kinderen.
-- Gebruik via scholen: de school is verantwoordelijk, met een verwerkersovereenkomst. Gebruik
-  thuis zonder school: toestemming van ouders nodig voor kinderen onder de 16.
-- Gegevens in Europa, een duidelijke privacyverklaring en een manier om gegevens van een kind
-  te verwijderen.
+- Zo min mogelijk bewaren: alleen het e-mailadres (om in te loggen) en spelgegevens; geen
+  naam, achternaam of geboortedatum.
+- Kinderen onder de 16: toestemming van ouders nodig, daarom vult een ouder het e-mailadres
+  in. Dit staat bij het aanmaken van het account.
+- Gegevens in Europa, een duidelijke privacyverklaring (verantwoordelijke: de eigenaar van de
+  site) en een knop om je account en alle gegevens te verwijderen.
 
-**Stappen** (elk een eigen pull request)
+**Stappen 7a: account voor kinderen en ouders** (elk een eigen pull request)
 
-- [ ] Beslissingen vastleggen: dienst (Supabase/Firebase), wie verantwoordelijk is voor de
-      gegevens, samenvoegregels, privacyverklaring
-- [ ] Online opslag en inloggen, eerst voor leerkrachten
-- [ ] Klassen en kind-inlog met klascode; voortgang synchroniseren (browser blijft werken zonder
-      internet of account)
-- [ ] Overzicht voor de leerkracht
-- [ ] Privacyverklaring en gegevens verwijderen
+- [x] Plan en besluiten vastleggen (dit stuk)
+- [x] Fundering, nog niets zichtbaar: samenvoegregels als pure functies met tests, en in
+      `src/storage` een manier om wijzigingen te volgen en gegevens in één keer te vervangen
+- [x] Supabase inrichten: project in de EU, tabel met voortgang per account, beveiligd zodat je
+      alleen je eigen voortgang kunt lezen en schrijven. Project `topografiewereld`
+      (`xjzapefnqfmwudchwvhl`, Frankfurt, gratis plan); tabel in
+      `supabase/migrations/20260930190000_progress.sql`, beveiliging getest met twee
+      proefaccounts.
+- [x] Inloggen: knop bovenaan; account maken, inloggen, wachtwoord vergeten, uitloggen
+      (`src/account/`, scherm `/account`). Nog verborgen: de knop verschijnt pas na één keer
+      `?account` in de url (`?account=uit` zet hem weer uit), tot synchroniseren en de
+      privacyverklaring klaar zijn. Supabase wordt alleen geladen voor wie het accountscherm
+      opent of al ingelogd is.
+- [ ] Instellingen in het Supabase-dashboard door de eigenaar (zie `supabase/README.md`):
+      adressen van de site, gratis maildienst (bijv. Brevo), Nederlandse mailteksten
+- [x] Synchroniseren: voortgang online bewaren en ophalen, samenvoegen bij inloggen; uitloggen
+      op een gedeelde computer laat de voortgang van dat account niet achter
+      (`src/account/sync.ts`, getest met een nep-server). Wijzigingen gaan 3 seconden later
+      online; bij terugkomen in het tabblad wordt opgehaald; zonder internet om de 30 seconden
+      opnieuw. Uitloggen zonder internet vraagt eerst "Toch uitloggen?".
+- [x] Privacyverklaring (`/privacy`, `src/account/PrivacyScreen.tsx`, gegevens in
+      `PRIVACY` in `src/account/config.ts`); op het accountscherm "Download mijn gegevens" en
+      "Account verwijderen" (databasefunctie `delete_my_account`, getest met proefaccounts:
+      verwijdert alleen je eigen account en voortgang). Naam verantwoordelijke: "Topografiewereld"
+      (keuze eigenaar).
+- [x] Contactadres in de privacyverklaring: `topografiewereld@gmail.com`
+- [x] Accountknop voor iedereen zichtbaar (de `?account`-vlag is weg)
+- [x] Vraag bij de eerste keer inloggen: "Is dit jouw voortgang?" (wens eigenaar: kinderen die
+      al zonder account gespeeld hebben, moeten dat op hun account kunnen krijgen; getest in
+      `src/account/session.test.ts` met een nagemaakte Supabase)
+- [ ] Vóór livegang (eigenaar): Brevo koppelen in Supabase (`supabase/README.md` stap 2 en 3),
+      daarna `PRIVACY.mailService` op `Brevo`; één keer spelen terwijl je ingelogd bent en
+      controleren dat de munten online aankomen; dan #115 mergen
+
+**Later 7b: klassen en leerkrachten**
+
+- Inloggen voor kinderen zonder e-mailadres: de leerkracht maakt een klas en krijgt een
+  klascode; een kind logt in met klascode + voornaam of bijnaam + plaatjes- of cijfercode
+  (eventueel inlogkaartjes met QR-code).
+- Leerkracht: overzicht per klas (welke pakketten, hoeveel sterren, lastige plekken van de klas,
+  reeksen) en eventueel pakketten als huiswerk klaarzetten.
+- Gebruik via scholen: de school is verantwoordelijk, met een verwerkersovereenkomst.
