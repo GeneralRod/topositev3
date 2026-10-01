@@ -62,8 +62,9 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   het eerst inlogt op een computer met voortgang, krijgt "Is dit jouw voortgang?"
   (`src/account/guest.ts`): ja = op het account, nee = apart bewaard en terug na uitloggen.
 - Dependabot-updates zijn verwerkt in #116.
-- Wachten op oké van de eigenaar: #117 (plan fase 8), #118 (vanzelf herladen na update), #119
-  (geluidjes), #120 (toets aanwijzen, gebouwd op #119) en #121 ("Oeral" telt goed in de toets).
+- Ook live (1 oktober 2026): plan fase 8 (#117), vanzelf herladen na een update (#118),
+  geluidjes met aan/uit-knop (#119, standaard aan), oefentoets ook met aanwijzen (#120) en
+  "Oeral" telt goed in de toets (#121). Volgende in fase 8: Europa, vlaggen, oefenkaart printen.
 - Ook live: "Landen van de wereld" (75 landen, pakket 1 ook per werelddeel).
 - Ook live: de oefentoets (namen opschrijven, in delen per pakket, met cijfer; onderaan de
   pagina van elk onderwerp). Code in `src/game/toets.ts` en `src/components/Toets.tsx`.

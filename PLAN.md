@@ -349,10 +349,10 @@ Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
 0. ✓ **Accounts afmaken** (fase 7a, pull request #115): mail via Brevo gekoppeld, live sinds
    1 oktober 2026.
 1. ✓ **Updates van hulpprogramma's** (Dependabot): samen in één pull request (#116).
-2. **Geluidjes** bij goed, fout en klaar (stond onder "Later"). Makkelijk aan en uit te zetten:
+2. ✓ **Geluidjes** bij goed, fout en klaar (stond onder "Later"). Makkelijk aan en uit te zetten:
    een luidsprekerknop op het spelscherm, de keuze wordt onthouden. Bij de oefentoets geen
    geluid tijdens de vragen (je hoort pas aan het eind of het goed was).
-3. **Toets met aanwijzen** als speelmanier van de oefentoets: je kiest "Opschrijven" (zoals nu)
+3. ✓ **Toets met aanwijzen** als speelmanier van de oefentoets: je kiest "Opschrijven" (zoals nu)
    of "Aanwijzen" (de naam staat in beeld, je klikt de plek aan op de kaart). Zelfde delen per
    pakket, nakijken pas aan het eind, zelfde cijfer.
 4. **Europa**: nieuw onderwerp met landen (vlakken) en hoofdsteden (stippen), in pakketten.
@@ -370,6 +370,6 @@ Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
 
 **Nog te beslissen door de eigenaar**
 
-- Geluidjes: standaard aan of uit?
+- ✓ Geluidjes: standaard aan (uit te zetten met de luidsprekerknop).
 - Europa: welke landen en hoofdsteden, en in welke pakketten?
 - Vlaggen: alle landen van de wereld, of eerst de landen uit "Landen van de wereld"?
