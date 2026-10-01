@@ -4,6 +4,8 @@ node_modules/
 src/data/wateren/shapes.json
 # Gegenereerd door scripts/nederland/build.mjs (één lange regel, niet opmaken)
 src/data/nederland/map.json
+# Gegenereerd door scripts/europa/build.mjs (één lange regel, niet opmaken)
+src/data/europa/map.json
 # Map van een lokale Claude-plugin (niet van dit project)
 .remember
 

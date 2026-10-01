@@ -1,0 +1,747 @@
+[
+  {
+    "name": "Nederland",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Aan de Noordzee, tussen België en Duitsland",
+    "lat": 52.2048,
+    "lng": 5.2861,
+    "tint": 2
+  },
+  {
+    "name": "België",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Tussen Nederland en Frankrijk",
+    "lat": 50.7802,
+    "lng": 4.7065,
+    "tint": 0
+  },
+  {
+    "name": "Luxemburg",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Klein land tussen België, Frankrijk en Duitsland",
+    "lat": 49.7055,
+    "lng": 6.0929,
+    "tint": 3
+  },
+  {
+    "name": "Duitsland",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Groot land ten oosten van Nederland",
+    "lat": 51.0251,
+    "lng": 9.6436,
+    "tint": 1
+  },
+  {
+    "name": "Frankrijk",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Ten zuiden van België, met kust aan twee zeeën",
+    "lat": 46.6938,
+    "lng": 2.5326,
+    "tint": 2
+  },
+  {
+    "name": "Verenigd Koninkrijk",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Eilanden aan de overkant van de Noordzee",
+    "lat": 52.4804,
+    "lng": -1.2604,
+    "tint": 1
+  },
+  {
+    "name": "Ierland",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Eiland ten westen van Groot-Brittannië",
+    "lat": 53.1238,
+    "lng": -7.8157,
+    "tint": 0
+  },
+  {
+    "name": "IJsland",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Eiland ver in het noordwesten, in de Atlantische Oceaan",
+    "lat": 64.6663,
+    "lng": -18.8286,
+    "tint": 0
+  },
+  {
+    "name": "Noorwegen",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Lang land langs de westkust van Scandinavië",
+    "lat": 61.533,
+    "lng": 9.9031,
+    "tint": 1
+  },
+  {
+    "name": "Zweden",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "In het midden van Scandinavië",
+    "lat": 65.6358,
+    "lng": 18.304,
+    "tint": 2
+  },
+  {
+    "name": "Finland",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Ten oosten van Zweden, aan de Oostzee",
+    "lat": 63.2945,
+    "lng": 27.4332,
+    "tint": 0
+  },
+  {
+    "name": "Denemarken",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Ten noorden van Duitsland, tussen Noordzee en Oostzee",
+    "lat": 55.9392,
+    "lng": 8.9969,
+    "tint": 0
+  },
+  {
+    "name": "Spanje",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Het grootste deel van het Iberisch Schiereiland",
+    "lat": 39.9836,
+    "lng": -3.4603,
+    "tint": 1
+  },
+  {
+    "name": "Portugal",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Aan de westkust van het Iberisch Schiereiland",
+    "lat": 40.6865,
+    "lng": -7.7294,
+    "tint": 0
+  },
+  {
+    "name": "Italië",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "De laars in de Middellandse Zee",
+    "lat": 45.1201,
+    "lng": 10.8425,
+    "tint": 0
+  },
+  {
+    "name": "Zwitserland",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "Bergland in de Alpen, zonder zee",
+    "lat": 46.7099,
+    "lng": 7.4805,
+    "tint": 3
+  },
+  {
+    "name": "Oostenrijk",
+    "package": "europa1",
+    "kind": "country",
+    "hint": "In de Alpen, ten oosten van Zwitserland",
+    "lat": 47.7407,
+    "lng": 15.342,
+    "tint": 2
+  },
+  {
+    "name": "Polen",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "Ten oosten van Duitsland, aan de Oostzee",
+    "lat": 51.9053,
+    "lng": 20.5282,
+    "tint": 2
+  },
+  {
+    "name": "Tsjechië",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "Ten zuidoosten van Duitsland, zonder zee",
+    "lat": 49.7645,
+    "lng": 14.2628,
+    "tint": 0
+  },
+  {
+    "name": "Slowakije",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "Tussen Polen en Hongarije",
+    "lat": 48.7306,
+    "lng": 18.7205,
+    "tint": 3
+  },
+  {
+    "name": "Hongarije",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "In Midden-Europa, aan de Donau",
+    "lat": 47.2488,
+    "lng": 20.4967,
+    "tint": 0
+  },
+  {
+    "name": "Slovenië",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "Klein land tussen Italië, Oostenrijk en Kroatië",
+    "lat": 46.0366,
+    "lng": 14.9011,
+    "tint": 3
+  },
+  {
+    "name": "Estland",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "Het noordelijkste van de drie Baltische staten",
+    "lat": 58.6228,
+    "lng": 26.4963,
+    "tint": 0
+  },
+  {
+    "name": "Letland",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "De middelste van de drie Baltische staten",
+    "lat": 56.631,
+    "lng": 26.6018,
+    "tint": 1
+  },
+  {
+    "name": "Litouwen",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "Het zuidelijkste van de drie Baltische staten",
+    "lat": 55.1098,
+    "lng": 24.2047,
+    "tint": 0
+  },
+  {
+    "name": "Wit-Rusland",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "Tussen Polen en Rusland, zonder zee",
+    "lat": 53.7974,
+    "lng": 28.4183,
+    "tint": 4
+  },
+  {
+    "name": "Oekraïne",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "Groot land aan de Zwarte Zee",
+    "lat": 49.6151,
+    "lng": 32.3723,
+    "tint": 1
+  },
+  {
+    "name": "Moldavië",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "Klein land tussen Roemenië en Oekraïne",
+    "lat": 47.4409,
+    "lng": 28.5011,
+    "tint": 0
+  },
+  {
+    "name": "Rusland",
+    "package": "europa2",
+    "kind": "country",
+    "hint": "Het grootste land: het oosten van Europa (en Azië)",
+    "lat": 61.1768,
+    "lng": 89.2291,
+    "tint": 3
+  },
+  {
+    "name": "Kroatië",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "Lange kust aan de Adriatische Zee",
+    "lat": 45.8213,
+    "lng": 16.5071,
+    "tint": 1
+  },
+  {
+    "name": "Bosnië en Herzegovina",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "Op de Balkan, tussen Kroatië en Servië",
+    "lat": 44.0765,
+    "lng": 18.074,
+    "tint": 0
+  },
+  {
+    "name": "Servië",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "Midden op de Balkan, zonder zee",
+    "lat": 44.2281,
+    "lng": 20.5756,
+    "tint": 3
+  },
+  {
+    "name": "Montenegro",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "Klein land aan de Adriatische Zee, ten zuiden van Bosnië",
+    "lat": 42.7725,
+    "lng": 19.1028,
+    "tint": 2
+  },
+  {
+    "name": "Kosovo",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "Klein land ten zuiden van Servië",
+    "lat": 42.6035,
+    "lng": 20.8739,
+    "tint": 1
+  },
+  {
+    "name": "Albanië",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "Aan de Adriatische Zee, tegenover de hak van Italië",
+    "lat": 40.6426,
+    "lng": 20.1135,
+    "tint": 0
+  },
+  {
+    "name": "Noord-Macedonië",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "Ten noorden van Griekenland, zonder zee",
+    "lat": 41.4848,
+    "lng": 21.1976,
+    "tint": 2
+  },
+  {
+    "name": "Griekenland",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "In het zuidoosten, met heel veel eilanden",
+    "lat": 39.835,
+    "lng": 21.6435,
+    "tint": 1
+  },
+  {
+    "name": "Bulgarije",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "Aan de Zwarte Zee, ten zuiden van Roemenië",
+    "lat": 42.5047,
+    "lng": 25.2231,
+    "tint": 0
+  },
+  {
+    "name": "Roemenië",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "Aan de Zwarte Zee, ten noorden van Bulgarije",
+    "lat": 45.7912,
+    "lng": 24.3513,
+    "tint": 2
+  },
+  {
+    "name": "Turkije",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "Voor een klein deel in Europa, de rest in Azië",
+    "lat": 39.0514,
+    "lng": 33.0774,
+    "tint": 2
+  },
+  {
+    "name": "Cyprus",
+    "package": "europa3",
+    "kind": "country",
+    "hint": "Eiland in het oosten van de Middellandse Zee",
+    "lat": 35.0297,
+    "lng": 33.1893,
+    "tint": 0
+  },
+  {
+    "name": "Amsterdam",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Nederland",
+    "lat": 52.3728,
+    "lng": 4.8936
+  },
+  {
+    "name": "Brussel",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van België",
+    "lat": 50.8467,
+    "lng": 4.3525
+  },
+  {
+    "name": "Luxemburg (stad)",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Luxemburg",
+    "lat": 49.6116,
+    "lng": 6.1319
+  },
+  {
+    "name": "Berlijn",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Duitsland",
+    "lat": 52.52,
+    "lng": 13.405
+  },
+  {
+    "name": "Parijs",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Frankrijk",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "name": "Londen",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van het Verenigd Koninkrijk",
+    "lat": 51.5074,
+    "lng": -0.1278
+  },
+  {
+    "name": "Dublin",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Ierland",
+    "lat": 53.3498,
+    "lng": -6.2603
+  },
+  {
+    "name": "Reykjavik",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van IJsland",
+    "lat": 64.1466,
+    "lng": -21.9426
+  },
+  {
+    "name": "Oslo",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Noorwegen",
+    "lat": 59.9139,
+    "lng": 10.7522
+  },
+  {
+    "name": "Stockholm",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Zweden",
+    "lat": 59.3293,
+    "lng": 18.0686
+  },
+  {
+    "name": "Helsinki",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Finland",
+    "lat": 60.1699,
+    "lng": 24.9384
+  },
+  {
+    "name": "Kopenhagen",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Denemarken",
+    "lat": 55.6867,
+    "lng": 12.5701
+  },
+  {
+    "name": "Madrid",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Spanje",
+    "lat": 40.4168,
+    "lng": -3.7038
+  },
+  {
+    "name": "Lissabon",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Portugal",
+    "lat": 38.7223,
+    "lng": -9.1393
+  },
+  {
+    "name": "Rome",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Italië",
+    "lat": 41.9028,
+    "lng": 12.4964
+  },
+  {
+    "name": "Bern",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Zwitserland",
+    "lat": 46.948,
+    "lng": 7.4474
+  },
+  {
+    "name": "Wenen",
+    "package": "europa4",
+    "kind": "city",
+    "hint": "Hoofdstad van Oostenrijk",
+    "lat": 48.2082,
+    "lng": 16.3738
+  },
+  {
+    "name": "Warschau",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Polen",
+    "lat": 52.2297,
+    "lng": 21.0122
+  },
+  {
+    "name": "Praag",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Tsjechië",
+    "lat": 50.0755,
+    "lng": 14.4378
+  },
+  {
+    "name": "Bratislava",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Slowakije",
+    "lat": 48.1486,
+    "lng": 17.1077
+  },
+  {
+    "name": "Boedapest",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Hongarije",
+    "lat": 47.4979,
+    "lng": 19.0402
+  },
+  {
+    "name": "Ljubljana",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Slovenië",
+    "lat": 46.0569,
+    "lng": 14.5058
+  },
+  {
+    "name": "Tallinn",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Estland",
+    "lat": 59.437,
+    "lng": 24.7536
+  },
+  {
+    "name": "Riga",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Letland",
+    "lat": 56.9496,
+    "lng": 24.1052
+  },
+  {
+    "name": "Vilnius",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Litouwen",
+    "lat": 54.6872,
+    "lng": 25.2797
+  },
+  {
+    "name": "Minsk",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Wit-Rusland",
+    "lat": 53.9006,
+    "lng": 27.559
+  },
+  {
+    "name": "Kyiv",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Oekraïne",
+    "lat": 50.4501,
+    "lng": 30.5234
+  },
+  {
+    "name": "Chisinau",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Moldavië",
+    "lat": 47.0105,
+    "lng": 28.8638
+  },
+  {
+    "name": "Moskou",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Rusland",
+    "lat": 55.7558,
+    "lng": 37.6173
+  },
+  {
+    "name": "Zagreb",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Kroatië",
+    "lat": 45.815,
+    "lng": 15.9819
+  },
+  {
+    "name": "Sarajevo",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Bosnië en Herzegovina",
+    "lat": 43.8563,
+    "lng": 18.4131
+  },
+  {
+    "name": "Belgrado",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Servië",
+    "lat": 44.7866,
+    "lng": 20.4489
+  },
+  {
+    "name": "Podgorica",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Montenegro",
+    "lat": 42.4304,
+    "lng": 19.2594
+  },
+  {
+    "name": "Pristina",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Kosovo",
+    "lat": 42.6629,
+    "lng": 21.1655
+  },
+  {
+    "name": "Tirana",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Albanië",
+    "lat": 41.3275,
+    "lng": 19.8187
+  },
+  {
+    "name": "Skopje",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Noord-Macedonië",
+    "lat": 41.9981,
+    "lng": 21.4254
+  },
+  {
+    "name": "Athene",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Griekenland",
+    "lat": 37.9838,
+    "lng": 23.7275
+  },
+  {
+    "name": "Sofia",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Bulgarije",
+    "lat": 42.6977,
+    "lng": 23.3219
+  },
+  {
+    "name": "Boekarest",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Roemenië",
+    "lat": 44.4268,
+    "lng": 26.1025
+  },
+  {
+    "name": "Ankara",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Turkije",
+    "lat": 39.9334,
+    "lng": 32.8597
+  },
+  {
+    "name": "Nicosia",
+    "package": "europa5",
+    "kind": "city",
+    "hint": "Hoofdstad van Cyprus",
+    "lat": 35.1856,
+    "lng": 33.3823
+  },
+  {
+    "name": "Andorra",
+    "package": "europa6",
+    "kind": "city",
+    "hint": "In de Pyreneeën, tussen Frankrijk en Spanje",
+    "lat": 42.5462,
+    "lng": 1.6016
+  },
+  {
+    "name": "Monaco",
+    "package": "europa6",
+    "kind": "city",
+    "hint": "Aan de Franse kust, vlak bij Italië",
+    "lat": 43.7384,
+    "lng": 7.4246
+  },
+  {
+    "name": "Liechtenstein",
+    "package": "europa6",
+    "kind": "city",
+    "hint": "Tussen Zwitserland en Oostenrijk",
+    "lat": 47.141,
+    "lng": 9.5209
+  },
+  {
+    "name": "San Marino",
+    "package": "europa6",
+    "kind": "city",
+    "hint": "Midden in Italië",
+    "lat": 43.9424,
+    "lng": 12.4578
+  },
+  {
+    "name": "Vaticaanstad",
+    "package": "europa6",
+    "kind": "city",
+    "hint": "Midden in Rome: het kleinste land van de wereld",
+    "lat": 41.9029,
+    "lng": 12.4534
+  },
+  {
+    "name": "Malta",
+    "package": "europa6",
+    "kind": "city",
+    "hint": "Eilandjes ten zuiden van Sicilië",
+    "lat": 35.9175,
+    "lng": 14.4091
+  }
+]
