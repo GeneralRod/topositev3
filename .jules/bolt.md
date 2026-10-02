@@ -1,0 +1,1 @@
+## 2024-11-20 - Memoizing derived arrays\n**Learning:** Derived arrays like `cities.filter()` are recreated on every render if not memoized, which can lead to unnecessary re-renders in child components like `<Marker>`s and shape layers.\n**Action:** Use `useMemo` for derived props passed to heavy map components.
