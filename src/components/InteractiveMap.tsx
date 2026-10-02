@@ -157,8 +157,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   maxZoom = MAX_ZOOM,
   map,
 }) => {
-  const dots = useMemo(() => cities.filter((c) => c.kind === undefined || c.kind === 'city'), [cities]);
-  const others = useMemo(() => cities.filter((c) => c.kind !== undefined && c.kind !== 'city'), [cities]);
+  const dots = useMemo(
+    () => cities.filter((c) => c.kind === undefined || c.kind === 'city'),
+    [cities],
+  );
+  const others = useMemo(
+    () => cities.filter((c) => c.kind !== undefined && c.kind !== 'city'),
+    [cities],
+  );
 
   return (
     <Container>
