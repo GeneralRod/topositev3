@@ -367,6 +367,12 @@ Volgorde (elk punt een eigen pull request, eigenaar test en geeft oké):
    invulregels, plus een apart antwoordblad. Via de printknop van de browser (ook op te slaan
    als PDF). Handig voor oefenen op papier en in de klas.
 7. **Klas en leerkracht** (fase 7b): pas na de accounts.
+8. **Beheer** (wens eigenaar, 2 oktober 2026): pagina `/beheer`, alleen voor het beheeraccount
+   (topografiewereld@gmail.com, rol `admin` in de tabel `user_roles`). Alle accounts zien en per
+   speler munten, prijzen, stickers, kast-upgrades, prestaties en sterren aanpassen, met reden
+   en logboek. Samenvoegen houdt nu rekening met bewust weghalen (een weggehaalde prijs of
+   verlaagde sterren komen niet terug van de computer van de speler). Later uit te breiden met
+   leraren en klassen (rol `leraar` bestaat al) en eigen pakketten.
 
 **Nog te beslissen door de eigenaar**
 

@@ -41,6 +41,8 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
 - `src/storage/merge.ts`: voortgang van browser en account samenvoegen (regels in `PLAN.md` fase 7)
 - `src/account/`: accounts (inloggen via Supabase, scherm `/account`, synchroniseren in
   `sync.ts`, privacyverklaring `/privacy` met gegevens in `config.ts`)
+- `src/admin/`: beheerpagina `/beheer` (alleen rol `admin` in tabel `user_roles`; de database
+  controleert dat in elke beheerfunctie)
 - `supabase/`: de database van de accounts (Supabase-project `topografiewereld`,
   id `xjzapefnqfmwudchwvhl`, Frankfurt, gratis plan; moet gratis blijven: wens eigenaar);
   `supabase/README.md` = instellingen die de eigenaar in het dashboard doet

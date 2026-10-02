@@ -58,3 +58,15 @@ Kan pas na stap 2. Kopieer onderwerp en tekst uit `templates/`:
 | Confirm signup       | Bevestig je account            | `templates/bevestigen.html`  |
 | Reset password       | Kies een nieuw wachtwoord      | `templates/wachtwoord.html`  |
 | Change email address | Bevestig je nieuwe e-mailadres | `templates/nieuw-email.html` |
+
+## Beheerder aanwijzen
+
+Wie beheerder is, staat in de tabel `user_roles` (rol `admin`). Iemand beheerder maken (eerst
+een gewoon account op de site maken), in de SQL Editor van Supabase:
+
+```sql
+insert into public.user_roles (user_id, role)
+select id, 'admin' from auth.users where lower(email) = 'topografiewereld@gmail.com';
+```
+
+Weer afnemen: `delete from public.user_roles where role = 'admin' and user_id = (select id from auth.users where lower(email) = '...');`

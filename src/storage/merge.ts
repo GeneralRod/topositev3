@@ -17,17 +17,17 @@ export function mergeSaveData(base: SaveData | null, local: SaveData, remote: Sa
   return {
     version: STORAGE_VERSION,
     coins: Math.max(0, remote.coins + local.coins - b.coins),
-    prizes: union(remote.prizes, local.prizes),
-    stickers: union(remote.stickers, local.stickers),
-    upgrades: union(remote.upgrades, local.upgrades),
+    prizes: mergeList(b.prizes, local.prizes, remote.prizes),
+    stickers: mergeList(b.stickers, local.stickers, remote.stickers),
+    upgrades: mergeList(b.upgrades, local.upgrades, remote.upgrades),
     style: pickChanged(b.style, local.style, remote.style),
     games: mergeGames(b.games, local.games, remote.games),
     cityStats: mergeCityStats(b.cityStats, local.cityStats, remote.cityStats),
-    stars: bestPerKey(remote.stars, local.stars),
+    stars: mergeBest(b.stars, local.stars, remote.stars),
     prefs: pickChanged(b.prefs, local.prefs, remote.prefs),
     daily: mergeDaily(local.daily, remote.daily),
-    achievements: union(remote.achievements, local.achievements),
-    toetsen: bestPerKey(remote.toetsen, local.toetsen),
+    achievements: mergeList(b.achievements, local.achievements, remote.achievements),
+    toetsen: mergeBest(b.toetsen, local.toetsen, remote.toetsen),
   };
 }
 
@@ -43,17 +43,38 @@ export function sameData(a: unknown, b: unknown): boolean {
   return keys.every((key) => key in right && sameData(left[key], right[key]));
 }
 
-function union(remote: string[], local: string[]): string[] {
-  return Array.from(new Set([...remote, ...local]));
+/**
+ * Lijsten (prijzen, stickers, ...): wat een kant sinds de basis toevoegde komt
+ * erbij, wat een kant bewust weghaalde (bijv. de beheerder) blijft weg. Zonder
+ * basis (eerste keer inloggen): alles van beide kanten.
+ */
+function mergeList(base: string[], local: string[], remote: string[]): string[] {
+  const before = new Set(base);
+  const here = new Set(local);
+  const there = new Set(remote);
+  return Array.from(new Set([...remote, ...local])).filter(
+    (id) => (here.has(id) && there.has(id)) || !before.has(id),
+  );
 }
 
-function bestPerKey(
-  remote: Record<string, number>,
+/**
+ * Sterren en cijfers: is maar één kant veranderd, dan die kant (ook als het
+ * lager werd, bijv. door de beheerder); allebei veranderd: het beste.
+ */
+function mergeBest(
+  base: Record<string, number>,
   local: Record<string, number>,
+  remote: Record<string, number>,
 ): Record<string, number> {
-  const out = { ...remote };
-  for (const [key, value] of Object.entries(local)) {
-    out[key] = Math.max(out[key] ?? value, value);
+  const out: Record<string, number> = {};
+  for (const key of new Set([...Object.keys(remote), ...Object.keys(local)])) {
+    const value =
+      local[key] === base[key]
+        ? remote[key]
+        : remote[key] === base[key]
+          ? local[key]
+          : Math.max(local[key] ?? 0, remote[key] ?? 0);
+    if (value !== undefined) out[key] = value;
   }
   return out;
 }

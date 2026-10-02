@@ -23,6 +23,7 @@ import { linkErrorMessage, passwordProblem } from './messages';
 import { useSyncStatus, type SyncStatus } from './sync';
 import { MIN_PASSWORD_LENGTH } from './config';
 import { progressSummary } from './guest';
+import { useIsAdmin } from '../admin/api';
 
 const Panel = styled.div`
   width: 100%;
@@ -483,6 +484,8 @@ const SignedIn: React.FC<{
   const [saved, setSaved] = useState(false);
   const [unsaved, setUnsaved] = useState(false);
   const { busy, error, submit } = useSubmit();
+  const isAdmin = useIsAdmin();
+  const navigate = useNavigate();
 
   if (changing) {
     return (
@@ -514,6 +517,11 @@ const SignedIn: React.FC<{
       </Muted>
       <SyncNotice />
       <KeptGuest />
+      {isAdmin && (
+        <SubmitButton type="button" variant="outline" onClick={() => navigate('/beheer')}>
+          🛠️ Naar beheer
+        </SubmitButton>
+      )}
       {saved && <Notice kind="success">Je nieuwe wachtwoord is opgeslagen.</Notice>}
       {error && <Notice kind="error">{error}</Notice>}
       <SubmitButton type="button" variant="outline" onClick={() => setChanging(true)}>
