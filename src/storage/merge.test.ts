@@ -199,3 +199,37 @@ describe('sameData', () => {
     expect(sameData({}, [])).toBe(false);
   });
 });
+
+describe('aanpassingen door de beheerder', () => {
+  it('houdt een weggehaalde prijs weg, ook als deze computer hem nog had', () => {
+    const base = save({ prizes: ['globe', 'kompas'], achievements: ['first-game'] });
+    const remote = save({ prizes: ['kompas'], achievements: [] });
+    // Op deze computer intussen een nieuwe prijs gekocht.
+    const local = save({ prizes: ['globe', 'kompas', 'atlas'], achievements: ['first-game'] });
+    const merged = mergeSaveData(base, local, remote);
+    expect(merged.prizes).toEqual(['kompas', 'atlas']);
+    expect(merged.achievements).toEqual([]);
+  });
+
+  it('neemt verlaagde of gewiste sterren over', () => {
+    const base = save({ stars: { pakket1: 3, pakket2: 2 }, toetsen: { 'nl:1:kort': 9 } });
+    const remote = save({ stars: { pakket1: 1 }, toetsen: {} });
+    const merged = mergeSaveData(base, base, remote);
+    expect(merged.stars).toEqual({ pakket1: 1 });
+    expect(merged.toetsen).toEqual({});
+  });
+
+  it('neemt het beste als beide kanten sterren veranderden', () => {
+    const base = save({ stars: { pakket1: 1 } });
+    const remote = save({ stars: { pakket1: 2 } });
+    const local = save({ stars: { pakket1: 3 } });
+    expect(mergeSaveData(base, local, remote).stars).toEqual({ pakket1: 3 });
+  });
+
+  it('geeft extra munten door zonder dat munten van het spelen verloren gaan', () => {
+    const base = save({ coins: 100 });
+    const remote = save({ coins: 600 }); // beheerder gaf 500
+    const local = save({ coins: 130 }); // intussen 30 verdiend
+    expect(mergeSaveData(base, local, remote).coins).toBe(630);
+  });
+});

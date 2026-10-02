@@ -19,5 +19,5 @@ export const PRIVACY = {
   contact: 'topografiewereld@gmail.com',
   /** Wie de mails verstuurt (via Supabase, zie supabase/README.md). */
   mailService: 'Brevo (een Frans bedrijf, ook in de Europese Unie)',
-  updated: '1 oktober 2026',
+  updated: '2 oktober 2026',
 };

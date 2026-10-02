@@ -129,6 +129,11 @@ const PrivacyScreen: React.FC = () => {
           </li>
         </ul>
         <p>We vragen geen naam, adres, geboortedatum of school.</p>
+        <p>
+          De beheerder van de site kan je voortgang bekijken en aanpassen, bijvoorbeeld om munten
+          terug te geven als je die kwijt bent. Elke aanpassing wordt bijgehouden in een logboek,
+          dat ook verdwijnt als je je account verwijdert.
+        </p>
 
         <h2>Waarom mogen we dit?</h2>
         <p>
