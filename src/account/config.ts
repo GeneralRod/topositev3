@@ -14,7 +14,7 @@ export const MIN_PASSWORD_LENGTH = 8;
 // Voor de privacyverklaring (/privacy).
 export const PRIVACY = {
   /** Wie verantwoordelijk is voor de gegevens. */
-  controller: 'Topografiewereld',
+  controller: 'Topografiewereld (Roderick Hage)',
   /** Contactadres voor vragen en verzoeken. */
   contact: 'topografiewereld@gmail.com',
   /** Wie de mails verstuurt (via Supabase, zie supabase/README.md). */

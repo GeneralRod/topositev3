@@ -38,6 +38,8 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   (`items.mjs` = de lijst; na aanpassen `node scripts/wateren/build.mjs` draaien)
 - `scripts/landen/`: lijst van "Landen van de wereld" (`items.mjs`); `node scripts/landen/build.mjs`
   maakt `src/data/landen/places.json` en `england.json`; de vormen zelf komen van de wereldkaart
+- `src/version.ts` + `vite.config.ts`: versienummer telt vanzelf op bij elke pull request in
+  `main` (9.x); bij een nieuw groot nummer `MAJOR` en `BASELINE_MERGES` aanpassen
 - `src/storage/merge.ts`: voortgang van browser en account samenvoegen (regels in `PLAN.md` fase 7)
 - `src/account/`: accounts (inloggen via Supabase, scherm `/account`, synchroniseren in
   `sync.ts`, privacyverklaring `/privacy` met gegevens in `config.ts`)
