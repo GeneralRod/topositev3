@@ -38,6 +38,11 @@ De eigenaar is geen programmeur: leg keuzes in gewone taal uit, in het Nederland
   (`items.mjs` = de lijst; na aanpassen `node scripts/wateren/build.mjs` draaien)
 - `scripts/landen/`: lijst van "Landen van de wereld" (`items.mjs`); `node scripts/landen/build.mjs`
   maakt `src/data/landen/places.json` en `england.json`; de vormen zelf komen van de wereldkaart
+- `src/version.ts` + `vite.config.ts`: versienummer X.Y, vanzelf bepaald bij de build. Y telt
+  elke pull request in `main` die de site zelf verandert (niet alleen `.md`). X verandert alleen
+  bij een mijlpaal voor iedereen (bijv. klassen en leraren, of een heel nieuw ontwerp); dat
+  beslist Claude: in die pull request `MAJOR` één hoger en `MAJOR_PR` = zijn nummer. Een nieuw
+  onderwerp, speelmanier of beheerfunctie is gewoon een update (Y).
 - `src/storage/merge.ts`: voortgang van browser en account samenvoegen (regels in `PLAN.md` fase 7)
 - `src/account/`: accounts (inloggen via Supabase, scherm `/account`, synchroniseren in
   `sync.ts`, privacyverklaring `/privacy` met gegevens in `config.ts`)

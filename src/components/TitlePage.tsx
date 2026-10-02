@@ -65,6 +65,21 @@ const StartButton = styled.button`
   }
 `;
 
+/** Heel subtiel onderaan: wie de site gemaakt heeft. */
+const Credit = styled.p`
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  margin: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+`;
+
 const TitlePage: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const navigate = useNavigate();
@@ -99,6 +114,7 @@ const TitlePage: React.FC = () => {
         <Title>Topografiewereld</Title>
         <StartButton onClick={() => navigate('/categories')}>Start</StartButton>
       </ContentWrapper>
+      <Credit>Gemaakt door Roderick Hage</Credit>
     </Container>
   );
 };
