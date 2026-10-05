@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
 import { MapContainer as LeafletMap, Marker, Popup, Tooltip } from 'react-leaflet';
 import { Icon } from 'leaflet';
@@ -113,14 +113,12 @@ const MapContainerWrapper = styled.div`
   width: 100%;
 `;
 
-const createDotIcon = () => {
-  return new Icon({
-    iconUrl:
-      'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iNiIgZmlsbD0iI2VhNDMzNSIvPjwvc3ZnPg==',
-    iconSize: [12, 12],
-    iconAnchor: [6, 6],
-  });
-};
+const DOT_ICON = new Icon({
+  iconUrl:
+    'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iNiIgZmlsbD0iI2VhNDMzNSIvPjwvc3ZnPg==',
+  iconSize: [12, 12],
+  iconAnchor: [6, 6],
+});
 
 const CityPopup = styled.div`
   text-align: center;
@@ -159,9 +157,9 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   maxZoom = MAX_ZOOM,
   map,
 }) => {
-  const dotIcon = createDotIcon();
-  const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
-  const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
+  // Memoize filters to avoid recalculating on every render, stabilizing references for children
+  const dots = useMemo(() => cities.filter((c) => c.kind === undefined || c.kind === 'city'), [cities]);
+  const others = useMemo(() => cities.filter((c) => c.kind !== undefined && c.kind !== 'city'), [cities]);
 
   return (
     <Container>
@@ -189,7 +187,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
               <ShapeLayers places={others} load={loadShapes} isOnLand={map?.isOnLand} />
             )}
             {dots.map((city) => (
-              <Marker key={city.name} position={[city.lat, city.lng]} icon={dotIcon}>
+              <Marker key={city.name} position={[city.lat, city.lng]} icon={DOT_ICON}>
                 {/* Naam meteen bij aanwijzen, net als bij zeeën, rivieren en gebieden. */}
                 <Tooltip direction="top" offset={[0, -6]}>
                   {city.name}
