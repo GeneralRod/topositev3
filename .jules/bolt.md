@@ -1,0 +1,4 @@
+## 2024-05-18 - Removing array bypass serialization hack in React
+
+**Learning:** Found a component using string concatenation (`.join('|')`) to trigger updates while bypassing unstable array references across renders. We can remove these serialization "hacks" entirely if we instead correctly `useMemo` the array logic at the source where it's declared and pass it as a stable dependency.
+**Action:** When seeing hacks to track changes of array contents to avoid triggering constant re-renders, trace it up to where the array is created, memoize it with `useMemo`, and then remove the hack in the downstream component.
