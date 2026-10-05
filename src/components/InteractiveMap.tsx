@@ -158,8 +158,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   map,
 }) => {
   // Memoize filters to avoid recalculating on every render, stabilizing references for children
-  const dots = useMemo(() => cities.filter((c) => c.kind === undefined || c.kind === 'city'), [cities]);
-  const others = useMemo(() => cities.filter((c) => c.kind !== undefined && c.kind !== 'city'), [cities]);
+  const dots = useMemo(
+    () => cities.filter((c) => c.kind === undefined || c.kind === 'city'),
+    [cities],
+  );
+  const others = useMemo(
+    () => cities.filter((c) => c.kind !== undefined && c.kind !== 'city'),
+    [cities],
+  );
 
   return (
     <Container>

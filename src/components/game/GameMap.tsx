@@ -84,9 +84,18 @@ const GameMap: React.FC<GameMapProps> = ({
   map,
 }) => {
   // Memoize filters to avoid recalculating on every render, stabilizing references for children
-  const dots = useMemo(() => cities.filter((c) => c.kind === undefined || c.kind === 'city'), [cities]);
-  const others = useMemo(() => cities.filter((c) => c.kind !== undefined && c.kind !== 'city'), [cities]);
-  const highlighted = useMemo(() => highlight ? cities.find((c) => c.name === highlight) : undefined, [highlight, cities]);
+  const dots = useMemo(
+    () => cities.filter((c) => c.kind === undefined || c.kind === 'city'),
+    [cities],
+  );
+  const others = useMemo(
+    () => cities.filter((c) => c.kind !== undefined && c.kind !== 'city'),
+    [cities],
+  );
+  const highlighted = useMemo(
+    () => (highlight ? cities.find((c) => c.name === highlight) : undefined),
+    [highlight, cities],
+  );
 
   return (
     <MapContainer
