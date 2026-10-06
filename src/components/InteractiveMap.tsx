@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
 import { MapContainer as LeafletMap, Marker, Popup, Tooltip } from 'react-leaflet';
 import { Icon } from 'leaflet';
@@ -159,9 +159,17 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   maxZoom = MAX_ZOOM,
   map,
 }) => {
-  const dotIcon = createDotIcon();
-  const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
-  const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
+  // ⚡ Bolt: Memoize icon and array filtering to prevent recalculating on every render,
+  // preventing unnecessary React re-renders in heavy components (Leaflet map).
+  const dotIcon = useMemo(() => createDotIcon(), []);
+  const dots = useMemo(
+    () => cities.filter((c) => c.kind === undefined || c.kind === 'city'),
+    [cities],
+  );
+  const others = useMemo(
+    () => cities.filter((c) => c.kind !== undefined && c.kind !== 'city'),
+    [cities],
+  );
 
   return (
     <Container>

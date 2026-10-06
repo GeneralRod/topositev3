@@ -561,7 +561,8 @@ const SyncBox = styled.p<{ kind: 'success' | 'waiting' | 'error' }>`
   line-height: 1.45;
   background: ${(p) =>
     p.kind === 'success' ? '#e6f4ea' : p.kind === 'error' ? '#fef7e0' : '#f1f3f4'};
-  color: ${(p) => (p.kind === 'success' ? '#137333' : p.kind === 'error' ? '#b06000' : colors.muted)};
+  color: ${(p) =>
+    p.kind === 'success' ? '#137333' : p.kind === 'error' ? '#b06000' : colors.muted};
 `;
 
 /** Staat alles online? */
