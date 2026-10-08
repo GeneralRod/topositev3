@@ -1,0 +1,4 @@
+## 2024-05-24 - Prevent Re-Renders on Action Callbacks
+
+**Learning:** React elements (like `GameMap` and `ChoicePanel`) that receive callbacks containing dynamic dependencies (such as `handleCityClick` which captures `state.currentCity`) will re-render whenever the dependency updates. Even if the callback hasn't structurally changed in intent, its reference changes, busting the `React.memo` cache.
+**Action:** When a callback is passed deeply to complex components, and it relies on state that updates often (like game state or current question), wrap the callback in a `useRef`/`useCallback` pattern. The ref always holds the freshest closure, while the wrapper function passed to children retains a stable reference. This preserves the benefits of `React.memo` in heavy components like map layers.
