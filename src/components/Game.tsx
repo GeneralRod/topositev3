@@ -194,6 +194,15 @@ const Game: React.FC<GameProps> = ({
     [clickCity, isChoice, state.currentCity, the, words.one],
   );
 
+  const handleCityClickRef = useRef(handleCityClick);
+  useEffect(() => {
+    handleCityClickRef.current = handleCityClick;
+  }, [handleCityClick]);
+
+  const stableCityClick = useCallback((cityName: string) => {
+    handleCityClickRef.current(cityName);
+  }, []);
+
   // Meerkeuze: vier antwoorden per vraag, vast zolang dezelfde vraag openstaat.
   const answeredCount = Object.values(state.status).filter((s) => s !== 'unanswered').length;
   const choices = useMemo(
@@ -260,7 +269,7 @@ const Game: React.FC<GameProps> = ({
           <GameMap
             cities={cities}
             status={state.status}
-            onCityClick={handleCityClick}
+            onCityClick={stableCityClick}
             highlight={isChoice ? state.currentCity : undefined}
             loadShapes={category?.loadShapes}
             maxZoom={category?.maxZoom}
@@ -272,7 +281,7 @@ const Game: React.FC<GameProps> = ({
             choices={choices}
             wrong={wrong}
             removed={removed}
-            onChoose={handleCityClick}
+            onChoose={stableCityClick}
             question={`${which} ${words.one} is dit?`}
           />
         )}
