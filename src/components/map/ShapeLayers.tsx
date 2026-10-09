@@ -253,7 +253,15 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
 
   useEffect(() => () => void map.closeTooltip(seaTooltip), [map, seaTooltip]);
 
+  const onLand = useMemo(() => {
+    return places
+      .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
+      .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
+  }, [places, byName]);
+
   if (!data) return null;
+
+  const statusOf = (name: string): CityStatus => status?.[name] ?? 'unanswered';
 
   /** Alle meren die niet meedoen als gewoon water: de wereldkaart heeft zelf geen meren. */
   const plainLakes = (exclude: string[]) =>
@@ -290,12 +298,6 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     );
   }
 
-  const statusOf = (name: string): CityStatus => status?.[name] ?? 'unanswered';
-  const onLand = useMemo(() => {
-    return places
-      .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
-      .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
-  }, [places, byName]);
   // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
   const isArea = (p: City) => AREAS.includes(p.kind);
 
