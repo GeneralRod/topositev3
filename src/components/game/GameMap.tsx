@@ -83,9 +83,18 @@ const GameMap: React.FC<GameMapProps> = ({
   maxZoom = MAX_ZOOM,
   map,
 }) => {
-  const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
-  const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
-  const highlighted = highlight ? cities.find((c) => c.name === highlight) : undefined;
+  const dots = React.useMemo(
+    () => cities.filter((c) => c.kind === undefined || c.kind === 'city'),
+    [cities],
+  );
+  const others = React.useMemo(
+    () => cities.filter((c) => c.kind !== undefined && c.kind !== 'city'),
+    [cities],
+  );
+  const highlighted = React.useMemo(
+    () => (highlight ? cities.find((c) => c.name === highlight) : undefined),
+    [cities, highlight],
+  );
   return (
     <MapContainer
       {...(map

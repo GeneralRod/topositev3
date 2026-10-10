@@ -164,7 +164,10 @@ const Game: React.FC<GameProps> = ({
     return () => window.clearTimeout(timer);
   }, [feedback]);
 
-  const currentCity = cities.find((c) => c.name === state.currentCity) ?? null;
+  const currentCity = useMemo(
+    () => cities.find((c) => c.name === state.currentCity) ?? null,
+    [cities, state.currentCity],
+  );
 
   const handleCityClick = useCallback(
     (cityName: string) => {
@@ -195,7 +198,10 @@ const Game: React.FC<GameProps> = ({
   );
 
   // Meerkeuze: vier antwoorden per vraag, vast zolang dezelfde vraag openstaat.
-  const answeredCount = Object.values(state.status).filter((s) => s !== 'unanswered').length;
+  const answeredCount = useMemo(
+    () => Object.values(state.status).filter((s) => s !== 'unanswered').length,
+    [state.status],
+  );
   const choices = useMemo(
     () =>
       isChoice && state.currentCity

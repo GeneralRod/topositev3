@@ -162,13 +162,12 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     return map;
   }, [data]);
 
-  const names = places.map((p) => p.name).join('|');
   const seas = useMemo(() => {
-    const inGame = new Set(names.split('|'));
+    const inGame = new Set(places.map((p) => p.name));
     return [...byName.values()].filter(
       (f) => f.properties.kind === 'sea' && inGame.has(f.properties.name),
     );
-  }, [byName, names]);
+  }, [byName, places]);
   const seaCopies = useMemo(() => dateLineCopies(seas), [seas]);
   // Alleen grenzen van zeeën die meedoen, en zonder de kunstmatige knip langs de
   // datumgrens (dat is geen echte zeegrens).
@@ -252,6 +251,14 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     };
   }, [map, hoverSea]);
 
+  const onLand = useMemo(
+    () =>
+      places
+        .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
+        .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? '')),
+    [places, byName],
+  );
+
   useEffect(() => () => void map.closeTooltip(seaTooltip), [map, seaTooltip]);
 
   if (!data) return null;
@@ -292,9 +299,6 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
   }
 
   const statusOf = (name: string): CityStatus => status?.[name] ?? 'unanswered';
-  const onLand = places
-    .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
-    .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
   // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
   const isArea = (p: City) => AREAS.includes(p.kind);
 
