@@ -1,0 +1,4 @@
+## 2024-10-10 - Unmemoized Filtering Breaks Referential Equality Downstream
+
+**Learning:** In React, applying `.filter()` (or `.map()`, `.reduce()`, etc) inside a component's render body creates a brand new array reference every time the component renders. In `GameMap.tsx`, creating `others` this way caused its child `ShapeLayers.tsx` to receive a new `places` array on every click/render. This broken referential equality led to performance hacks downstream, like serializing the array (`places.map(p => p.name).join('|')`) just to create a stable primitive for `useMemo` dependencies.
+**Action:** Always wrap `.filter()` results in `useMemo` when those arrays are passed as props to child components or used as dependencies in other hooks. This preserves referential equality and prevents cascading re-renders and unnecessary re-evaluations downstream.
