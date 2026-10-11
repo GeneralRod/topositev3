@@ -60,6 +60,13 @@ export function useGame(packageId: string, cityNames: string[], options: GameOpt
   // Meerkeuze is makkelijker: halve munten.
   const coinFactor = mode === 'choice' ? 0.5 : 1;
   const [state, setState] = useState(() => startGame(packageId, cityNames));
+  const stateRef = useRef(state);
+
+  // Track state in a ref to avoid callback re-creation on every state change
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+
   /** Prestatieprijzen die je met dit spel net hebt verdiend. */
   const [earned, setEarned] = useState<string[]>([]);
   const questionStartedAt = useRef(0);
@@ -76,11 +83,18 @@ export function useGame(packageId: string, cityNames: string[], options: GameOpt
 
   const clickCity = useCallback(
     (cityName: string): AnswerResult => {
+      const currentState = stateRef.current;
       const seconds = (Date.now() - questionStartedAt.current) / 1000;
-      const { state: answered, result } = answer(state, cityName, seconds, Math.random, coinFactor);
+      const { state: answered, result } = answer(
+        currentState,
+        cityName,
+        seconds,
+        Math.random,
+        coinFactor,
+      );
       let next = answered;
-      if (result.kind === 'wrong' && state.currentCity) {
-        recordCityAnswer(categoryId, state.currentCity, 'wrong');
+      if (result.kind === 'wrong' && currentState.currentCity) {
+        recordCityAnswer(categoryId, currentState.currentCity, 'wrong');
       }
       if (result.kind === 'correct') {
         recordCityAnswer(categoryId, result.city, result.firstTry ? 'first-try' : 'after-mistake');
@@ -100,7 +114,7 @@ export function useGame(packageId: string, cityNames: string[], options: GameOpt
       setState(next);
       return result;
     },
-    [state, categoryId, countStars, packageId, coinFactor, onComplete, kind, mode],
+    [categoryId, countStars, packageId, coinFactor, onComplete, kind, mode],
   );
 
   const showHint = useCallback(() => setState((s) => takeHint(s, MAX_HINTS[mode])), [mode]);
