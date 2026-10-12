@@ -188,6 +188,12 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     return seaTints(seaNames, data?.seaBorders ?? []);
   }, [data]);
 
+  const onLand = useMemo(() => {
+    return places
+      .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
+      .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
+  }, [places, byName]);
+
   // Waar de muis op staat: een vorm boven het land (via Leaflet) of een zee (zelf getest).
   const [hoverShape, setHoverShape] = useState<string | null>(null);
   // Zelfde, maar meteen bijgewerkt: Leaflet meldt 'muis van de rivier af' en 'muis
@@ -292,9 +298,6 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
   }
 
   const statusOf = (name: string): CityStatus => status?.[name] ?? 'unanswered';
-  const onLand = places
-    .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
-    .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
   // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
   const isArea = (p: City) => AREAS.includes(p.kind);
 
