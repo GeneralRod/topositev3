@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { MapContainer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -74,6 +74,28 @@ interface GameMapProps {
   map?: CategoryMap;
 }
 
+const CityMarker = React.memo(
+  ({
+    city,
+    status,
+    onClick,
+  }: {
+    city: City;
+    status: CityStatus;
+    onClick: (name: string) => void;
+  }) => {
+    // Prevent Leaflet from removing and re-adding the event listener on every render
+    const eventHandlers = useMemo(
+      () => ({ click: () => onClick(city.name) }),
+      [city.name, onClick],
+    );
+
+    return (
+      <Marker position={[city.lat, city.lng]} icon={ICONS[status]} eventHandlers={eventHandlers} />
+    );
+  },
+);
+
 const GameMap: React.FC<GameMapProps> = ({
   cities,
   status,
@@ -122,11 +144,11 @@ const GameMap: React.FC<GameMapProps> = ({
               <Marker key={city.name} position={[city.lat, city.lng]} icon={PULSE_ICON} />
             ))
         : dots.map((city) => (
-            <Marker
+            <CityMarker
               key={city.name}
-              position={[city.lat, city.lng]}
-              icon={ICONS[status[city.name] ?? 'unanswered']}
-              eventHandlers={{ click: () => onCityClick(city.name) }}
+              city={city}
+              status={status[city.name] ?? 'unanswered'}
+              onClick={onCityClick}
             />
           ))}
     </MapContainer>
