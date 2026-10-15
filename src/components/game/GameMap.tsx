@@ -85,16 +85,15 @@ const CityMarker = React.memo(
     onClick: (name: string) => void;
   }) => {
     // Prevent Leaflet from removing and re-adding the event listener on every render
-    const eventHandlers = useMemo(() => ({ click: () => onClick(city.name) }), [city.name, onClick]);
+    const eventHandlers = useMemo(
+      () => ({ click: () => onClick(city.name) }),
+      [city.name, onClick],
+    );
 
     return (
-      <Marker
-        position={[city.lat, city.lng]}
-        icon={ICONS[status]}
-        eventHandlers={eventHandlers}
-      />
+      <Marker position={[city.lat, city.lng]} icon={ICONS[status]} eventHandlers={eventHandlers} />
     );
-  }
+  },
 );
 
 const GameMap: React.FC<GameMapProps> = ({
