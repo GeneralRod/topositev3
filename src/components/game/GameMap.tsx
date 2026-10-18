@@ -86,6 +86,17 @@ const GameMap: React.FC<GameMapProps> = ({
   const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
   const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
   const highlighted = highlight ? cities.find((c) => c.name === highlight) : undefined;
+
+  // ⚡ Bolt: Memoize event handlers to prevent react-leaflet from removing and re-adding
+  // listeners on every re-render, which is a significant performance bottleneck.
+  const cityHandlers = React.useMemo(() => {
+    const handlers: Record<string, { click: () => void }> = {};
+    for (const city of cities) {
+      handlers[city.name] = { click: () => onCityClick(city.name) };
+    }
+    return handlers;
+  }, [cities, onCityClick]);
+
   return (
     <MapContainer
       {...(map
@@ -126,7 +137,7 @@ const GameMap: React.FC<GameMapProps> = ({
               key={city.name}
               position={[city.lat, city.lng]}
               icon={ICONS[status[city.name] ?? 'unanswered']}
-              eventHandlers={{ click: () => onCityClick(city.name) }}
+              eventHandlers={cityHandlers[city.name]}
             />
           ))}
     </MapContainer>
