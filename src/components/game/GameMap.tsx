@@ -61,6 +61,19 @@ const FollowHighlight: React.FC<{ lat?: number; lng?: number }> = ({ lat, lng })
   return null;
 };
 
+const CityMarker = React.memo(({ city, icon, onCityClick }: { city: City, icon: L.DivIcon, onCityClick: (name: string) => void }) => {
+  const clickRef = React.useRef(onCityClick);
+  React.useEffect(() => {
+    clickRef.current = onCityClick;
+  }, [onCityClick]);
+
+  const eventHandlers = React.useMemo(() => ({
+    click: () => clickRef.current(city.name)
+  }), [city.name]);
+
+  return <Marker position={[city.lat, city.lng]} icon={icon} eventHandlers={eventHandlers} />;
+});
+
 interface GameMapProps {
   cities: City[];
   status: Record<string, CityStatus>;
@@ -122,11 +135,11 @@ const GameMap: React.FC<GameMapProps> = ({
               <Marker key={city.name} position={[city.lat, city.lng]} icon={PULSE_ICON} />
             ))
         : dots.map((city) => (
-            <Marker
+            <CityMarker
               key={city.name}
-              position={[city.lat, city.lng]}
+              city={city}
               icon={ICONS[status[city.name] ?? 'unanswered']}
-              eventHandlers={{ click: () => onCityClick(city.name) }}
+              onCityClick={onCityClick}
             />
           ))}
     </MapContainer>
