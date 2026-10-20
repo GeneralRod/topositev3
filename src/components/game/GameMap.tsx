@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { MapContainer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -86,6 +86,19 @@ const GameMap: React.FC<GameMapProps> = ({
   const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
   const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
   const highlighted = highlight ? cities.find((c) => c.name === highlight) : undefined;
+
+  // Optimizations for react-leaflet eventHandlers: prevent detaching/reattaching on every render
+  const onCityClickRef = useRef(onCityClick);
+  useLayoutEffect(() => {
+    onCityClickRef.current = onCityClick;
+  });
+
+  const cityHandlers = useMemo(() => {
+    return Object.fromEntries(
+      cities.map((city) => [city.name, { click: () => onCityClickRef.current(city.name) }]),
+    );
+  }, [cities]);
+
   return (
     <MapContainer
       {...(map
@@ -126,7 +139,7 @@ const GameMap: React.FC<GameMapProps> = ({
               key={city.name}
               position={[city.lat, city.lng]}
               icon={ICONS[status[city.name] ?? 'unanswered']}
-              eventHandlers={{ click: () => onCityClick(city.name) }}
+              eventHandlers={cityHandlers[city.name]}
             />
           ))}
     </MapContainer>
