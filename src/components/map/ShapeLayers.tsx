@@ -156,10 +156,13 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     };
   }, [load]);
 
-  const onLand = useMemo(() => places
-    .filter((p) => p.kind !== 'sea' && p.kind !== 'peak')
-    .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? '')),
-    [places]);
+  const onLand = useMemo(
+    () =>
+      places
+        .filter((p) => p.kind !== 'sea' && p.kind !== 'peak')
+        .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? '')),
+    [places],
+  );
 
   const byName = useMemo(() => {
     const map = new Map<string, ShapeFeature>();
@@ -224,11 +227,14 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
   // ⚡ Bolt: Event handlers object voor shapes en peaks gememoized. Dit voorkomt dat react-leaflet
   // alle listener attachements moet weggooien en recreëren per re-render.
   const shapeEventHandlers = useMemo(() => {
-    const handlers: Record<string, {
-      click: (event: L.LeafletMouseEvent) => void;
-      mouseover: () => void;
-      mouseout: () => void;
-    }> = {};
+    const handlers: Record<
+      string,
+      {
+        click: (event: L.LeafletMouseEvent) => void;
+        mouseover: () => void;
+        mouseout: () => void;
+      }
+    > = {};
 
     for (const place of places) {
       if (place.kind !== 'sea' && place.kind !== 'peak' && byName.has(place.name)) {
@@ -348,7 +354,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
   }
 
   const statusOf = (name: string): CityStatus => status?.[name] ?? 'unanswered';
-  const onLandWithShape = onLand.filter(p => byName.has(p.name));
+  const onLandWithShape = onLand.filter((p) => byName.has(p.name));
   // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
   const isArea = (p: City) => AREAS.includes(p.kind);
 
