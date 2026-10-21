@@ -1,0 +1,4 @@
+## 2025-02-12 - Inline Event Handlers in react-leaflet cause re-attachment overhead
+
+**Learning:** `react-leaflet` intercepts the `eventHandlers` prop for its components (e.g., `Marker`, `GeoJSON`, `Popup`). When an inline object (e.g., `eventHandlers={{ click: () => ... }}`) is passed, the object reference changes on every React render. Leaflet translates this reference change into a full "remove old listeners, attach new listeners" operation, which can cause severe performance bottlenecks, especially when rendering many markers or regions.
+**Action:** Always memoize the `eventHandlers` object using `useMemo` or declare handlers outside the component when working with `react-leaflet`. If handlers depend on fresh state or props, use a combination of `useRef` and `useLayoutEffect` to stabilize the callback function, while keeping the `eventHandlers` object reference stable.

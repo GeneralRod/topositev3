@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { GeoJSON, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import type { City } from '../../data/cities';
@@ -156,6 +156,14 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     };
   }, [load]);
 
+  const onLand = useMemo(
+    () =>
+      places
+        .filter((p) => p.kind !== 'sea' && p.kind !== 'peak')
+        .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? '')),
+    [places],
+  );
+
   const byName = useMemo(() => {
     const map = new Map<string, ShapeFeature>();
     for (const f of data?.features ?? []) map.set(f.properties.name, f as ShapeFeature);
@@ -200,14 +208,68 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
   // hele kaart opnieuw hoeft te tekenen bij elke muisbeweging).
   const seaTooltip = useMemo(() => L.tooltip({ direction: 'auto' }), []);
 
+  const exploreRef = useRef(explore);
+  const onPickRef = useRef(onPick);
+  useLayoutEffect(() => {
+    exploreRef.current = explore;
+    onPickRef.current = onPick;
+  });
+
+  const pick = useCallback((name: string, latlng: L.LatLng) => {
+    if (exploreRef.current) setPopup({ name, latlng });
+    else onPickRef.current?.(name);
+  }, []);
+
+  // ⚡ Bolt: Event handlers object voor de popup gememoized om Leaflet listeners
+  // niet bij elke render opnieuw te laten attachen.
+  const popupEventHandlers = useMemo(() => ({ remove: () => setPopup(null) }), []);
+
+  // ⚡ Bolt: Event handlers object voor shapes en peaks gememoized. Dit voorkomt dat react-leaflet
+  // alle listener attachements moet weggooien en recreëren per re-render.
+  const shapeEventHandlers = useMemo(() => {
+    const handlers: Record<
+      string,
+      {
+        click: (event: L.LeafletMouseEvent) => void;
+        mouseover: () => void;
+        mouseout: () => void;
+      }
+    > = {};
+
+    for (const place of places) {
+      if (place.kind !== 'sea' && place.kind !== 'peak' && byName.has(place.name)) {
+        handlers[place.name] = {
+          // pick functie is stabiel via onPickRef
+          click: (event) => pick(place.name, event.latlng),
+          mouseover: () => {
+            hoverShapeNow.current = place.name;
+            setHoverShape(place.name);
+            setHoverSea(null);
+          },
+          mouseout: () => {
+            if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
+            setHoverShape((current) => (current === place.name ? null : current));
+          },
+        };
+      }
+    }
+    return handlers;
+  }, [places, byName, pick]);
+
+  // ⚡ Bolt: Memoiseer ook pieken listeners apart.
+  const peakEventHandlers = useMemo(() => {
+    const handlers: Record<string, { click: (event: L.LeafletMouseEvent) => void }> = {};
+    for (const place of places) {
+      if (place.kind === 'peak') {
+        handlers[place.name] = { click: (event) => pick(place.name, event.latlng) };
+      }
+    }
+    return handlers;
+  }, [places, pick]);
+
   const seaAt = (latlng: L.LatLng): ShapeFeature | undefined => {
     if (isOnLand(latlng.lng, latlng.lat)) return undefined;
     return seas.find((f) => containsPoint(f.geometry, wrapLng(latlng.lng), latlng.lat));
-  };
-
-  const pick = (name: string, latlng: L.LatLng) => {
-    if (explore) setPopup({ name, latlng });
-    else onPick?.(name);
   };
 
   useMapEvents({
@@ -292,9 +354,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
   }
 
   const statusOf = (name: string): CityStatus => status?.[name] ?? 'unanswered';
-  const onLand = places
-    .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
-    .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
+  const onLandWithShape = onLand.filter((p) => byName.has(p.name));
   // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
   const isArea = (p: City) => AREAS.includes(p.kind);
 
@@ -308,18 +368,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
         hovered: hoverShape === place.name,
         tint: byName.get(place.name)!.properties.tint,
       })}
-      eventHandlers={{
-        click: (event) => pick(place.name, event.latlng),
-        mouseover: () => {
-          hoverShapeNow.current = place.name;
-          setHoverShape(place.name);
-          setHoverSea(null);
-        },
-        mouseout: () => {
-          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
-          setHoverShape((current) => (current === place.name ? null : current));
-        },
-      }}
+      eventHandlers={shapeEventHandlers[place.name]}
     >
       {explore && <Tooltip sticky>{place.name}</Tooltip>}
     </GeoJSON>
@@ -347,9 +396,9 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
           style={{ color: SHAPE_COLORS.seaBorder, weight: 1.5, dashArray: '6 4', opacity: 0.8 }}
         />
       )}
-      {onLand.filter(isArea).map(renderShape)}
-      {plainLakes(onLand.map((p) => p.name))}
-      {onLand.filter((p) => !isArea(p)).map(renderShape)}
+      {onLandWithShape.filter(isArea).map(renderShape)}
+      {plainLakes(onLandWithShape.map((p) => p.name))}
+      {onLandWithShape.filter((p) => !isArea(p)).map(renderShape)}
       {places
         .filter((p) => p.kind === 'peak')
         .map((place) => (
@@ -357,13 +406,13 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
             key={place.name}
             position={[place.lat, place.lng]}
             icon={PEAK_ICONS[statusOf(place.name)]}
-            eventHandlers={{ click: (event) => pick(place.name, event.latlng) }}
+            eventHandlers={peakEventHandlers[place.name]}
           >
             {explore && <Tooltip>{place.name}</Tooltip>}
           </Marker>
         ))}
       {explore && popup && (
-        <Popup position={popup.latlng} eventHandlers={{ remove: () => setPopup(null) }}>
+        <Popup position={popup.latlng} eventHandlers={popupEventHandlers}>
           <strong>{popup.name}</strong>
         </Popup>
       )}
