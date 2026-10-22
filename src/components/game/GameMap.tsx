@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { MapContainer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -83,6 +83,11 @@ const GameMap: React.FC<GameMapProps> = ({
   maxZoom = MAX_ZOOM,
   map,
 }) => {
+  const onCityClickRef = useRef(onCityClick);
+  useLayoutEffect(() => {
+    onCityClickRef.current = onCityClick;
+  }, [onCityClick]);
+
   const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
   const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
   const highlighted = highlight ? cities.find((c) => c.name === highlight) : undefined;
@@ -122,16 +127,35 @@ const GameMap: React.FC<GameMapProps> = ({
               <Marker key={city.name} position={[city.lat, city.lng]} icon={PULSE_ICON} />
             ))
         : dots.map((city) => (
-            <Marker
+            <MarkerWithMemoizedHandler
               key={city.name}
-              position={[city.lat, city.lng]}
-              icon={ICONS[status[city.name] ?? 'unanswered']}
-              eventHandlers={{ click: () => onCityClick(city.name) }}
+              city={city}
+              status={status[city.name] ?? 'unanswered'}
+              onCityClickRef={onCityClickRef}
             />
           ))}
     </MapContainer>
   );
 };
+
+const MarkerWithMemoizedHandler: React.FC<{
+  city: City;
+  status: CityStatus;
+  onCityClickRef: React.MutableRefObject<(cityName: string) => void>;
+}> = React.memo(({ city, status, onCityClickRef }) => {
+  const eventHandlers = useMemo(
+    () => ({ click: () => onCityClickRef.current(city.name) }),
+    [city.name, onCityClickRef],
+  );
+
+  return (
+    <Marker
+      position={[city.lat, city.lng]}
+      icon={ICONS[status]}
+      eventHandlers={eventHandlers}
+    />
+  );
+});
 
 // Niet opnieuw tekenen als alleen de melding "Goed!" verschijnt of verdwijnt (idee van Jules).
 export default React.memo(GameMap);
