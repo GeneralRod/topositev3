@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { MapContainer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -83,6 +83,21 @@ const GameMap: React.FC<GameMapProps> = ({
   maxZoom = MAX_ZOOM,
   map,
 }) => {
+  const onCityClickRef = useRef(onCityClick);
+  useLayoutEffect(() => {
+    onCityClickRef.current = onCityClick;
+  }); // update every render without deps to fix exhaustive-deps
+
+  const cityEventHandlers = useMemo(() => {
+    const handlers: Record<string, L.LeafletEventHandlerFnMap> = {};
+    for (const city of cities) {
+      handlers[city.name] = {
+        click: () => onCityClickRef.current(city.name),
+      } as L.LeafletEventHandlerFnMap;
+    }
+    return handlers;
+  }, [cities]);
+
   const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
   const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
   const highlighted = highlight ? cities.find((c) => c.name === highlight) : undefined;
@@ -126,7 +141,7 @@ const GameMap: React.FC<GameMapProps> = ({
               key={city.name}
               position={[city.lat, city.lng]}
               icon={ICONS[status[city.name] ?? 'unanswered']}
-              eventHandlers={{ click: () => onCityClick(city.name) }}
+              eventHandlers={cityEventHandlers[city.name]}
             />
           ))}
     </MapContainer>
