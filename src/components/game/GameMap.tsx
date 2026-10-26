@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { MapContainer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -83,6 +83,26 @@ const GameMap: React.FC<GameMapProps> = ({
   maxZoom = MAX_ZOOM,
   map,
 }) => {
+  // Stable ref for the callback to prevent recreation of event handlers
+  const onCityClickRef = useRef(onCityClick);
+  useLayoutEffect(() => {
+    onCityClickRef.current = onCityClick;
+  });
+
+  // Cache event handlers per city to avoid Leaflet re-attaching listeners on every render.
+  // We use useMemo with `cities` dependency so the handlers objects are stable as long as the cities array is stable.
+  // Wait, if cities array is not stable, we lose caching.
+  // Let's create an object containing the handlers inside useMemo using `cities` as a dependency.
+  const cityHandlers = React.useMemo(() => {
+    const handlers: Record<string, { click: () => void }> = {};
+    for (const city of cities) {
+      if (city.kind === undefined || city.kind === 'city') {
+        handlers[city.name] = { click: () => onCityClickRef.current(city.name) };
+      }
+    }
+    return handlers;
+  }, [cities]);
+
   const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
   const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
   const highlighted = highlight ? cities.find((c) => c.name === highlight) : undefined;
@@ -126,7 +146,7 @@ const GameMap: React.FC<GameMapProps> = ({
               key={city.name}
               position={[city.lat, city.lng]}
               icon={ICONS[status[city.name] ?? 'unanswered']}
-              eventHandlers={{ click: () => onCityClick(city.name) }}
+              eventHandlers={cityHandlers[city.name]}
             />
           ))}
     </MapContainer>
