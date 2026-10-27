@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { MapContainer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -83,9 +83,29 @@ const GameMap: React.FC<GameMapProps> = ({
   maxZoom = MAX_ZOOM,
   map,
 }) => {
-  const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
-  const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
+  const dots = useMemo(
+    () => cities.filter((c) => c.kind === undefined || c.kind === 'city'),
+    [cities],
+  );
+  const others = useMemo(
+    () => cities.filter((c) => c.kind !== undefined && c.kind !== 'city'),
+    [cities],
+  );
   const highlighted = highlight ? cities.find((c) => c.name === highlight) : undefined;
+
+  const onCityClickRef = useRef(onCityClick);
+  useLayoutEffect(() => {
+    onCityClickRef.current = onCityClick;
+  });
+
+  const cityHandlers = useMemo(() => {
+    const handlers: Record<string, { click: () => void }> = {};
+    for (const city of dots) {
+      handlers[city.name] = { click: () => onCityClickRef.current(city.name) };
+    }
+    return handlers;
+  }, [dots]);
+
   return (
     <MapContainer
       {...(map
@@ -126,7 +146,7 @@ const GameMap: React.FC<GameMapProps> = ({
               key={city.name}
               position={[city.lat, city.lng]}
               icon={ICONS[status[city.name] ?? 'unanswered']}
-              eventHandlers={{ click: () => onCityClick(city.name) }}
+              eventHandlers={cityHandlers[city.name]}
             />
           ))}
     </MapContainer>
