@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react';
 import { GeoJSON, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import type { City } from '../../data/cities';
@@ -205,11 +205,6 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     return seas.find((f) => containsPoint(f.geometry, wrapLng(latlng.lng), latlng.lat));
   };
 
-  const pick = (name: string, latlng: L.LatLng) => {
-    if (explore) setPopup({ name, latlng });
-    else onPick?.(name);
-  };
-
   useMapEvents({
     click(event) {
       if (choosing) return;
@@ -254,6 +249,64 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
 
   useEffect(() => () => void map.closeTooltip(seaTooltip), [map, seaTooltip]);
 
+  const pickRef = useRef((name: string, latlng: L.LatLng) => {
+    if (explore) setPopup({ name, latlng });
+    else onPick?.(name);
+  });
+  useLayoutEffect(() => {
+    pickRef.current = (name: string, latlng: L.LatLng) => {
+      if (explore) setPopup({ name, latlng });
+      else onPick?.(name);
+    };
+  }, [explore, onPick]);
+
+  const pick = (name: string, latlng: L.LatLng) => pickRef.current(name, latlng);
+
+  const setPopupNull = () => setPopup(null);
+  const popupHandlers = useMemo(() => ({ remove: setPopupNull }), []);
+
+  const onLand = useMemo(
+    () =>
+      places
+        .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
+        .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? '')),
+    [places, byName],
+  );
+
+  const shapeHandlers = useMemo(() => {
+    const handlers: Record<
+      string,
+      { click: (event: L.LeafletMouseEvent) => void; mouseover: () => void; mouseout: () => void }
+    > = {};
+    for (const place of onLand) {
+      handlers[place.name] = {
+        click: (event: L.LeafletMouseEvent) => pick(place.name, event.latlng),
+        mouseover: () => {
+          hoverShapeNow.current = place.name;
+          setHoverShape(place.name);
+          setHoverSea(null);
+        },
+        mouseout: () => {
+          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
+          setHoverShape((current) => (current === place.name ? null : current));
+        },
+      };
+    }
+    return handlers;
+  }, [onLand]);
+
+  const peakHandlers = useMemo(() => {
+    const handlers: Record<string, { click: (event: L.LeafletMouseEvent) => void }> = {};
+    for (const place of places) {
+      if (place.kind === 'peak') {
+        handlers[place.name] = {
+          click: (event: L.LeafletMouseEvent) => pick(place.name, event.latlng),
+        };
+      }
+    }
+    return handlers;
+  }, [places]);
+
   if (!data) return null;
 
   /** Alle meren die niet meedoen als gewoon water: de wereldkaart heeft zelf geen meren. */
@@ -292,9 +345,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
   }
 
   const statusOf = (name: string): CityStatus => status?.[name] ?? 'unanswered';
-  const onLand = places
-    .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
-    .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
+
   // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
   const isArea = (p: City) => AREAS.includes(p.kind);
 
@@ -308,18 +359,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
         hovered: hoverShape === place.name,
         tint: byName.get(place.name)!.properties.tint,
       })}
-      eventHandlers={{
-        click: (event) => pick(place.name, event.latlng),
-        mouseover: () => {
-          hoverShapeNow.current = place.name;
-          setHoverShape(place.name);
-          setHoverSea(null);
-        },
-        mouseout: () => {
-          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
-          setHoverShape((current) => (current === place.name ? null : current));
-        },
-      }}
+      eventHandlers={shapeHandlers[place.name]}
     >
       {explore && <Tooltip sticky>{place.name}</Tooltip>}
     </GeoJSON>
@@ -357,13 +397,13 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
             key={place.name}
             position={[place.lat, place.lng]}
             icon={PEAK_ICONS[statusOf(place.name)]}
-            eventHandlers={{ click: (event) => pick(place.name, event.latlng) }}
+            eventHandlers={peakHandlers[place.name]}
           >
             {explore && <Tooltip>{place.name}</Tooltip>}
           </Marker>
         ))}
       {explore && popup && (
-        <Popup position={popup.latlng} eventHandlers={{ remove: () => setPopup(null) }}>
+        <Popup position={popup.latlng} eventHandlers={popupHandlers}>
           <strong>{popup.name}</strong>
         </Popup>
       )}
