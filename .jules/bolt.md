@@ -1,0 +1,4 @@
+## 2025-02-12 - Prevent listener re-attachment in react-leaflet components
+
+**Learning:** In `react-leaflet`, passing inline object event handlers like `eventHandlers={{ click: () => ... }}` directly to components (such as `Marker`, `GeoJSON`, `Popup`) causes severe performance degradation because `react-leaflet` drops and re-attaches event listeners to the underlying Leaflet objects on _every_ single re-render of the component. This causes a massive amount of unnecessary DOM manipulation.
+**Action:** Always memoize or cache the `eventHandlers` object when passing it to `react-leaflet` components. Utilizing a combination of `useRef` to store individual stable objects keyed by unique identifiers (e.g., city names) and `useLayoutEffect` to stabilize closure dependencies solves the problem without triggering re-renders or breaking event dispatch logic.
