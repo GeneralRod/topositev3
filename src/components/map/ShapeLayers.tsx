@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { GeoJSON, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import type { City } from '../../data/cities';
@@ -140,6 +140,49 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
   const explore = status === undefined;
   const choosing = highlight !== undefined;
 
+  // Stabilize onPick callback to avoid stale closures
+  const onPickRef = useRef(onPick);
+  useLayoutEffect(() => {
+    onPickRef.current = onPick;
+  }, [onPick]);
+
+  // Cache event handlers for markers and shapes to avoid react-leaflet re-attaching listeners on every render
+  const handlersMap = useMemo(() => {
+    const handlers: Record<
+      string,
+      {
+        click: (event: L.LeafletMouseEvent) => void;
+        mouseover: () => void;
+        mouseout: () => void;
+      }
+    > = {};
+    places.forEach((place) => {
+      handlers[place.name] = {
+        click: (event: L.LeafletMouseEvent) => {
+          if (status === undefined) setPopup({ name: place.name, latlng: event.latlng });
+          else onPickRef.current?.(place.name);
+        },
+        mouseover: () => {
+          hoverShapeNow.current = place.name;
+          setHoverShape(place.name);
+          setHoverSea(null);
+        },
+        mouseout: () => {
+          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
+          setHoverShape((current) => (current === place.name ? null : current));
+        },
+      };
+    });
+    return handlers;
+  }, [places, status]);
+
+  const popupHandlers = useMemo(
+    () => ({
+      remove: () => setPopup(null),
+    }),
+    [],
+  );
+
   // Rivieren zijn smal: een klik tot een paar pixels ernaast telt ook.
   const canvas = useMemo(() => L.canvas({ pane: SHAPE_PANE, tolerance: 6 }), []);
   // Knipperen kan alleen met SVG (met een CSS-animatie).
@@ -190,10 +233,10 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
 
   // Waar de muis op staat: een vorm boven het land (via Leaflet) of een zee (zelf getest).
   const [hoverShape, setHoverShape] = useState<string | null>(null);
+  const [hoverSea, setHoverSea] = useState<string | null>(null);
   // Zelfde, maar meteen bijgewerkt: Leaflet meldt 'muis van de rivier af' en 'muis
   // bewogen' in één keer, nog voordat React de nieuwe stand heeft.
   const hoverShapeNow = useRef<string | null>(null);
-  const [hoverSea, setHoverSea] = useState<string | null>(null);
   const dragging = useRef(false);
   const map = useMap();
   // Naamlabel dat met de muis meeloopt boven een zee (zelf beheerd, zodat niet de
@@ -308,18 +351,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
         hovered: hoverShape === place.name,
         tint: byName.get(place.name)!.properties.tint,
       })}
-      eventHandlers={{
-        click: (event) => pick(place.name, event.latlng),
-        mouseover: () => {
-          hoverShapeNow.current = place.name;
-          setHoverShape(place.name);
-          setHoverSea(null);
-        },
-        mouseout: () => {
-          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
-          setHoverShape((current) => (current === place.name ? null : current));
-        },
-      }}
+      eventHandlers={handlersMap[place.name]}
     >
       {explore && <Tooltip sticky>{place.name}</Tooltip>}
     </GeoJSON>
@@ -357,13 +389,13 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
             key={place.name}
             position={[place.lat, place.lng]}
             icon={PEAK_ICONS[statusOf(place.name)]}
-            eventHandlers={{ click: (event) => pick(place.name, event.latlng) }}
+            eventHandlers={handlersMap[place.name]}
           >
             {explore && <Tooltip>{place.name}</Tooltip>}
           </Marker>
         ))}
       {explore && popup && (
-        <Popup position={popup.latlng} eventHandlers={{ remove: () => setPopup(null) }}>
+        <Popup position={popup.latlng} eventHandlers={popupHandlers}>
           <strong>{popup.name}</strong>
         </Popup>
       )}
