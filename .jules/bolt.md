@@ -1,0 +1,4 @@
+## 2024-05-19 - React-Leaflet inline eventHandlers performance pitfall
+
+**Learning:** Passing inline objects to `eventHandlers` in `react-leaflet` components (like `Marker`, `GeoJSON`, `Popup`) causes Leaflet to remove and re-add DOM event listeners on every render because the object reference changes. In components that render many items (like maps with many cities or shapes) and re-render often (like on every game state change), this causes severe UI stalling and a huge performance bottleneck.
+**Action:** Always construct a stable dictionary of event handlers using `useMemo` (e.g., keyed by entity ID or name) and pass the stable reference to the `eventHandlers` prop. Use `useRef` + `useLayoutEffect` to keep callbacks inside the memoized handlers up to date without triggering re-creation of the `useMemo` object.

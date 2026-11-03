@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { GeoJSON, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import type { City } from '../../data/cities';
@@ -205,16 +205,19 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     return seas.find((f) => containsPoint(f.geometry, wrapLng(latlng.lng), latlng.lat));
   };
 
-  const pick = (name: string, latlng: L.LatLng) => {
-    if (explore) setPopup({ name, latlng });
-    else onPick?.(name);
-  };
+  const pickRef = useRef<(name: string, latlng: L.LatLng) => void>(() => {});
+  useLayoutEffect(() => {
+    pickRef.current = (name: string, latlng: L.LatLng) => {
+      if (explore) setPopup({ name, latlng });
+      else onPick?.(name);
+    };
+  }, [explore, onPick]);
 
   useMapEvents({
     click(event) {
       if (choosing) return;
       const sea = seaAt(event.latlng);
-      if (sea) pick(sea.properties.name, event.latlng);
+      if (sea) pickRef.current(sea.properties.name, event.latlng);
       else setPopup(null);
     },
     mousemove(event) {
@@ -254,6 +257,54 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
 
   useEffect(() => () => void map.closeTooltip(seaTooltip), [map, seaTooltip]);
 
+  const statusOf = (name: string): CityStatus => status?.[name] ?? 'unanswered';
+  const onLand = useMemo(
+    () =>
+      places
+        .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
+        .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? '')),
+    [places, byName],
+  );
+  // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
+  const isArea = (p: City) => AREAS.includes(p.kind);
+
+  const shapeEventHandlers = useMemo(() => {
+    const handlers: Record<
+      string,
+      { click: (event: L.LeafletMouseEvent) => void; mouseover: () => void; mouseout: () => void }
+    > = {};
+    for (const place of onLand) {
+      handlers[place.name] = {
+        click: (event) => pickRef.current(place.name, event.latlng),
+        mouseover: () => {
+          hoverShapeNow.current = place.name;
+          setHoverShape(place.name);
+          setHoverSea(null);
+        },
+        mouseout: () => {
+          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
+          setHoverShape((current) => (current === place.name ? null : current));
+        },
+      };
+    }
+    return handlers;
+  }, [onLand]);
+
+  const peakEventHandlers = useMemo(() => {
+    const handlers: Record<string, { click: (event: L.LeafletMouseEvent) => void }> = {};
+    const peaks = places.filter((p) => p.kind === 'peak');
+    for (const place of peaks) {
+      handlers[place.name] = {
+        click: (event) => pickRef.current(place.name, event.latlng),
+      };
+    }
+    return handlers;
+  }, [places]);
+
+  const popupEventHandlers = useMemo(() => {
+    return { remove: () => setPopup(null) };
+  }, []);
+
   if (!data) return null;
 
   /** Alle meren die niet meedoen als gewoon water: de wereldkaart heeft zelf geen meren. */
@@ -291,13 +342,6 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     );
   }
 
-  const statusOf = (name: string): CityStatus => status?.[name] ?? 'unanswered';
-  const onLand = places
-    .filter((p) => p.kind !== 'sea' && p.kind !== 'peak' && byName.has(p.name))
-    .sort((a, b) => DRAW_ORDER.indexOf(a.kind ?? '') - DRAW_ORDER.indexOf(b.kind ?? ''));
-  // Gebieden onder de meren (een meer kan in een gebergte liggen), de rest erboven.
-  const isArea = (p: City) => AREAS.includes(p.kind);
-
   const renderShape = (place: City) => (
     <GeoJSON
       key={place.name}
@@ -308,18 +352,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
         hovered: hoverShape === place.name,
         tint: byName.get(place.name)!.properties.tint,
       })}
-      eventHandlers={{
-        click: (event) => pick(place.name, event.latlng),
-        mouseover: () => {
-          hoverShapeNow.current = place.name;
-          setHoverShape(place.name);
-          setHoverSea(null);
-        },
-        mouseout: () => {
-          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
-          setHoverShape((current) => (current === place.name ? null : current));
-        },
-      }}
+      eventHandlers={shapeEventHandlers[place.name]}
     >
       {explore && <Tooltip sticky>{place.name}</Tooltip>}
     </GeoJSON>
@@ -357,13 +390,13 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
             key={place.name}
             position={[place.lat, place.lng]}
             icon={PEAK_ICONS[statusOf(place.name)]}
-            eventHandlers={{ click: (event) => pick(place.name, event.latlng) }}
+            eventHandlers={peakEventHandlers[place.name]}
           >
             {explore && <Tooltip>{place.name}</Tooltip>}
           </Marker>
         ))}
       {explore && popup && (
-        <Popup position={popup.latlng} eventHandlers={{ remove: () => setPopup(null) }}>
+        <Popup position={popup.latlng} eventHandlers={popupEventHandlers}>
           <strong>{popup.name}</strong>
         </Popup>
       )}
