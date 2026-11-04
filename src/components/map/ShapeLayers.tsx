@@ -384,11 +384,14 @@ const PlaceShape = React.memo<{
   onMouseOver: (name: string) => void;
   onMouseOut: (name: string) => void;
 }>(({ place, data, canvas, status, hovered, explore, onPick, onMouseOver, onMouseOut }) => {
-  const handlers = React.useMemo(() => ({
-    click: (event: L.LeafletMouseEvent) => onPick(place.name, event.latlng),
-    mouseover: () => onMouseOver(place.name),
-    mouseout: () => onMouseOut(place.name),
-  }), [onPick, onMouseOver, onMouseOut, place.name]);
+  const handlers = React.useMemo(
+    () => ({
+      click: (event: L.LeafletMouseEvent) => onPick(place.name, event.latlng),
+      mouseover: () => onMouseOver(place.name),
+      mouseout: () => onMouseOut(place.name),
+    }),
+    [onPick, onMouseOver, onMouseOut, place.name],
+  );
 
   return (
     <GeoJSON
@@ -413,16 +416,15 @@ const PeakMarker = React.memo<{
   explore: boolean;
   onPick: (name: string, latlng: L.LatLng) => void;
 }>(({ place, status, explore, onPick }) => {
-  const handlers = React.useMemo(() => ({
-    click: (event: L.LeafletMouseEvent) => onPick(place.name, event.latlng),
-  }), [onPick, place.name]);
+  const handlers = React.useMemo(
+    () => ({
+      click: (event: L.LeafletMouseEvent) => onPick(place.name, event.latlng),
+    }),
+    [onPick, place.name],
+  );
 
   return (
-    <Marker
-      position={[place.lat, place.lng]}
-      icon={PEAK_ICONS[status]}
-      eventHandlers={handlers}
-    >
+    <Marker position={[place.lat, place.lng]} icon={PEAK_ICONS[status]} eventHandlers={handlers}>
       {explore && <Tooltip>{place.name}</Tooltip>}
     </Marker>
   );

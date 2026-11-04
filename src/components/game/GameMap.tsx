@@ -34,17 +34,14 @@ const CityMarker = React.memo<{
   status: CityStatus;
   onClick: (name: string) => void;
 }>(({ city, status, onClick }) => {
-  const handlers = React.useMemo(() => ({
-    click: () => onClick(city.name),
-  }), [onClick, city.name]);
-
-  return (
-    <Marker
-      position={[city.lat, city.lng]}
-      icon={ICONS[status]}
-      eventHandlers={handlers}
-    />
+  const handlers = React.useMemo(
+    () => ({
+      click: () => onClick(city.name),
+    }),
+    [onClick, city.name],
   );
+
+  return <Marker position={[city.lat, city.lng]} icon={ICONS[status]} eventHandlers={handlers} />;
 });
 
 function dotIcon(color: string): L.DivIcon {
