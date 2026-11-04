@@ -27,6 +27,26 @@ const STATUS_COLORS: Record<CityStatus, string> = {
   green: '#34a853',
 };
 
+// ⚡ Bolt: CityMarker component extracted to memoize event handlers and prevent
+// react-leaflet from re-attaching event listeners on every re-render.
+const CityMarker = React.memo<{
+  city: City;
+  status: CityStatus;
+  onClick: (name: string) => void;
+}>(({ city, status, onClick }) => {
+  const handlers = React.useMemo(() => ({
+    click: () => onClick(city.name),
+  }), [onClick, city.name]);
+
+  return (
+    <Marker
+      position={[city.lat, city.lng]}
+      icon={ICONS[status]}
+      eventHandlers={handlers}
+    />
+  );
+});
+
 function dotIcon(color: string): L.DivIcon {
   return L.divIcon({
     className: 'custom-dot',
@@ -122,11 +142,11 @@ const GameMap: React.FC<GameMapProps> = ({
               <Marker key={city.name} position={[city.lat, city.lng]} icon={PULSE_ICON} />
             ))
         : dots.map((city) => (
-            <Marker
+            <CityMarker
               key={city.name}
-              position={[city.lat, city.lng]}
-              icon={ICONS[status[city.name] ?? 'unanswered']}
-              eventHandlers={{ click: () => onCityClick(city.name) }}
+              city={city}
+              status={status[city.name] ?? 'unanswered'}
+              onClick={onCityClick}
             />
           ))}
     </MapContainer>

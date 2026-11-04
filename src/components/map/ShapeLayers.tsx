@@ -205,16 +205,30 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     return seas.find((f) => containsPoint(f.geometry, wrapLng(latlng.lng), latlng.lat));
   };
 
-  const pick = (name: string, latlng: L.LatLng) => {
-    if (explore) setPopup({ name, latlng });
-    else onPick?.(name);
-  };
+  const memoizedPick = React.useCallback(
+    (name: string, latlng: L.LatLng) => {
+      if (explore) setPopup({ name, latlng });
+      else onPick?.(name);
+    },
+    [explore, onPick],
+  );
+
+  const handleShapeMouseOver = React.useCallback((name: string) => {
+    hoverShapeNow.current = name;
+    setHoverShape(name);
+    setHoverSea(null);
+  }, []);
+
+  const handleShapeMouseOut = React.useCallback((name: string) => {
+    if (hoverShapeNow.current === name) hoverShapeNow.current = null;
+    setHoverShape((current) => (current === name ? null : current));
+  }, []);
 
   useMapEvents({
     click(event) {
       if (choosing) return;
       const sea = seaAt(event.latlng);
-      if (sea) pick(sea.properties.name, event.latlng);
+      if (sea) memoizedPick(sea.properties.name, event.latlng);
       else setPopup(null);
     },
     mousemove(event) {
@@ -299,30 +313,18 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
   const isArea = (p: City) => AREAS.includes(p.kind);
 
   const renderShape = (place: City) => (
-    <GeoJSON
+    <PlaceShape
       key={place.name}
+      place={place}
       data={byName.get(place.name)!}
-      {...withRenderer(canvas)}
-      bubblingMouseEvents={false}
-      style={shapeStyle(place.kind!, statusOf(place.name), {
-        hovered: hoverShape === place.name,
-        tint: byName.get(place.name)!.properties.tint,
-      })}
-      eventHandlers={{
-        click: (event) => pick(place.name, event.latlng),
-        mouseover: () => {
-          hoverShapeNow.current = place.name;
-          setHoverShape(place.name);
-          setHoverSea(null);
-        },
-        mouseout: () => {
-          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
-          setHoverShape((current) => (current === place.name ? null : current));
-        },
-      }}
-    >
-      {explore && <Tooltip sticky>{place.name}</Tooltip>}
-    </GeoJSON>
+      canvas={canvas}
+      status={statusOf(place.name)}
+      hovered={hoverShape === place.name}
+      explore={explore}
+      onPick={memoizedPick}
+      onMouseOver={handleShapeMouseOver}
+      onMouseOut={handleShapeMouseOut}
+    />
   );
 
   return (
@@ -353,14 +355,13 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
       {places
         .filter((p) => p.kind === 'peak')
         .map((place) => (
-          <Marker
+          <PeakMarker
             key={place.name}
-            position={[place.lat, place.lng]}
-            icon={PEAK_ICONS[statusOf(place.name)]}
-            eventHandlers={{ click: (event) => pick(place.name, event.latlng) }}
-          >
-            {explore && <Tooltip>{place.name}</Tooltip>}
-          </Marker>
+            place={place}
+            status={statusOf(place.name)}
+            explore={explore}
+            onPick={memoizedPick}
+          />
         ))}
       {explore && popup && (
         <Popup position={popup.latlng} eventHandlers={{ remove: () => setPopup(null) }}>
@@ -370,5 +371,61 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     </>
   );
 };
+
+// ⚡ Bolt: PlaceShape component extracted to memoize event handlers
+const PlaceShape = React.memo<{
+  place: City;
+  data: ShapeFeature;
+  canvas: L.Renderer;
+  status: CityStatus;
+  hovered: boolean;
+  explore: boolean;
+  onPick: (name: string, latlng: L.LatLng) => void;
+  onMouseOver: (name: string) => void;
+  onMouseOut: (name: string) => void;
+}>(({ place, data, canvas, status, hovered, explore, onPick, onMouseOver, onMouseOut }) => {
+  const handlers = React.useMemo(() => ({
+    click: (event: L.LeafletMouseEvent) => onPick(place.name, event.latlng),
+    mouseover: () => onMouseOver(place.name),
+    mouseout: () => onMouseOut(place.name),
+  }), [onPick, onMouseOver, onMouseOut, place.name]);
+
+  return (
+    <GeoJSON
+      data={data}
+      {...withRenderer(canvas)}
+      bubblingMouseEvents={false}
+      style={shapeStyle(place.kind!, status, {
+        hovered,
+        tint: data.properties.tint,
+      })}
+      eventHandlers={handlers}
+    >
+      {explore && <Tooltip sticky>{place.name}</Tooltip>}
+    </GeoJSON>
+  );
+});
+
+// ⚡ Bolt: PeakMarker component extracted to memoize event handlers
+const PeakMarker = React.memo<{
+  place: City;
+  status: CityStatus;
+  explore: boolean;
+  onPick: (name: string, latlng: L.LatLng) => void;
+}>(({ place, status, explore, onPick }) => {
+  const handlers = React.useMemo(() => ({
+    click: (event: L.LeafletMouseEvent) => onPick(place.name, event.latlng),
+  }), [onPick, place.name]);
+
+  return (
+    <Marker
+      position={[place.lat, place.lng]}
+      icon={PEAK_ICONS[status]}
+      eventHandlers={handlers}
+    >
+      {explore && <Tooltip>{place.name}</Tooltip>}
+    </Marker>
+  );
+});
 
 export default ShapeLayers;
