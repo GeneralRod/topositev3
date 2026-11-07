@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { GeoJSON, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import type { City } from '../../data/cities';
@@ -210,6 +210,44 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     else onPick?.(name);
   };
 
+  const pickRef = useRef(pick);
+  useLayoutEffect(() => {
+    pickRef.current = pick;
+  });
+
+  // ⚡ Bolt: Memoize shape event handlers to prevent react-leaflet from
+  // detaching and re-attaching event listeners on every re-render (which is a massive bottleneck).
+  // The 'pickRef' is used to ensure we always call the latest 'pick' function without breaking memoization.
+  const shapeHandlers = useMemo(() => {
+    const handlers: Record<string, { click: (e: L.LeafletMouseEvent) => void; mouseover: () => void; mouseout: () => void }> = {};
+    places.forEach(place => {
+      handlers[place.name] = {
+        click: (event) => pickRef.current(place.name, event.latlng),
+        mouseover: () => {
+          hoverShapeNow.current = place.name;
+          setHoverShape(place.name);
+          setHoverSea(null);
+        },
+        mouseout: () => {
+          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
+          setHoverShape((current) => (current === place.name ? null : current));
+        },
+      };
+    });
+    return handlers;
+  }, [places]);
+
+  // ⚡ Bolt: Memoize peak event handlers for the same reason: avoid react-leaflet listener churn.
+  const peakHandlers = useMemo(() => {
+    const handlers: Record<string, { click: (e: L.LeafletMouseEvent) => void }> = {};
+    places.filter(p => p.kind === 'peak').forEach(place => {
+      handlers[place.name] = { click: (event) => pickRef.current(place.name, event.latlng) };
+    });
+    return handlers;
+  }, [places]);
+
+  const popupHandlers = useMemo(() => ({ remove: () => setPopup(null) }), []);
+
   useMapEvents({
     click(event) {
       if (choosing) return;
@@ -308,18 +346,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
         hovered: hoverShape === place.name,
         tint: byName.get(place.name)!.properties.tint,
       })}
-      eventHandlers={{
-        click: (event) => pick(place.name, event.latlng),
-        mouseover: () => {
-          hoverShapeNow.current = place.name;
-          setHoverShape(place.name);
-          setHoverSea(null);
-        },
-        mouseout: () => {
-          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
-          setHoverShape((current) => (current === place.name ? null : current));
-        },
-      }}
+      eventHandlers={shapeHandlers[place.name]}
     >
       {explore && <Tooltip sticky>{place.name}</Tooltip>}
     </GeoJSON>
@@ -357,13 +384,13 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
             key={place.name}
             position={[place.lat, place.lng]}
             icon={PEAK_ICONS[statusOf(place.name)]}
-            eventHandlers={{ click: (event) => pick(place.name, event.latlng) }}
+            eventHandlers={peakHandlers[place.name]}
           >
             {explore && <Tooltip>{place.name}</Tooltip>}
           </Marker>
         ))}
       {explore && popup && (
-        <Popup position={popup.latlng} eventHandlers={{ remove: () => setPopup(null) }}>
+        <Popup position={popup.latlng} eventHandlers={popupHandlers}>
           <strong>{popup.name}</strong>
         </Popup>
       )}
