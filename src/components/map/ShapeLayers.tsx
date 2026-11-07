@@ -219,8 +219,11 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
   // detaching and re-attaching event listeners on every re-render (which is a massive bottleneck).
   // The 'pickRef' is used to ensure we always call the latest 'pick' function without breaking memoization.
   const shapeHandlers = useMemo(() => {
-    const handlers: Record<string, { click: (e: L.LeafletMouseEvent) => void; mouseover: () => void; mouseout: () => void }> = {};
-    places.forEach(place => {
+    const handlers: Record<
+      string,
+      { click: (e: L.LeafletMouseEvent) => void; mouseover: () => void; mouseout: () => void }
+    > = {};
+    places.forEach((place) => {
       handlers[place.name] = {
         click: (event) => pickRef.current(place.name, event.latlng),
         mouseover: () => {
@@ -240,9 +243,11 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
   // ⚡ Bolt: Memoize peak event handlers for the same reason: avoid react-leaflet listener churn.
   const peakHandlers = useMemo(() => {
     const handlers: Record<string, { click: (e: L.LeafletMouseEvent) => void }> = {};
-    places.filter(p => p.kind === 'peak').forEach(place => {
-      handlers[place.name] = { click: (event) => pickRef.current(place.name, event.latlng) };
-    });
+    places
+      .filter((p) => p.kind === 'peak')
+      .forEach((place) => {
+        handlers[place.name] = { click: (event) => pickRef.current(place.name, event.latlng) };
+      });
     return handlers;
   }, [places]);
 

@@ -94,7 +94,7 @@ const GameMap: React.FC<GameMapProps> = ({
   // to recreate the handler object when the callback changes.
   const markerHandlers = React.useMemo(() => {
     const handlers: Record<string, { click: () => void }> = {};
-    cities.forEach(city => {
+    cities.forEach((city) => {
       handlers[city.name] = { click: () => onCityClickRef.current(city.name) };
     });
     return handlers;
