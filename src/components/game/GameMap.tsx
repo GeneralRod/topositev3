@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { MapContainer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -61,6 +61,29 @@ const FollowHighlight: React.FC<{ lat?: number; lng?: number }> = ({ lat, lng })
   return null;
 };
 
+/**
+ * ⚡ Bolt: Cache eventHandlers object per city to prevent Leaflet from unbinding
+ * and rebinding DOM event listeners on every re-render.
+ * Reduces Leaflet's internal DOM manipulation workload when highlighting cities.
+ */
+function useCityClickHandler(onCityClick: (cityName: string) => void) {
+  const onCityClickRef = useRef(onCityClick);
+  useLayoutEffect(() => {
+    onCityClickRef.current = onCityClick;
+  });
+
+  const cache = useRef<Record<string, { click: () => void }>>({});
+
+  return useCallback((cityName: string) => {
+    if (!cache.current[cityName]) {
+      cache.current[cityName] = {
+        click: () => onCityClickRef.current(cityName),
+      };
+    }
+    return cache.current[cityName];
+  }, []);
+}
+
 interface GameMapProps {
   cities: City[];
   status: Record<string, CityStatus>;
@@ -83,6 +106,7 @@ const GameMap: React.FC<GameMapProps> = ({
   maxZoom = MAX_ZOOM,
   map,
 }) => {
+  const getEventHandlers = useCityClickHandler(onCityClick);
   const dots = cities.filter((c) => c.kind === undefined || c.kind === 'city');
   const others = cities.filter((c) => c.kind !== undefined && c.kind !== 'city');
   const highlighted = highlight ? cities.find((c) => c.name === highlight) : undefined;
@@ -126,7 +150,7 @@ const GameMap: React.FC<GameMapProps> = ({
               key={city.name}
               position={[city.lat, city.lng]}
               icon={ICONS[status[city.name] ?? 'unanswered']}
-              eventHandlers={{ click: () => onCityClick(city.name) }}
+              eventHandlers={getEventHandlers(city.name)}
             />
           ))}
     </MapContainer>

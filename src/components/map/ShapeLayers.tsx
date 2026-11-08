@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useLayoutEffect, useCallback } from 'react';
 import { GeoJSON, Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import type { City } from '../../data/cities';
@@ -113,6 +113,68 @@ function usePanes(): void {
   }
 }
 
+function useShapeEventHandlers(
+  pick: (name: string, latlng: L.LatLng) => void,
+  hoverShapeNow: React.MutableRefObject<string | null>,
+  setHoverShape: React.Dispatch<React.SetStateAction<string | null>>,
+  setHoverSea: React.Dispatch<React.SetStateAction<string | null>>,
+) {
+  const handlersRef = useRef({ pick, setHoverShape, setHoverSea });
+  useLayoutEffect(() => {
+    handlersRef.current = { pick, setHoverShape, setHoverSea };
+  });
+
+  const cache = useRef<
+    Record<
+      string,
+      { click: (e: { latlng: L.LatLng }) => void; mouseover: () => void; mouseout: () => void }
+    >
+  >({});
+
+  return useCallback(
+    (name: string) => {
+      if (!cache.current[name]) {
+        cache.current[name] = {
+          click: (event: { latlng: L.LatLng }) => handlersRef.current.pick(name, event.latlng),
+          mouseover: () => {
+            hoverShapeNow.current = name;
+            handlersRef.current.setHoverShape(name);
+            handlersRef.current.setHoverSea(null);
+          },
+          mouseout: () => {
+            if (hoverShapeNow.current === name) hoverShapeNow.current = null;
+            handlersRef.current.setHoverShape((current) => (current === name ? null : current));
+          },
+        };
+      }
+      return cache.current[name];
+    },
+    [hoverShapeNow],
+  );
+}
+
+/**
+ * ⚡ Bolt: Cache eventHandlers object per peak to prevent Leaflet from unbinding
+ * and rebinding DOM event listeners on every re-render.
+ */
+function usePeakEventHandlers(pick: (name: string, latlng: L.LatLng) => void) {
+  const pickRef = useRef(pick);
+  useLayoutEffect(() => {
+    pickRef.current = pick;
+  });
+
+  const cache = useRef<Record<string, { click: (e: { latlng: L.LatLng }) => void }>>({});
+
+  return useCallback((name: string) => {
+    if (!cache.current[name]) {
+      cache.current[name] = {
+        click: (event: { latlng: L.LatLng }) => pickRef.current(name, event.latlng),
+      };
+    }
+    return cache.current[name];
+  }, []);
+}
+
 interface ShapeLayersProps {
   /** Plekken met een vorm of een bergtop (geen steden). */
   places: City[];
@@ -209,6 +271,16 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
     if (explore) setPopup({ name, latlng });
     else onPick?.(name);
   };
+
+  const getShapeEventHandlers = useShapeEventHandlers(
+    pick,
+    hoverShapeNow,
+    setHoverShape,
+    setHoverSea,
+  );
+  const getPeakEventHandlers = usePeakEventHandlers(pick);
+
+  const popupEventHandlers = useMemo(() => ({ remove: () => setPopup(null) }), []);
 
   useMapEvents({
     click(event) {
@@ -308,18 +380,7 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
         hovered: hoverShape === place.name,
         tint: byName.get(place.name)!.properties.tint,
       })}
-      eventHandlers={{
-        click: (event) => pick(place.name, event.latlng),
-        mouseover: () => {
-          hoverShapeNow.current = place.name;
-          setHoverShape(place.name);
-          setHoverSea(null);
-        },
-        mouseout: () => {
-          if (hoverShapeNow.current === place.name) hoverShapeNow.current = null;
-          setHoverShape((current) => (current === place.name ? null : current));
-        },
-      }}
+      eventHandlers={getShapeEventHandlers(place.name)}
     >
       {explore && <Tooltip sticky>{place.name}</Tooltip>}
     </GeoJSON>
@@ -357,13 +418,13 @@ const ShapeLayers: React.FC<ShapeLayersProps> = ({
             key={place.name}
             position={[place.lat, place.lng]}
             icon={PEAK_ICONS[statusOf(place.name)]}
-            eventHandlers={{ click: (event) => pick(place.name, event.latlng) }}
+            eventHandlers={getPeakEventHandlers(place.name)}
           >
             {explore && <Tooltip>{place.name}</Tooltip>}
           </Marker>
         ))}
       {explore && popup && (
-        <Popup position={popup.latlng} eventHandlers={{ remove: () => setPopup(null) }}>
+        <Popup position={popup.latlng} eventHandlers={popupEventHandlers}>
           <strong>{popup.name}</strong>
         </Popup>
       )}
