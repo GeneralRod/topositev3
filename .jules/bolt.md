@@ -1,4 +1,4 @@
-
 ## 2024-11-11 - React Leaflet Event Handlers Dependency Pitfall
+
 **Learning:** When using `useMemo` in React to stabilize object references for Leaflet `eventHandlers` (to prevent listener unbinding/rebinding on every render), it is vital that the arrays iterated over inside the `useMemo` (e.g., arrays constructed from `cities.filter()`) are themselves strictly memoized. Failing to memoize the array dependency causes the `useMemo` block to re-execute on every render, thus continuing to recreate the `eventHandlers` references and nullifying the performance optimization.
 **Action:** When creating memoized handlers based on an array derived from props, wrap the derivation of that array in its own `useMemo` with the correct prop dependencies, ensuring the entire dependency chain is stable before applying it to external libraries like Leaflet.
